@@ -7,7 +7,7 @@ namespace cotwin
 {
 	class Game
 	{
-	private:
+	protected:
 		SDL_Window * window;
 		SDL_Renderer* renderer;
 
