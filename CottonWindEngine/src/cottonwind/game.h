@@ -94,10 +94,11 @@ namespace cotwin
 					EventCategory category;
 					if (e.type >= SDL_KEYDOWN && e.type <= SDL_KEYMAPCHANGED)
 						category = EventCategoryKeyboard;
-					else if (e.type == SDL_WINDOWEVENT)
+					else if (e.type >= SDL_MOUSEMOTION && e.type <= SDL_MOUSEWHEEL)
+						category = EventCategoryMouse;
+					else if (e.type == SDL_WINDOWEVENT || e.type == SDL_QUIT)
 						category = EventCategoryWindow;
-					
-					SDL_QUIT;
+
 					event_queue.emplace(e);
 				}
 

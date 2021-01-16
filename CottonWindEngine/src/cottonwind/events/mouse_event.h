@@ -34,10 +34,11 @@ namespace cotwin
 	{
 	public:
 		unsigned int button_code;
+		bool double_clicked;
 
 	public:
-		MouseButtonEvent(Vector2 s_cursor_position, unsigned int s_button_code)
-			: MouseEvent(s_cursor_position), button_code(s_button_code)
+		MouseButtonEvent(Vector2 s_cursor_position, unsigned int s_button_code, bool s_double_clicked)
+			: MouseEvent(s_cursor_position), button_code(s_button_code), double_clicked(s_double_clicked)
 		{}
 	};
 
