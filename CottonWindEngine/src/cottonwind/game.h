@@ -4,7 +4,7 @@
 
 #include <SDL.h>
 
-#include "event.h"
+#include "events/event.h"
 
 
 namespace cotwin
@@ -91,6 +91,13 @@ namespace cotwin
 					}
 					
 					// TODO : convert SDL_Event to cotwin::Event type
+					EventCategory category;
+					if (e.type >= SDL_KEYDOWN && e.type <= SDL_KEYMAPCHANGED)
+						category = EventCategoryKeyboard;
+					else if (e.type == SDL_WINDOWEVENT)
+						category = EventCategoryWindow;
+					
+					SDL_QUIT;
 					event_queue.emplace(e);
 				}
 
