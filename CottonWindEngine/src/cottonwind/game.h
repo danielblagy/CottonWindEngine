@@ -21,6 +21,9 @@ namespace cotwin
 		// Game will stop update loop, execute on_destroy() and clean up when running is set to false
 		bool running = false;
 		// Renderer renderer;
+
+	private:
+		double target_delta = 0.0;
 	
 	public:
 		Game(WindowProperties window_properties)
@@ -35,6 +38,7 @@ namespace cotwin
 			on_init();
 			
 			Uint32 last_time = SDL_GetTicks();
+			double accumulated_delta = 0.0;
 
 			while (running)
 			{
@@ -42,10 +46,20 @@ namespace cotwin
 				Uint32 ms_passed = current_time - last_time;
 				last_time = current_time;
 
-				double fps = 1.0 / (double)(ms_passed / 1000.0);
-				SDL_Log("CottonWind: delta %u ms (%lf fps)", ms_passed, fps);
+				// time delta in seconds
+				double current_frame_delta = ms_passed / 1000.0;
 
-				SDL_Delay(15);
+				accumulated_delta += current_frame_delta;
+
+				if (target_delta > accumulated_delta)
+				{
+					continue;
+				}
+
+				double fps = 1.0 / accumulated_delta;
+				SDL_Log("CottonWind: delta %lf s (%lf fps)", accumulated_delta, fps);
+
+				//SDL_Delay(15);
 				
 				// TODO : make an event system and pass event handling to the api user
 				SDL_Event e;
@@ -57,10 +71,12 @@ namespace cotwin
 					}
 				}
 
-				on_update();
+				on_update(accumulated_delta);
 
 				SDL_RenderClear(renderer);
 				SDL_RenderPresent(renderer);
+
+				accumulated_delta = 0.0;
 			}
 		}
 
@@ -74,12 +90,23 @@ namespace cotwin
 		}
 
 		virtual void on_init() = 0;
-		virtual void on_update() = 0;
+		virtual void on_update(double delta) = 0;
 		virtual void on_destroy() = 0;
 
 		bool is_running()
 		{
 			return running;
+		}
+
+		// uncapped by default
+		void set_target_delta(double delta_in_seconds)
+		{
+			target_delta = delta_in_seconds;
+		}
+
+		void set_target_fps(unsigned int fps)
+		{
+			target_delta = 1.0 / fps;
 		}
 
 	private:
