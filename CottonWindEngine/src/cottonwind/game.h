@@ -18,6 +18,7 @@ namespace cotwin
 		SDL_Window* window;
 		SDL_Renderer* renderer;
 
+		// Game will stop update loop, execute on_destroy() and clean up when running is set to false
 		bool running = false;
 		// Renderer renderer;
 	
@@ -33,10 +34,19 @@ namespace cotwin
 		{
 			on_init();
 			
-			// The window is open: could enter program loop here (see SDL_PollEvent())
+			Uint32 last_time = SDL_GetTicks();
 
 			while (running)
 			{
+				Uint32 current_time = SDL_GetTicks();
+				Uint32 ms_passed = current_time - last_time;
+				last_time = current_time;
+
+				double fps = 1.0 / (double)(ms_passed / 1000.0);
+				SDL_Log("CottonWind: delta %u ms (%lf fps)", ms_passed, fps);
+
+				SDL_Delay(15);
+				
 				// TODO : make an event system and pass event handling to the api user
 				SDL_Event e;
 				if (SDL_PollEvent(&e))
@@ -75,7 +85,7 @@ namespace cotwin
 	private:
 		bool init(WindowProperties window_properties)
 		{
-			int sdl_init_result = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
+			int sdl_init_result = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER);
 
 			if (sdl_init_result != 0)
 			{
