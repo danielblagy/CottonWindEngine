@@ -1,6 +1,10 @@
 #pragma once
 
+#include <queue>
+
 #include <SDL.h>
+
+#include "event.h"
 
 
 namespace cotwin
@@ -37,6 +41,8 @@ namespace cotwin
 		// Renderer renderer;
 
 	private:
+		std::queue<Event> event_queue;
+		
 		// all delta time used in this class is in SECONDS
 		double target_delta = 0.0;
 	
@@ -74,14 +80,18 @@ namespace cotwin
 				double fps = 1.0 / accumulated_delta;
 				SDL_Log("CottonWind: delta %lf s (%lf fps)", accumulated_delta, fps);
 				
-				// TODO : make an event system and pass event handling to the api user
 				SDL_Event e;
-				if (SDL_PollEvent(&e))
+				while (SDL_PollEvent(&e))
 				{
+					// TODO : decide whether or not to give up control over SDL_QUIT handling to the user
 					if (e.type == SDL_QUIT)
 					{
 						running = false;
+						continue;
 					}
+					
+					// TODO : convert SDL_Event to cotwin::Event type
+					event_queue.emplace(e);
 				}
 
 				on_update(accumulated_delta);
@@ -91,6 +101,8 @@ namespace cotwin
 
 				accumulated_delta = 0.0;
 			}
+
+			stop();
 		}
 
 		void stop()
@@ -121,6 +133,23 @@ namespace cotwin
 		void set_target_fps(unsigned int fps)
 		{
 			target_delta = 1.0 / fps;
+		}
+
+		bool poll_event(Event* event)
+		{
+			if (event_queue.empty())
+				return false;
+
+			*event = event_queue.front();
+			event_queue.pop();
+
+			return true;
+		}
+
+		void clear_event_queue()
+		{
+			while (!event_queue.empty())
+				event_queue.pop();
 		}
 
 	private:

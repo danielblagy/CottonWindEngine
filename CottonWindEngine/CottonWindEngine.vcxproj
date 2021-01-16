@@ -153,6 +153,7 @@
     <ClCompile Include="src\test.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\cottonwind\event.h" />
     <ClInclude Include="src\cottonwind\game.h" />
     <ClInclude Include="src\cottonwind\math.h" />
   </ItemGroup>

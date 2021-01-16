@@ -19,10 +19,14 @@ public:
 
 	void on_update(double delta) override
 	{
-		std::cout << "test game update" << std::endl;
-		// TODO : handle events instead
-		if (!running)
-			stop();
+		cotwin::Event event;
+		while (poll_event(&event))
+		{
+			if (event.type == SDL_KEYDOWN)
+			{
+				std::cout << "TestGame: " << SDL_GetKeyName(event.key.keysym.sym) << " was pressed!" << std::endl;
+			}
+		}
 	}
 
 	void on_destroy() override
