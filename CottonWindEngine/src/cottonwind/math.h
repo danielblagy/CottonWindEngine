@@ -33,6 +33,9 @@ namespace cotwin
 		struct {
 			int r, g, b, a;
 		};
+		struct {
+			int left, top, width, height;
+		};
 		int e[4];
 	};
 }

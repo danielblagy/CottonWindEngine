@@ -23,6 +23,7 @@ namespace cotwin
 		// Renderer renderer;
 
 	private:
+		// all delta time used in this class is in SECONDS
 		double target_delta = 0.0;
 	
 	public:
@@ -58,8 +59,6 @@ namespace cotwin
 
 				double fps = 1.0 / accumulated_delta;
 				SDL_Log("CottonWind: delta %lf s (%lf fps)", accumulated_delta, fps);
-
-				//SDL_Delay(15);
 				
 				// TODO : make an event system and pass event handling to the api user
 				SDL_Event e;
@@ -104,6 +103,7 @@ namespace cotwin
 			target_delta = delta_in_seconds;
 		}
 
+		// uncapped by default
 		void set_target_fps(unsigned int fps)
 		{
 			target_delta = 1.0 / fps;
