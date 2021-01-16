@@ -89,12 +89,10 @@ namespace cotwin
 					}
 					
 					// TODO : refactor this ... code
-					EventCategory category;
-					EventType type;
 					if (e.type >= SDL_KEYDOWN && e.type <= SDL_KEYMAPCHANGED)
 					{
-						category = EventCategoryKeyboard;
-						
+						EventType type;
+
 						switch (e.type)
 						{
 						case SDL_KEYDOWN: {
@@ -110,52 +108,38 @@ namespace cotwin
 						if (type != Unsupported)
 						{
 							KeyboardEvent event(e.key.keysym.sym, SDL_GetKeyName(e.key.keysym.sym), e.key.repeat);
-							event.category = category;
 							event.type = type;
 							on_event(&event);
 						}
 					}
 					else if (e.type >= SDL_MOUSEMOTION && e.type <= SDL_MOUSEWHEEL)
 					{
-						category = EventCategoryMouse;
-
 						switch (e.type)
 						{
 						case SDL_MOUSEMOTION: {
-							type = MouseMove;
 							MouseMoveEvent event({ e.motion.x, e.motion.y }, { e.motion.xrel, e.motion.yrel });
-							event.category = category;
-							event.type = type;
 							on_event(&event);
 						} break;
 						case SDL_MOUSEBUTTONDOWN: {
-							type = MouseButtonPress;
 							MouseButtonEvent event({ e.motion.x, e.motion.y }, e.button.button, e.button.clicks == 2);
-							event.category = category;
-							event.type = type;
+							event.type = MouseButtonPress;
 							on_event(&event);
 						} break;
 						case SDL_MOUSEBUTTONUP: {
-							type = MouseButtonRelease;
 							MouseButtonEvent event({ e.motion.x, e.motion.y }, e.button.button, e.button.clicks == 2);
-							event.category = category;
-							event.type = type;
+							event.type = MouseButtonRelease;
 							on_event(&event);
 						} break;
 						case SDL_MOUSEWHEEL: {
-							type = MouseWheel;
 							MouseWheelEvent event({ e.wheel.x, e.wheel.y });
-							event.category = category;
-							event.type = type;
 							on_event(&event);
 						} break;
-						default:
-							type = Unsupported;
+						default: {}
 						}
 					}
 					else if (e.type == SDL_WINDOWEVENT || e.type == SDL_QUIT)
 					{
-						category = EventCategoryWindow;
+						//category = EventCategoryWindow;
 					}
 				}
 

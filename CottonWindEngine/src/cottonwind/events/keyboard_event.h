@@ -17,6 +17,8 @@ namespace cotwin
 	public:
 		KeyboardEvent(unsigned int s_keycode, const char* s_keyname, bool s_repeat)
 			: keycode(s_keycode), keyname(s_keyname), repeat(s_repeat)
-		{}
+		{
+			category = EventCategoryKeyboard;
+		}
 	};
 }

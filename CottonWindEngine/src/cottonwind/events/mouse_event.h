@@ -16,7 +16,9 @@ namespace cotwin
 	protected:
 		MouseEvent(Vector2 s_cursor_position)
 			: cursor_position(s_cursor_position)
-		{}
+		{
+			category = EventCategoryMouse;
+		}
 	};
 
 	class MouseMoveEvent : public MouseEvent
@@ -27,7 +29,9 @@ namespace cotwin
 	public:
 		MouseMoveEvent(Vector2 s_cursor_position, Vector2 s_relative_motion)
 			: MouseEvent(s_cursor_position), relative_motion(s_relative_motion)
-		{}
+		{
+			type = MouseMove;
+		}
 	};
 
 	class MouseButtonEvent : public MouseEvent
@@ -52,6 +56,9 @@ namespace cotwin
 	public:
 		MouseWheelEvent(Vector2 s_wheel_scroll)
 			: wheel_scroll(s_wheel_scroll)
-		{}
+		{
+			category = EventCategoryMouse;
+			type = MouseWheel;
+		}
 	};
 }
