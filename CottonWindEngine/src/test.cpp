@@ -33,9 +33,9 @@ public:
 
 int main(int argc, char* args[])
 {
-	TestGame game({ "Test Game", 0, 0, 1280, 720, false, true, true, false });
-	//TestGame game({ "Test Game", 50, 50, 1280, 720, false, false, false, true });
-	//TestGame game({ "Test Game", 0, 0, 1280, 720, true, false, false, false });
+	TestGame game(cotwin::WindowProperties("Test Game", 0, 0, 1280, 720, cotwin::Centered | cotwin::Resizable));
+	//TestGame game(cotwin::WindowProperties("Test Game", 50, 250, 1280, 720, cotwin::Borderless));
+	//TestGame game(cotwin::WindowProperties("Test Game", 0, 0, 1280, 720, cotwin::Fullscreen));
 
 	//game.set_target_delta(0.033);
 	game.set_target_fps(60);

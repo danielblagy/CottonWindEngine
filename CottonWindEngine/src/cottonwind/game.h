@@ -5,11 +5,25 @@
 
 namespace cotwin
 {
+	enum WindowPropertiesFlags
+	{
+		None = 0,
+		Fullscreen = 1 << 0,
+		Centered = 1 << 1,
+		Resizable = 1 << 2,
+		Borderless = 1 << 3
+	};
+	
 	struct WindowProperties
 	{
 		const char* title;
 		int left, top, width, height;
-		bool fullscreen, centered, resizable, borderless;
+		//bool fullscreen, centered, resizable, borderless;
+		WindowPropertiesFlags flags;
+
+		WindowProperties(const char* s_title, int s_left, int s_top, int s_width, int s_height, unsigned int s_flags)
+			: title(s_title), left(s_left), top(s_top), width(s_width), height(s_height), flags(static_cast<WindowPropertiesFlags>(s_flags))
+		{}
 	};
 	
 	class Game
@@ -120,7 +134,7 @@ namespace cotwin
 				return false;
 			}
 
-			if (window_properties.centered)
+			if (window_properties.flags & Centered)
 			{
 				window_properties.left = SDL_WINDOWPOS_CENTERED;
 				window_properties.top = SDL_WINDOWPOS_CENTERED;
@@ -128,18 +142,18 @@ namespace cotwin
 
 			Uint32 window_flags = SDL_WINDOW_OPENGL;
 			
-			if (window_properties.fullscreen)
+			if (window_properties.flags & Fullscreen)
 			{
 				window_flags = window_flags | SDL_WINDOW_FULLSCREEN;
 			}
 			else
 			{
-				if (window_properties.resizable)
+				if (window_properties.flags & Resizable)
 				{
 					window_flags = window_flags | SDL_WINDOW_RESIZABLE;
 				}
 
-				if (window_properties.borderless)
+				if (window_properties.flags & Borderless)
 				{
 					window_flags = window_flags | SDL_WINDOW_BORDERLESS;
 				}
