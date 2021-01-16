@@ -1,10 +1,10 @@
 #pragma once
 
-#include <queue>
-
 #include <SDL.h>
 
 #include "events/event.h"
+#include "events/keyboard_event.h"
+#include "events/mouse_event.h"
 
 
 namespace cotwin
@@ -41,8 +41,6 @@ namespace cotwin
 		// Renderer renderer;
 
 	private:
-		std::queue<Event> event_queue;
-		
 		// all delta time used in this class is in SECONDS
 		double target_delta = 0.0;
 	
@@ -90,16 +88,75 @@ namespace cotwin
 						continue;
 					}
 					
-					// TODO : convert SDL_Event to cotwin::Event type
+					// TODO : refactor this ... code
 					EventCategory category;
+					EventType type;
 					if (e.type >= SDL_KEYDOWN && e.type <= SDL_KEYMAPCHANGED)
+					{
 						category = EventCategoryKeyboard;
-					else if (e.type >= SDL_MOUSEMOTION && e.type <= SDL_MOUSEWHEEL)
-						category = EventCategoryMouse;
-					else if (e.type == SDL_WINDOWEVENT || e.type == SDL_QUIT)
-						category = EventCategoryWindow;
+						
+						switch (e.type)
+						{
+						case SDL_KEYDOWN: {
+							type = KeyPress;
+						} break;
+						case SDL_KEYUP: {
+							type = KeyRelease;
+						} break;
+						default:
+							type = Unsupported;
+						}
 
-					event_queue.emplace(e);
+						if (type != Unsupported)
+						{
+							KeyboardEvent event(e.key.keysym.sym, SDL_GetKeyName(e.key.keysym.sym), e.key.repeat);
+							event.category = category;
+							event.type = type;
+							on_event(&event);
+						}
+					}
+					else if (e.type >= SDL_MOUSEMOTION && e.type <= SDL_MOUSEWHEEL)
+					{
+						category = EventCategoryMouse;
+
+						switch (e.type)
+						{
+						case SDL_MOUSEMOTION: {
+							type = MouseMove;
+							MouseMoveEvent event({ e.motion.x, e.motion.y }, { e.motion.xrel, e.motion.yrel });
+							event.category = category;
+							event.type = type;
+							on_event(&event);
+						} break;
+						case SDL_MOUSEBUTTONDOWN: {
+							type = MouseButtonPress;
+							MouseButtonEvent event({ e.motion.x, e.motion.y }, e.button.button, e.button.clicks == 2);
+							event.category = category;
+							event.type = type;
+							on_event(&event);
+						} break;
+						case SDL_MOUSEBUTTONUP: {
+							type = MouseButtonRelease;
+							MouseButtonEvent event({ e.motion.x, e.motion.y }, e.button.button, e.button.clicks == 2);
+							event.category = category;
+							event.type = type;
+							on_event(&event);
+						} break;
+						case SDL_MOUSEWHEEL: {
+							type = MouseWheel;
+							MouseWheelEvent event({ e.wheel.x, e.wheel.y });
+							event.category = category;
+							event.type = type;
+							on_event(&event);
+						} break;
+						default:
+							type = Unsupported;
+						}
+					}
+					else if (e.type == SDL_WINDOWEVENT || e.type == SDL_QUIT)
+					{
+						category = EventCategoryWindow;
+					}
 				}
 
 				on_update(accumulated_delta);
@@ -124,6 +181,7 @@ namespace cotwin
 
 		virtual void on_init() = 0;
 		virtual void on_update(double delta) = 0;
+		virtual void on_event(Event* event) = 0;
 		virtual void on_destroy() = 0;
 
 		bool is_running()

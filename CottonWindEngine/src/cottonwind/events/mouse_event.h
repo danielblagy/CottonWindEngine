@@ -19,13 +19,13 @@ namespace cotwin
 		{}
 	};
 
-	class MouseMovedEvent : public MouseEvent
+	class MouseMoveEvent : public MouseEvent
 	{
 	public:
 		Vector2 relative_motion;
 
 	public:
-		MouseMovedEvent(Vector2 s_cursor_position, Vector2 s_relative_motion)
+		MouseMoveEvent(Vector2 s_cursor_position, Vector2 s_relative_motion)
 			: MouseEvent(s_cursor_position), relative_motion(s_relative_motion)
 		{}
 	};
@@ -42,7 +42,7 @@ namespace cotwin
 		{}
 	};
 
-	class MouseWheelEvent : public MouseEvent
+	class MouseWheelEvent : public Event
 	{
 	public:
 		// x is the amount scrolled horizontally, positive to the right and negative to the left
@@ -50,8 +50,8 @@ namespace cotwin
 		Vector2 wheel_scroll;
 
 	public:
-		MouseWheelEvent(Vector2 s_cursor_position, Vector2 s_wheel_scroll)
-			: MouseEvent(s_cursor_position), wheel_scroll(s_wheel_scroll)
+		MouseWheelEvent(Vector2 s_wheel_scroll)
+			: wheel_scroll(s_wheel_scroll)
 		{}
 	};
 }

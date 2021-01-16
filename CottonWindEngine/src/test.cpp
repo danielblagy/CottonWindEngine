@@ -19,13 +19,18 @@ public:
 
 	void on_update(double delta) override
 	{
-		cotwin::Event event;
-		while (poll_event(&event))
+		
+	}
+
+	void on_event(cotwin::Event* event)
+	{
+		if (event->type == cotwin::KeyPress)
 		{
-			if (event.type == SDL_KEYDOWN)
-			{
-				std::cout << "TestGame: " << SDL_GetKeyName(event.key.keysym.sym) << " was pressed!" << std::endl;
-			}
+			std::cout << "TestGame: " << dynamic_cast<cotwin::KeyboardEvent*>(event)->keyname << " was pressed!" << std::endl;
+		}
+		else if (event->type == cotwin::MouseButtonPress)
+		{
+			std::cout << "TestGame: " << dynamic_cast<cotwin::MouseButtonEvent*>(event)->button_code << " mouse button was pressed!" << std::endl;
 		}
 	}
 

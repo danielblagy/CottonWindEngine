@@ -7,7 +7,7 @@ namespace cotwin
 {
 	enum EventCategory
 	{
-		None = 0,
+		EventCategoryNone = 0,
 		EventCategoryWindow = 1 << 0,
 		EventCategoryKeyboard = 1 << 1,
 		EventCategoryMouse = 1 << 2
@@ -15,7 +15,7 @@ namespace cotwin
 
 	enum EventType
 	{
-		Unknown,
+		Unsupported,
 		ApplicationQuit,
 		WindowClose, WindowResize, WindowFocusGained, WindowFocusLost, WindowMove, WindowMinimize, WindowMaximize,
 		KeyPress, KeyRelease,
@@ -27,5 +27,7 @@ namespace cotwin
 	public:
 		EventCategory category;
 		EventType type;
+
+		virtual ~Event() = default;
 	};
 }
