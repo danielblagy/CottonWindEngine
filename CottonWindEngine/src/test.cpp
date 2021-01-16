@@ -24,13 +24,22 @@ public:
 
 	void on_event(cotwin::Event* event)
 	{
-		if (event->type == cotwin::KeyPress)
+		if (event->type == cotwin::ApplicationQuit)
+		{
+			running = false;
+		}
+		else if (event->type == cotwin::KeyPress)
 		{
 			std::cout << "TestGame: " << dynamic_cast<cotwin::KeyboardEvent*>(event)->keyname << " was pressed!" << std::endl;
 		}
 		else if (event->type == cotwin::MouseButtonPress)
 		{
 			std::cout << "TestGame: " << dynamic_cast<cotwin::MouseButtonEvent*>(event)->button_code << " mouse button was pressed!" << std::endl;
+		}
+		else if (event->type == cotwin::WindowMove)
+		{
+			cotwin::Vector2 new_position = dynamic_cast<cotwin::WindowMoveEvent*>(event)->new_position;
+			std::cout << "TestGame: window move (" << new_position.x << ", " << new_position.y << ")" << std::endl;
 		}
 	}
 

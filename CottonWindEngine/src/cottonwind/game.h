@@ -5,6 +5,7 @@
 #include "events/event.h"
 #include "events/keyboard_event.h"
 #include "events/mouse_event.h"
+#include "events/window_event.h"
 
 
 namespace cotwin
@@ -81,13 +82,6 @@ namespace cotwin
 				SDL_Event e;
 				while (SDL_PollEvent(&e))
 				{
-					// TODO : decide whether or not to give up control over SDL_QUIT handling to the user
-					if (e.type == SDL_QUIT)
-					{
-						running = false;
-						continue;
-					}
-					
 					// TODO : refactor this ... code
 					if (e.type >= SDL_KEYDOWN && e.type <= SDL_KEYMAPCHANGED)
 					{
@@ -137,9 +131,57 @@ namespace cotwin
 						default: {}
 						}
 					}
-					else if (e.type == SDL_WINDOWEVENT || e.type == SDL_QUIT)
+					else if (e.type == SDL_QUIT)
 					{
-						//category = EventCategoryWindow;
+						Event event;
+						event.category = EventCategoryWindow;
+						event.type = ApplicationQuit;
+						on_event(&event);
+					}
+					else if (e.type == SDL_WINDOWEVENT)
+					{
+						switch (e.type)
+						{
+						case SDL_WINDOWEVENT_CLOSE: {
+							Event event;
+							event.category = EventCategoryWindow;
+							event.type = WindowClose;
+							on_event(&event);
+						} break;
+						case SDL_WINDOWEVENT_MINIMIZED: {
+							Event event;
+							event.category = EventCategoryWindow;
+							event.type = WindowMinimize;
+							on_event(&event);
+						} break;
+						case SDL_WINDOWEVENT_MAXIMIZED: {
+							Event event;
+							event.category = EventCategoryWindow;
+							event.type = WindowMaximize;
+							on_event(&event);
+						} break;
+						case SDL_WINDOWEVENT_FOCUS_GAINED: {
+							Event event;
+							event.category = EventCategoryWindow;
+							event.type = WindowFocusGained;
+							on_event(&event);
+						} break;
+						case SDL_WINDOWEVENT_FOCUS_LOST: {
+							Event event;
+							event.category = EventCategoryWindow;
+							event.type = WindowFocusLost;
+							on_event(&event);
+						} break;
+						case SDL_WINDOWEVENT_MOVED: {
+							WindowMoveEvent event({ (int)e.window.data1, (int)e.window.data2 });
+							on_event(&event);
+						} break;
+						case SDL_WINDOWEVENT_RESIZED: {
+							WindowResizeEvent event({ (int)e.window.data1, (int)e.window.data2 });
+							on_event(&event);
+						} break;
+						default: {}
+						}
 					}
 				}
 
@@ -183,23 +225,6 @@ namespace cotwin
 		void set_target_fps(unsigned int fps)
 		{
 			target_delta = 1.0 / fps;
-		}
-
-		bool poll_event(Event* event)
-		{
-			if (event_queue.empty())
-				return false;
-
-			*event = event_queue.front();
-			event_queue.pop();
-
-			return true;
-		}
-
-		void clear_event_queue()
-		{
-			while (!event_queue.empty())
-				event_queue.pop();
 		}
 
 	private:
