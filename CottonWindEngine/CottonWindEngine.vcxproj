@@ -164,6 +164,7 @@
     <ClInclude Include="src\cottonwind\layer\layer.h" />
     <ClInclude Include="src\cottonwind\layer\layer_stack.h" />
     <ClInclude Include="src\cottonwind\math.h" />
+    <ClInclude Include="src\cottonwind\render\renderer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

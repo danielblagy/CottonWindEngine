@@ -9,6 +9,8 @@
 
 #include "layer/layer_stack.h"
 
+#include "render/renderer.h"
+
 
 namespace cotwin
 {
@@ -48,6 +50,8 @@ namespace cotwin
 		
 		// all delta time used in this class is in SECONDS
 		double delta_cap = 0.0;
+
+		Vector4ui8 clear_color;
 	
 	public:
 		Game(WindowProperties window_properties)
@@ -62,7 +66,6 @@ namespace cotwin
 			on_init();
 			
 			Uint32 last_time = SDL_GetTicks();
-			// TODO : rename accumulated_delta
 			double accumulated_delta = 0.0;
 
 			while (running)
@@ -83,6 +86,7 @@ namespace cotwin
 				
 				handle_sdl_events();
 
+				SDL_SetRenderDrawColor(renderer, clear_color.r, clear_color.g, clear_color.b, clear_color.a);
 				SDL_RenderClear(renderer);
 				
 				// update and render for each layer from the bottom to the top
@@ -132,9 +136,14 @@ namespace cotwin
 			delta_cap = 1.0 / fps;
 		}
 
-		void set_render_clear_color(Vector4ui8 clear_color)
+		void set_render_clear_color(Vector4ui8 s_clear_color)
 		{
-			SDL_SetRenderDrawColor(renderer, clear_color.r, clear_color.g, clear_color.b, clear_color.a);
+			clear_color = s_clear_color;
+		}
+
+		void init_renderer(Renderer* renderer_instance)
+		{
+			renderer_instance->renderer = renderer;
 		}
 
 	private:
