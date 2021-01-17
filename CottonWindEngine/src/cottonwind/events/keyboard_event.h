@@ -10,6 +10,7 @@ namespace cotwin
 	class KeyboardEvent : public Event
 	{
 	public:
+		// uses to store SDL_Scancode
 		unsigned int keycode;
 		const char* keyname;
 		bool repeat;

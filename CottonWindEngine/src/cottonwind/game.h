@@ -101,7 +101,7 @@ namespace cotwin
 
 						if (type != Unsupported)
 						{
-							KeyboardEvent event(e.key.keysym.sym, SDL_GetKeyName(e.key.keysym.sym), e.key.repeat);
+							KeyboardEvent event(e.key.keysym.scancode, SDL_GetScancodeName(e.key.keysym.scancode), e.key.repeat);
 							event.type = type;
 							on_event(&event);
 						}
