@@ -43,15 +43,12 @@ namespace cotwin
 
 		// Game will stop update loop, execute on_destroy() and clean up when running is set to false
 		bool running = false;
-		// Renderer renderer;
 
 	private:
+		Vector4ui8 clear_color;
 		LayerStack layer_stack;
-		
-		// all delta time used in this class is in SECONDS
 		double delta_cap = 0.0;
 
-		Vector4ui8 clear_color;
 	
 	public:
 		Game(WindowProperties window_properties)
@@ -141,9 +138,9 @@ namespace cotwin
 			clear_color = s_clear_color;
 		}
 
-		void init_renderer(Renderer* renderer_instance)
+		Renderer get_renderer()
 		{
-			renderer_instance->renderer = renderer;
+			return Renderer(renderer);
 		}
 
 	private:

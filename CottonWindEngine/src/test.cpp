@@ -80,9 +80,6 @@ public:
 
 class TestGame : public cotwin::Game
 {
-private:
-	cotwin::Renderer renderer;
-
 public:
 	TestGame(cotwin::WindowProperties window_properties)
 		: Game(window_properties)
@@ -92,8 +89,7 @@ public:
 
 	void on_init() override
 	{
-		init_renderer(&renderer);
-		attach_layer(new TestMainLayer(renderer));
+		attach_layer(new TestMainLayer(get_renderer()));
 		set_fps_cap(60);
 		set_render_clear_color({ 70, 100, 200, 255 });
 	}
