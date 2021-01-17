@@ -2,6 +2,8 @@
 
 #include "cottonwind/game.h"
 #include "cottonwind/input/input.h"
+#include "cottonwind/input/keycodes.h"
+#include "cottonwind/input/mouse_buttons.h"
 
 
 class TestGame : public cotwin::Game
@@ -20,7 +22,14 @@ public:
 
 	void on_update(double delta) override
 	{
+		if (cotwin::Input::is_key_pressed(CW_KEY_F))
+			std::cout << "TestGame: JUMP is pressed!" << std::endl;
 		
+		if (cotwin::Input::is_mouse_button_pressed(CW_MOUSEBUTTON_LEFT))
+			std::cout << "TestGame: SHOOT is pressed!" << std::endl;
+
+		cotwin::Vector2 mouse_position = cotwin::Input::get_mouse_position();
+		std::cout << "TestGame: Mouse Position (" << mouse_position.x << ", " << mouse_position.y << ")" << std::endl;
 	}
 
 	void on_event(cotwin::Event* event)
