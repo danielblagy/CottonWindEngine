@@ -27,6 +27,7 @@ namespace cotwin
 	public:
 		EventCategory category;
 		EventType type;
+		bool processed = false;
 
 		virtual ~Event() = default;
 	};

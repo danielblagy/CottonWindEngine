@@ -31,5 +31,25 @@ namespace cotwin
 		{
 			layers.erase(layers.end());
 		}
+
+		std::vector<Layer*>::const_iterator begin()
+		{
+			return layers.begin();
+		}
+
+		std::vector<Layer*>::const_iterator end()
+		{
+			return layers.end();
+		}
+
+		std::vector<Layer*>::const_reverse_iterator rbegin()
+		{
+			return layers.rbegin();
+		}
+
+		std::vector<Layer*>::const_reverse_iterator rend()
+		{
+			return layers.rend();
+		}
 	};
 }

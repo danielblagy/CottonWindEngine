@@ -20,7 +20,7 @@ namespace cotwin
 
 		virtual void on_attach() {}
 		virtual void on_detach() {}
-		virtual void on_update() {}
+		virtual void on_update(double delta) {}
 		virtual void on_event(Event* event) {}
 
 		inline void enable() { enabled = true; }

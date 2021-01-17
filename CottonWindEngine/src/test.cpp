@@ -20,44 +20,6 @@ public:
 		std::cout << "test game init" << std::endl;
 	}
 
-	void on_update(double delta) override
-	{
-		if (cotwin::Input::is_key_pressed(CW_KEY_F))
-			std::cout << "TestGame: JUMP is pressed!" << std::endl;
-		
-		if (cotwin::Input::is_mouse_button_pressed(CW_MOUSEBUTTON_LEFT))
-			std::cout << "TestGame: SHOOT is pressed!" << std::endl;
-
-		cotwin::Vector2 mouse_position = cotwin::Input::get_mouse_position();
-		std::cout << "TestGame: Mouse Position (" << mouse_position.x << ", " << mouse_position.y << ")" << std::endl;
-	}
-
-	void on_event(cotwin::Event* event)
-	{
-		if (event->type == cotwin::ApplicationQuit)
-		{
-			running = false;
-		}
-		else if (event->type == cotwin::KeyPress)
-		{
-			std::cout << "TestGame: " << dynamic_cast<cotwin::KeyboardEvent*>(event)->keyname << " was pressed!" << std::endl;
-		}
-		else if (event->type == cotwin::MouseButtonPress)
-		{
-			std::cout << "TestGame: " << dynamic_cast<cotwin::MouseButtonEvent*>(event)->button_code << " mouse button was pressed!" << std::endl;
-		}
-		else if (event->type == cotwin::WindowMove)
-		{
-			cotwin::Vector2 new_position = dynamic_cast<cotwin::WindowMoveEvent*>(event)->new_position;
-			std::cout << "TestGame: window move (" << new_position.x << ", " << new_position.y << ")" << std::endl;
-		}
-		else if (event->type == cotwin::WindowResize)
-		{
-			cotwin::Vector2 new_size = dynamic_cast<cotwin::WindowResizeEvent*>(event)->new_size;
-			std::cout << "TestGame: window resize (" << new_size.x << ", " << new_size.y << ")" << std::endl;
-		}
-	}
-
 	void on_destroy() override
 	{
 		std::cout << "test game destroy" << std::endl;

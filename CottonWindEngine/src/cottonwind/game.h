@@ -7,6 +7,8 @@
 #include "events/mouse_event.h"
 #include "events/window_event.h"
 
+#include "layer/layer_stack.h"
+
 
 namespace cotwin
 {
@@ -40,6 +42,8 @@ namespace cotwin
 		// Game will stop update loop, execute on_destroy() and clean up when running is set to false
 		bool running = false;
 		// Renderer renderer;
+
+		LayerStack layer_stack;
 
 	private:
 		// all delta time used in this class is in SECONDS
@@ -79,113 +83,11 @@ namespace cotwin
 				double fps = 1.0 / accumulated_delta;
 				SDL_Log("CottonWind: delta %lf s (%lf fps)", accumulated_delta, fps);
 				
-				SDL_Event e;
-				while (SDL_PollEvent(&e))
-				{
-					// TODO : refactor this ... code
-					if (e.type >= SDL_KEYDOWN && e.type <= SDL_KEYMAPCHANGED)
-					{
-						EventType type;
+				handle_sdl_events();
 
-						switch (e.type)
-						{
-						case SDL_KEYDOWN: {
-							type = KeyPress;
-						} break;
-						case SDL_KEYUP: {
-							type = KeyRelease;
-						} break;
-						default:
-							type = Unsupported;
-						}
-
-						if (type != Unsupported)
-						{
-							KeyboardEvent event(e.key.keysym.scancode, SDL_GetScancodeName(e.key.keysym.scancode), e.key.repeat);
-							event.type = type;
-							on_event(&event);
-						}
-					}
-					else if (e.type >= SDL_MOUSEMOTION && e.type <= SDL_MOUSEWHEEL)
-					{
-						switch (e.type)
-						{
-						case SDL_MOUSEMOTION: {
-							MouseMoveEvent event({ e.motion.x, e.motion.y }, { e.motion.xrel, e.motion.yrel });
-							on_event(&event);
-						} break;
-						case SDL_MOUSEBUTTONDOWN: {
-							MouseButtonEvent event({ e.motion.x, e.motion.y }, e.button.button, e.button.clicks == 2);
-							event.type = MouseButtonPress;
-							on_event(&event);
-						} break;
-						case SDL_MOUSEBUTTONUP: {
-							MouseButtonEvent event({ e.motion.x, e.motion.y }, e.button.button, e.button.clicks == 2);
-							event.type = MouseButtonRelease;
-							on_event(&event);
-						} break;
-						case SDL_MOUSEWHEEL: {
-							MouseWheelEvent event({ e.wheel.x, e.wheel.y });
-							on_event(&event);
-						} break;
-						default: {}
-						}
-					}
-					else if (e.type == SDL_QUIT)
-					{
-						Event event;
-						event.category = EventCategoryWindow;
-						event.type = ApplicationQuit;
-						on_event(&event);
-					}
-					else if (e.type == SDL_WINDOWEVENT)
-					{
-						switch (e.window.event)
-						{
-						case SDL_WINDOWEVENT_CLOSE: {
-							Event event;
-							event.category = EventCategoryWindow;
-							event.type = WindowClose;
-							on_event(&event);
-						} break;
-						case SDL_WINDOWEVENT_MINIMIZED: {
-							Event event;
-							event.category = EventCategoryWindow;
-							event.type = WindowMinimize;
-							on_event(&event);
-						} break;
-						case SDL_WINDOWEVENT_MAXIMIZED: {
-							Event event;
-							event.category = EventCategoryWindow;
-							event.type = WindowMaximize;
-							on_event(&event);
-						} break;
-						case SDL_WINDOWEVENT_FOCUS_GAINED: {
-							Event event;
-							event.category = EventCategoryWindow;
-							event.type = WindowFocusGained;
-							on_event(&event);
-						} break;
-						case SDL_WINDOWEVENT_FOCUS_LOST: {
-							Event event;
-							event.category = EventCategoryWindow;
-							event.type = WindowFocusLost;
-							on_event(&event);
-						} break;
-						case SDL_WINDOWEVENT_MOVED: {
-							WindowMoveEvent event({ (int)e.window.data1, (int)e.window.data2 });
-							on_event(&event);
-						} break;
-						case SDL_WINDOWEVENT_RESIZED: {
-							WindowResizeEvent event({ (int)e.window.data1, (int)e.window.data2 });
-							on_event(&event);
-						} break;
-						default: {}
-						}
-					}
-				}
-
-				on_update(accumulated_delta);
+				// update and render for each layer from the bottom to the top
+				for (Layer* layer : layer_stack)
+					layer->on_update(accumulated_delta);
 
 				SDL_RenderClear(renderer);
 				SDL_RenderPresent(renderer);
@@ -206,8 +108,6 @@ namespace cotwin
 		}
 
 		virtual void on_init() = 0;
-		virtual void on_update(double delta) = 0;
-		virtual void on_event(Event* event) = 0;
 		virtual void on_destroy() = 0;
 
 		bool is_running()
@@ -284,6 +184,126 @@ namespace cotwin
 			SDL_Log("CottonWind: Game was successfully initialized");
 
 			return true;
+		}
+
+		void on_event(Event* event)
+		{
+			// process event from the top to the bottom
+			for (auto it = layer_stack.rbegin(); it	!= layer_stack.rend(); ++it)
+			{
+				if (event->processed)
+					break;
+				
+				(*it)->on_event(event);
+			}
+		}
+
+		void handle_sdl_events()
+		{
+			SDL_Event e;
+			while (SDL_PollEvent(&e))
+			{
+				if (e.type >= SDL_KEYDOWN && e.type <= SDL_KEYMAPCHANGED)
+				{
+					EventType type;
+
+					switch (e.type)
+					{
+					case SDL_KEYDOWN: {
+						type = KeyPress;
+					} break;
+					case SDL_KEYUP: {
+						type = KeyRelease;
+					} break;
+					default:
+						type = Unsupported;
+					}
+
+					if (type != Unsupported)
+					{
+						KeyboardEvent event(e.key.keysym.scancode, SDL_GetScancodeName(e.key.keysym.scancode), e.key.repeat);
+						event.type = type;
+						on_event(&event);
+					}
+				}
+				else if (e.type >= SDL_MOUSEMOTION && e.type <= SDL_MOUSEWHEEL)
+				{
+					switch (e.type)
+					{
+					case SDL_MOUSEMOTION: {
+						MouseMoveEvent event({ e.motion.x, e.motion.y }, { e.motion.xrel, e.motion.yrel });
+						on_event(&event);
+					} break;
+					case SDL_MOUSEBUTTONDOWN: {
+						MouseButtonEvent event({ e.motion.x, e.motion.y }, e.button.button, e.button.clicks == 2);
+						event.type = MouseButtonPress;
+						on_event(&event);
+					} break;
+					case SDL_MOUSEBUTTONUP: {
+						MouseButtonEvent event({ e.motion.x, e.motion.y }, e.button.button, e.button.clicks == 2);
+						event.type = MouseButtonRelease;
+						on_event(&event);
+					} break;
+					case SDL_MOUSEWHEEL: {
+						MouseWheelEvent event({ e.wheel.x, e.wheel.y });
+						on_event(&event);
+					} break;
+					default: {}
+					}
+				}
+				else if (e.type == SDL_QUIT)
+				{
+					Event event;
+					event.category = EventCategoryWindow;
+					event.type = ApplicationQuit;
+					on_event(&event);
+				}
+				else if (e.type == SDL_WINDOWEVENT)
+				{
+					switch (e.window.event)
+					{
+					case SDL_WINDOWEVENT_CLOSE: {
+						Event event;
+						event.category = EventCategoryWindow;
+						event.type = WindowClose;
+						on_event(&event);
+					} break;
+					case SDL_WINDOWEVENT_MINIMIZED: {
+						Event event;
+						event.category = EventCategoryWindow;
+						event.type = WindowMinimize;
+						on_event(&event);
+					} break;
+					case SDL_WINDOWEVENT_MAXIMIZED: {
+						Event event;
+						event.category = EventCategoryWindow;
+						event.type = WindowMaximize;
+						on_event(&event);
+					} break;
+					case SDL_WINDOWEVENT_FOCUS_GAINED: {
+						Event event;
+						event.category = EventCategoryWindow;
+						event.type = WindowFocusGained;
+						on_event(&event);
+					} break;
+					case SDL_WINDOWEVENT_FOCUS_LOST: {
+						Event event;
+						event.category = EventCategoryWindow;
+						event.type = WindowFocusLost;
+						on_event(&event);
+					} break;
+					case SDL_WINDOWEVENT_MOVED: {
+						WindowMoveEvent event({ (int)e.window.data1, (int)e.window.data2 });
+						on_event(&event);
+					} break;
+					case SDL_WINDOWEVENT_RESIZED: {
+						WindowResizeEvent event({ (int)e.window.data1, (int)e.window.data2 });
+						on_event(&event);
+					} break;
+					default: {}
+					}
+				}
+			}
 		}
 	};
 }
