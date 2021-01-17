@@ -41,6 +41,11 @@ public:
 			cotwin::Vector2 new_position = dynamic_cast<cotwin::WindowMoveEvent*>(event)->new_position;
 			std::cout << "TestGame: window move (" << new_position.x << ", " << new_position.y << ")" << std::endl;
 		}
+		else if (event->type == cotwin::WindowResize)
+		{
+			cotwin::Vector2 new_size = dynamic_cast<cotwin::WindowResizeEvent*>(event)->new_size;
+			std::cout << "TestGame: window resize (" << new_size.x << ", " << new_size.y << ")" << std::endl;
+		}
 	}
 
 	void on_destroy() override

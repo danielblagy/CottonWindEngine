@@ -140,7 +140,7 @@ namespace cotwin
 					}
 					else if (e.type == SDL_WINDOWEVENT)
 					{
-						switch (e.type)
+						switch (e.window.event)
 						{
 						case SDL_WINDOWEVENT_CLOSE: {
 							Event event;
