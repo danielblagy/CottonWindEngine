@@ -94,7 +94,7 @@ int main(int argc, char* args[])
 	//TestGame game(cotwin::WindowProperties("Test Game", 0, 0, 1280, 720, cotwin::Fullscreen));
 
 	//game.set_target_delta(0.033);
-	game.set_target_fps(60);
+	game.set_fps_cap(60);
 	
 	game.start();
 	

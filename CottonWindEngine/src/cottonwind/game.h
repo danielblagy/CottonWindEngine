@@ -47,7 +47,7 @@ namespace cotwin
 		LayerStack layer_stack;
 		
 		// all delta time used in this class is in SECONDS
-		double target_delta = 0.0;
+		double delta_cap = 0.0;
 	
 	public:
 		Game(WindowProperties window_properties)
@@ -76,7 +76,7 @@ namespace cotwin
 
 				accumulated_delta += current_frame_delta;
 
-				if (target_delta > accumulated_delta)
+				if (delta_cap > accumulated_delta)
 				{
 					continue;
 				}
@@ -121,15 +121,15 @@ namespace cotwin
 		}
 
 		// uncapped by default
-		void set_target_delta(double delta_in_seconds)
+		void set_delta_cap(double delta_in_seconds)
 		{
-			target_delta = delta_in_seconds;
+			delta_cap = delta_in_seconds;
 		}
 
 		// uncapped by default
-		void set_target_fps(unsigned int fps)
+		void set_fps_cap(unsigned int fps)
 		{
-			target_delta = 1.0 / fps;
+			delta_cap = 1.0 / fps;
 		}
 
 		void set_render_clear_color(Vector4ui8 clear_color)
