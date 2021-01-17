@@ -43,9 +43,9 @@ namespace cotwin
 		bool running = false;
 		// Renderer renderer;
 
-		LayerStack layer_stack;
-
 	private:
+		LayerStack layer_stack;
+		
 		// all delta time used in this class is in SECONDS
 		double target_delta = 0.0;
 	
@@ -79,9 +79,6 @@ namespace cotwin
 				{
 					continue;
 				}
-
-				double fps = 1.0 / accumulated_delta;
-				SDL_Log("CottonWind: delta %lf s (%lf fps)", accumulated_delta, fps);
 				
 				handle_sdl_events();
 
@@ -105,6 +102,12 @@ namespace cotwin
 			SDL_DestroyRenderer(renderer);
 			SDL_DestroyWindow(window);
 			SDL_Quit();
+		}
+
+		void attach_layer(Layer* layer)
+		{
+			layer_stack.push_layer(layer);
+			layer->on_attach();
 		}
 
 		virtual void on_init() = 0;
@@ -257,6 +260,9 @@ namespace cotwin
 					event.category = EventCategoryWindow;
 					event.type = ApplicationQuit;
 					on_event(&event);
+
+					// stop the game
+					running = false;
 				}
 				else if (e.type == SDL_WINDOWEVENT)
 				{

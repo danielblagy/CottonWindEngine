@@ -29,7 +29,9 @@ namespace cotwin
 
 		void pop_layer(Layer* layer)
 		{
-			layers.erase(layers.end());
+			auto it = std::find(layers.begin(), layers.end(), layer);
+			layer->on_detach();
+			layers.erase(it);
 		}
 
 		std::vector<Layer*>::const_iterator begin()

@@ -161,6 +161,8 @@
     <ClInclude Include="src\cottonwind\input\input.h" />
     <ClInclude Include="src\cottonwind\input\keycodes.h" />
     <ClInclude Include="src\cottonwind\input\mouse_buttons.h" />
+    <ClInclude Include="src\cottonwind\layer\layer.h" />
+    <ClInclude Include="src\cottonwind\layer\layer_stack.h" />
     <ClInclude Include="src\cottonwind\math.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
