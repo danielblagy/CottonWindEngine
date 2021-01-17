@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdint.h>
+
 
 namespace cotwin
 {
@@ -37,5 +39,19 @@ namespace cotwin
 			int left, top, width, height;
 		};
 		int e[4];
+	};
+
+	union Vector4ui8
+	{
+		struct {
+			uint8_t x, y, z, w;
+		};
+		struct {
+			uint8_t r, g, b, a;
+		};
+		struct {
+			uint8_t left, top, width, height;
+		};
+		uint8_t e[4];
 	};
 }

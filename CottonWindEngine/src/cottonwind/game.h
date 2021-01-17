@@ -62,6 +62,7 @@ namespace cotwin
 			on_init();
 			
 			Uint32 last_time = SDL_GetTicks();
+			// TODO : rename accumulated_delta
 			double accumulated_delta = 0.0;
 
 			while (running)
@@ -82,11 +83,12 @@ namespace cotwin
 				
 				handle_sdl_events();
 
+				SDL_RenderClear(renderer);
+				
 				// update and render for each layer from the bottom to the top
 				for (Layer* layer : layer_stack)
 					layer->on_update(accumulated_delta);
 
-				SDL_RenderClear(renderer);
 				SDL_RenderPresent(renderer);
 
 				accumulated_delta = 0.0;
@@ -128,6 +130,11 @@ namespace cotwin
 		void set_target_fps(unsigned int fps)
 		{
 			target_delta = 1.0 / fps;
+		}
+
+		void set_render_clear_color(Vector4ui8 clear_color)
+		{
+			SDL_SetRenderDrawColor(renderer, clear_color.r, clear_color.g, clear_color.b, clear_color.a);
 		}
 
 	private:
@@ -182,7 +189,9 @@ namespace cotwin
 				return false;
 			}
 
-			SDL_SetRenderDrawColor(renderer, 180, 50, 100, 255);
+			// set render clear color to black by default
+			Vector4ui8 black_color = { 0, 0, 0, 0 };
+			set_render_clear_color(black_color);
 
 			SDL_Log("CottonWind: Game was successfully initialized");
 
