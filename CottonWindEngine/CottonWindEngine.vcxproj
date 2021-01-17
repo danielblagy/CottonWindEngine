@@ -158,6 +158,7 @@
     <ClInclude Include="src\cottonwind\events\mouse_event.h" />
     <ClInclude Include="src\cottonwind\events\window_event.h" />
     <ClInclude Include="src\cottonwind\game.h" />
+    <ClInclude Include="src\cottonwind\input\keyboard_input.h" />
     <ClInclude Include="src\cottonwind\math.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

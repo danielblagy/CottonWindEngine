@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "cottonwind/game.h"
+#include "cottonwind/input/input.h"
 
 
 class TestGame : public cotwin::Game
