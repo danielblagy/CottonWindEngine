@@ -32,8 +32,8 @@ namespace cotwin
 		friend Game;
 
 	protected:
-		Renderer(SDL_Renderer* s_renderer)
-			: renderer (s_renderer)
+		Renderer()
+			: renderer (0)
 		{}
 	};
 }

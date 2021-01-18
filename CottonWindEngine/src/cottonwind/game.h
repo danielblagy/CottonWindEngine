@@ -13,8 +13,6 @@
 
 #include "render/renderer.h"
 
-//#include "imgui/imgui_layer.h"
-
 // dear imgui: standalone example application for SDL2 + OpenGL
 // If you are new to dear imgui, see examples/README.txt and documentation at the top of imgui.cpp.
 // (SDL is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
@@ -59,7 +57,6 @@ namespace cotwin
 	protected:
 		// TODO : put this in private ??
 		SDL_Window* window;
-		SDL_Renderer* renderer;
 		SDL_GLContext gl_context;
 		const char* glsl_version;
 
@@ -109,14 +106,26 @@ namespace cotwin
 				
 				handle_sdl_events();
 
-				SDL_SetRenderDrawColor(renderer, clear_color.r, clear_color.g, clear_color.b, clear_color.a);
-				SDL_RenderClear(renderer);
+				//SDL_SetRenderDrawColor(renderer, clear_color.r, clear_color.g, clear_color.b, clear_color.a);
+				//SDL_RenderClear(renderer);
+
+				// TODO : have a global WindowData struct which is updated when window events come up
+				//										(either handle that in the engine, or require it from the user)
+				// clear screen
+				int window_w, window_h;
+				SDL_GetWindowSize(window, &window_w, &window_h);
+				glViewport(0, 0, window_w, window_h);
+				glClearColor((float) clear_color.x / 255.0f, (float) clear_color.y / 255.0f, (float) clear_color.z / 255.0f, (float) clear_color.w / 255.0f);
+				glClear(GL_COLOR_BUFFER_BIT);
 				
 				// update and render for each layer from the bottom to the top
 				for (Layer* layer : layer_stack)
 					layer->on_update(accumulated_delta);
 
-				SDL_RenderPresent(renderer);
+				//SDL_RenderPresent(renderer);
+
+				// update screen with rendering
+				SDL_GL_SwapWindow(window);
 
 				accumulated_delta = 0.0;
 			}
@@ -129,7 +138,7 @@ namespace cotwin
 			on_destroy();
 			
 			SDL_GL_DeleteContext(gl_context);
-			SDL_DestroyRenderer(renderer);
+			//SDL_DestroyRenderer(renderer);
 			SDL_DestroyWindow(window);
 			SDL_Quit();
 		}
@@ -167,7 +176,7 @@ namespace cotwin
 
 		Renderer get_renderer()
 		{
-			return Renderer(renderer);
+			return Renderer();
 		}
 
 	private:
@@ -181,10 +190,10 @@ namespace cotwin
 				return false;
 			}
 
-			// TODO : mac support
+			// TODO : mac support (opengl)
 
 			// GL 3.0 + GLSL 130
-			const char* glsl_version = "#version 130";
+			glsl_version = "#version 130";
 			SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
 			SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
@@ -195,9 +204,6 @@ namespace cotwin
 			SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 			SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
-			//SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-			//SDL_Window* window = SDL_CreateWindow("Dear ImGui SDL2+OpenGL3 example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
-
 			if (window_properties.flags & Centered)
 			{
 				window_properties.left = SDL_WINDOWPOS_CENTERED;
@@ -205,7 +211,6 @@ namespace cotwin
 			}
 
 			Uint32 window_flags = SDL_WINDOW_OPENGL;
-
 			if (window_properties.flags & Fullscreen)
 			{
 				window_flags = window_flags | SDL_WINDOW_FULLSCREEN;
@@ -234,7 +239,12 @@ namespace cotwin
 
 			gl_context = SDL_GL_CreateContext(window);
 			SDL_GL_MakeCurrent(window, gl_context);
+			// TODO : deal with vsync
 			//SDL_GL_SetSwapInterval(1); // Enable vsync
+
+			// set render clear color to black by default
+			Vector4ui8 black_color = { 0, 0, 0, 0 };
+			set_render_clear_color(black_color);
 
 			// Initialize OpenGL loader
 			if (gladLoadGL() == 0)
