@@ -13,11 +13,6 @@
 
 #include "render/renderer.h"
 
-// dear imgui: standalone example application for SDL2 + OpenGL
-// If you are new to dear imgui, see examples/README.txt and documentation at the top of imgui.cpp.
-// (SDL is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
-// (GL3W is a helper library to access OpenGL functions since there is no standard header to access modern OpenGL functions easily. Alternatives are GLEW, Glad, etc.)
-
 #include "vendor/imgui_sdl2_opengl3/imgui.h"
 #include "vendor/imgui_sdl2_opengl3/imgui_impl_sdl.h"
 #include "vendor/imgui_sdl2_opengl3/imgui_impl_opengl3.h"
@@ -44,7 +39,6 @@ namespace cotwin
 	{
 		const char* title;
 		int left, top, width, height;
-		//bool fullscreen, centered, resizable, borderless;
 		WindowPropertiesFlags flags;
 
 		WindowProperties(const char* s_title, int s_left, int s_top, int s_width, int s_height, unsigned int s_flags)
@@ -106,9 +100,6 @@ namespace cotwin
 				
 				handle_sdl_events();
 
-				//SDL_SetRenderDrawColor(renderer, clear_color.r, clear_color.g, clear_color.b, clear_color.a);
-				//SDL_RenderClear(renderer);
-
 				// TODO : have a global WindowData struct which is updated when window events come up
 				//										(either handle that in the engine, or require it from the user)
 				// clear screen
@@ -121,8 +112,6 @@ namespace cotwin
 				// update and render for each layer from the bottom to the top
 				for (Layer* layer : layer_stack)
 					layer->on_update(accumulated_delta);
-
-				//SDL_RenderPresent(renderer);
 
 				// update screen with rendering
 				SDL_GL_SwapWindow(window);
@@ -138,7 +127,6 @@ namespace cotwin
 			on_destroy();
 			
 			SDL_GL_DeleteContext(gl_context);
-			//SDL_DestroyRenderer(renderer);
 			SDL_DestroyWindow(window);
 			SDL_Quit();
 		}
@@ -258,78 +246,6 @@ namespace cotwin
 			SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &opengl_major_version);
 			SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &opengl_minor_version);
 			SDL_Log("CottonWind: OpenGL version: %d.%d", opengl_major_version, opengl_minor_version);
-
-			/*
-			
-			// for imgui
-			glsl_version = "#version 150";
-			// TODO : handle mac
-			//SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG); // Always required on Mac
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-
-			SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-			SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-			SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-			
-			// display opengl version
-			int opengl_major_version, opengl_minor_version;
-			SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &opengl_major_version);
-			SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &opengl_minor_version);
-			SDL_Log("CottonWind: OpenGL version: %d.%d", opengl_major_version, opengl_minor_version);
-
-			if (window_properties.flags & Centered)
-			{
-				window_properties.left = SDL_WINDOWPOS_CENTERED;
-				window_properties.top = SDL_WINDOWPOS_CENTERED;
-			}
-
-			Uint32 window_flags = SDL_WINDOW_OPENGL;
-			
-			if (window_properties.flags & Fullscreen)
-			{
-				window_flags = window_flags | SDL_WINDOW_FULLSCREEN;
-			}
-			else
-			{
-				if (window_properties.flags & Resizable)
-				{
-					window_flags = window_flags | SDL_WINDOW_RESIZABLE;
-				}
-
-				if (window_properties.flags & Borderless)
-				{
-					window_flags = window_flags | SDL_WINDOW_BORDERLESS;
-				}
-			}
-
-			window = SDL_CreateWindow(
-				window_properties.title, window_properties.left, window_properties.top, window_properties.width, window_properties.height, window_flags
-			);
-
-			if (window == NULL) {
-				SDL_Log("CottonWind: Could not create window: %s\n", SDL_GetError());
-				return false;
-			}
-
-			gl_context = SDL_GL_CreateContext(window);
-			SDL_GL_MakeCurrent(window, gl_context);
-			// TODO : handle vsync
-			//SDL_GL_SetSwapInterval(1); // Enable vsync
-
-			renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-
-			if (renderer == NULL) {
-				SDL_Log("CottonWind: Could not create renderer: %s\n", SDL_GetError());
-				return false;
-			}
-
-			// set render clear color to black by default
-			Vector4ui8 black_color = { 0, 0, 0, 0 };
-			set_render_clear_color(black_color);
-
-			*/
 
 			SDL_Log("CottonWind: Game was successfully initialized");
 
