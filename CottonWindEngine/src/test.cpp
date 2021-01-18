@@ -1,5 +1,7 @@
 #include <iostream>
 
+#define CW_DEBUG_MODE_ENABLED 1
+
 #include "cottonwind/game.h"
 #include "cottonwind/input/input.h"
 #include "cottonwind/input/keycodes.h"

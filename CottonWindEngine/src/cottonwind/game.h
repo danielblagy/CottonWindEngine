@@ -1,6 +1,8 @@
 #pragma once
 
-#include <SDL.h>
+#include <cstring>
+
+//#include <SDL.h>
 
 #include "events/event.h"
 #include "events/keyboard_event.h"
@@ -10,6 +12,23 @@
 #include "layer/layer_stack.h"
 
 #include "render/renderer.h"
+
+//#include "imgui/imgui_layer.h"
+
+// dear imgui: standalone example application for SDL2 + OpenGL
+// If you are new to dear imgui, see examples/README.txt and documentation at the top of imgui.cpp.
+// (SDL is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
+// (GL3W is a helper library to access OpenGL functions since there is no standard header to access modern OpenGL functions easily. Alternatives are GLEW, Glad, etc.)
+
+#include "vendor/imgui_sdl2_opengl3/imgui.h"
+#include "vendor/imgui_sdl2_opengl3/imgui_impl_sdl.h"
+#include "vendor/imgui_sdl2_opengl3/imgui_impl_opengl3.h"
+#include <stdio.h>
+#include <SDL.h>
+
+#include <glad/glad.h>          // Initialize with gladLoadGL()
+
+#include "imgui/imgui_layer.h"
 
 
 namespace cotwin
@@ -38,8 +57,11 @@ namespace cotwin
 	class Game
 	{
 	protected:
+		// TODO : put this in private ??
 		SDL_Window* window;
 		SDL_Renderer* renderer;
+		SDL_GLContext gl_context;
+		const char* glsl_version;
 
 		// Game will stop update loop, execute on_destroy() and clean up when running is set to false
 		bool running = false;
@@ -61,6 +83,10 @@ namespace cotwin
 		void start()
 		{
 			on_init();
+
+			#if CW_DEBUG_MODE_ENABLED == 1
+			attach_layer(new ImGuiDebugLayer(window, gl_context, glsl_version));
+			#endif
 			
 			Uint32 last_time = SDL_GetTicks();
 			double accumulated_delta = 0.0;
@@ -102,6 +128,7 @@ namespace cotwin
 		{
 			on_destroy();
 			
+			SDL_GL_DeleteContext(gl_context);
 			SDL_DestroyRenderer(renderer);
 			SDL_DestroyWindow(window);
 			SDL_Quit();
@@ -154,10 +181,89 @@ namespace cotwin
 				return false;
 			}
 
-			// TODO : think about OpenGL version, for now use 3.2
+			// TODO : mac support
+
+			// GL 3.0 + GLSL 130
+			const char* glsl_version = "#version 130";
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+
+			// Create window with graphics context
+			SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+			SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+			SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+
+			//SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+			//SDL_Window* window = SDL_CreateWindow("Dear ImGui SDL2+OpenGL3 example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
+
+			if (window_properties.flags & Centered)
+			{
+				window_properties.left = SDL_WINDOWPOS_CENTERED;
+				window_properties.top = SDL_WINDOWPOS_CENTERED;
+			}
+
+			Uint32 window_flags = SDL_WINDOW_OPENGL;
+
+			if (window_properties.flags & Fullscreen)
+			{
+				window_flags = window_flags | SDL_WINDOW_FULLSCREEN;
+			}
+			else
+			{
+				if (window_properties.flags & Resizable)
+				{
+					window_flags = window_flags | SDL_WINDOW_RESIZABLE;
+				}
+
+				if (window_properties.flags & Borderless)
+				{
+					window_flags = window_flags | SDL_WINDOW_BORDERLESS;
+				}
+			}
+
+			window = SDL_CreateWindow(
+				window_properties.title, window_properties.left, window_properties.top, window_properties.width, window_properties.height, window_flags
+			);
+
+			if (window == NULL) {
+				SDL_Log("CottonWind: Could not create window: %s\n", SDL_GetError());
+				return false;
+			}
+
+			gl_context = SDL_GL_CreateContext(window);
+			SDL_GL_MakeCurrent(window, gl_context);
+			//SDL_GL_SetSwapInterval(1); // Enable vsync
+
+			// Initialize OpenGL loader
+			if (gladLoadGL() == 0)
+			{
+				SDL_Log("CottonWind: Failed to initialize OpenGL loader!");
+				return false;
+			}
+
+			// display opengl version
+			int opengl_major_version, opengl_minor_version;
+			SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &opengl_major_version);
+			SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &opengl_minor_version);
+			SDL_Log("CottonWind: OpenGL version: %d.%d", opengl_major_version, opengl_minor_version);
+
+			/*
+			
+			// for imgui
+			glsl_version = "#version 150";
+			// TODO : handle mac
+			//SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG); // Always required on Mac
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+
+			SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+			SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+			SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 			
+			// display opengl version
 			int opengl_major_version, opengl_minor_version;
 			SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &opengl_major_version);
 			SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &opengl_minor_version);
@@ -197,6 +303,11 @@ namespace cotwin
 				return false;
 			}
 
+			gl_context = SDL_GL_CreateContext(window);
+			SDL_GL_MakeCurrent(window, gl_context);
+			// TODO : handle vsync
+			//SDL_GL_SetSwapInterval(1); // Enable vsync
+
 			renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
 			if (renderer == NULL) {
@@ -208,18 +319,26 @@ namespace cotwin
 			Vector4ui8 black_color = { 0, 0, 0, 0 };
 			set_render_clear_color(black_color);
 
+			*/
+
 			SDL_Log("CottonWind: Game was successfully initialized");
 
 			return true;
 		}
 
-		void on_event(Event* event)
+		// passing SDL_Event for now for imgui event processing, deal with it later
+		void on_event(Event* event, const SDL_Event* sdl_event)
 		{
 			// process event from the top to the bottom
 			for (auto it = layer_stack.rbegin(); it	!= layer_stack.rend(); ++it)
 			{
 				if (event->processed)
 					break;
+
+				#if CW_DEBUG_MODE_ENABLED == 1
+				if (std::strcmp((*it)->get_name(), "imgui debug"))
+					dynamic_cast<ImGuiDebugLayer*>(*it)->on_event(event, sdl_event);
+				#endif
 				
 				(*it)->on_event(event);
 			}
@@ -250,7 +369,14 @@ namespace cotwin
 					{
 						KeyboardEvent event(e.key.keysym.scancode, SDL_GetScancodeName(e.key.keysym.scancode), e.key.repeat);
 						event.type = type;
-						on_event(&event);
+						on_event(&event, &e);
+					}
+					else
+					{
+						Event event;
+						event.category = EventCategoryNone;
+						event.type = Unsupported;
+						on_event(&event, &e);
 					}
 				}
 				else if (e.type >= SDL_MOUSEMOTION && e.type <= SDL_MOUSEWHEEL)
@@ -259,23 +385,28 @@ namespace cotwin
 					{
 					case SDL_MOUSEMOTION: {
 						MouseMoveEvent event({ e.motion.x, e.motion.y }, { e.motion.xrel, e.motion.yrel });
-						on_event(&event);
+						on_event(&event, &e);
 					} break;
 					case SDL_MOUSEBUTTONDOWN: {
 						MouseButtonEvent event({ e.motion.x, e.motion.y }, e.button.button, e.button.clicks == 2);
 						event.type = MouseButtonPress;
-						on_event(&event);
+						on_event(&event, &e);
 					} break;
 					case SDL_MOUSEBUTTONUP: {
 						MouseButtonEvent event({ e.motion.x, e.motion.y }, e.button.button, e.button.clicks == 2);
 						event.type = MouseButtonRelease;
-						on_event(&event);
+						on_event(&event, &e);
 					} break;
 					case SDL_MOUSEWHEEL: {
 						MouseWheelEvent event({ e.wheel.x, e.wheel.y });
-						on_event(&event);
+						on_event(&event, &e);
 					} break;
-					default: {}
+					default: {
+						Event event;
+						event.category = EventCategoryNone;
+						event.type = Unsupported;
+						on_event(&event, &e);
+					}
 					}
 				}
 				else if (e.type == SDL_QUIT)
@@ -283,7 +414,7 @@ namespace cotwin
 					Event event;
 					event.category = EventCategoryWindow;
 					event.type = ApplicationQuit;
-					on_event(&event);
+					on_event(&event, &e);
 
 					// stop the game
 					running = false;
@@ -296,41 +427,46 @@ namespace cotwin
 						Event event;
 						event.category = EventCategoryWindow;
 						event.type = WindowClose;
-						on_event(&event);
+						on_event(&event, &e);
 					} break;
 					case SDL_WINDOWEVENT_MINIMIZED: {
 						Event event;
 						event.category = EventCategoryWindow;
 						event.type = WindowMinimize;
-						on_event(&event);
+						on_event(&event, &e);
 					} break;
 					case SDL_WINDOWEVENT_MAXIMIZED: {
 						Event event;
 						event.category = EventCategoryWindow;
 						event.type = WindowMaximize;
-						on_event(&event);
+						on_event(&event, &e);
 					} break;
 					case SDL_WINDOWEVENT_FOCUS_GAINED: {
 						Event event;
 						event.category = EventCategoryWindow;
 						event.type = WindowFocusGained;
-						on_event(&event);
+						on_event(&event, &e);
 					} break;
 					case SDL_WINDOWEVENT_FOCUS_LOST: {
 						Event event;
 						event.category = EventCategoryWindow;
 						event.type = WindowFocusLost;
-						on_event(&event);
+						on_event(&event, &e);
 					} break;
 					case SDL_WINDOWEVENT_MOVED: {
 						WindowMoveEvent event({ (int)e.window.data1, (int)e.window.data2 });
-						on_event(&event);
+						on_event(&event, &e);
 					} break;
 					case SDL_WINDOWEVENT_RESIZED: {
 						WindowResizeEvent event({ (int)e.window.data1, (int)e.window.data2 });
-						on_event(&event);
+						on_event(&event, &e);
 					} break;
-					default: {}
+					default: {
+						Event event;
+						event.category = EventCategoryNone;
+						event.type = Unsupported;
+						on_event(&event, &e);
+					}
 					}
 				}
 			}

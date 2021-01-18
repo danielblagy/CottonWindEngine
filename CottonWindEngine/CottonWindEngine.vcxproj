@@ -150,6 +150,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\cottonwind\vendor\glad_v3.2_core\src\glad.c" />
+    <ClCompile Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imgui.cpp" />
+    <ClCompile Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imgui_demo.cpp" />
+    <ClCompile Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imgui_draw.cpp" />
+    <ClCompile Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imgui_impl_sdl.cpp" />
+    <ClCompile Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imgui_widgets.cpp" />
     <ClCompile Include="src\test.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -166,6 +173,16 @@
     <ClInclude Include="src\cottonwind\layer\layer_stack.h" />
     <ClInclude Include="src\cottonwind\math.h" />
     <ClInclude Include="src\cottonwind\render\renderer.h" />
+    <ClInclude Include="src\cottonwind\vendor\glad_v3.2_core\include\glad\glad.h" />
+    <ClInclude Include="src\cottonwind\vendor\glad_v3.2_core\include\KHR\khrplatform.h" />
+    <ClInclude Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imconfig.h" />
+    <ClInclude Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imgui.h" />
+    <ClInclude Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imgui_impl_opengl3.h" />
+    <ClInclude Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imgui_impl_sdl.h" />
+    <ClInclude Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imgui_internal.h" />
+    <ClInclude Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imstb_rectpack.h" />
+    <ClInclude Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imstb_textedit.h" />
+    <ClInclude Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imstb_truetype.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

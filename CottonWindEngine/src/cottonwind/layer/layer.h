@@ -25,5 +25,7 @@ namespace cotwin
 
 		inline void enable() { enabled = true; }
 		inline void disable() { enabled = false; }
+
+		inline const char* get_name() { return name; }
 	};
 }
