@@ -154,6 +154,15 @@ namespace cotwin
 				return false;
 			}
 
+			// TODO : think about OpenGL version, for now use 3.2
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+			
+			int opengl_major_version, opengl_minor_version;
+			SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &opengl_major_version);
+			SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &opengl_minor_version);
+			SDL_Log("CottonWind: OpenGL version: %d.%d", opengl_major_version, opengl_minor_version);
+
 			if (window_properties.flags & Centered)
 			{
 				window_properties.left = SDL_WINDOWPOS_CENTERED;
