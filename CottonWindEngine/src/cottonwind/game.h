@@ -346,7 +346,7 @@ namespace cotwin
 					break;
 
 				#if CW_DEBUG_MODE_ENABLED == 1
-				if (std::strcmp((*it)->get_name(), "imgui debug"))
+				if (std::strcmp((*it)->get_name(), "imgui debug") == 0)
 					dynamic_cast<ImGuiDebugLayer*>(*it)->on_event(event, sdl_event);
 				#endif
 				

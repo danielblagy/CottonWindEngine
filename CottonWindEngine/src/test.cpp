@@ -36,12 +36,11 @@ public:
 		renderer.draw_rect({ 50, 50, 50, 50 }, orange_color);
 		renderer.fill_rect({ 500, 450, 120, 60 }, yellow_color);
 		
-		std::cout << "test main layer on update: delta " << delta << " sec" << "  FPS: " << 1.0 / delta << std::endl;
 		if (cotwin::Input::is_key_pressed(CW_KEY_F))
 			std::cout << "TestGame: JUMP is pressed!" << std::endl;
 
-		if (cotwin::Input::is_mouse_button_pressed(CW_MOUSEBUTTON_LEFT))
-			std::cout << "TestGame: SHOOT is pressed!" << std::endl;
+		//if (cotwin::Input::is_mouse_button_pressed(CW_MOUSEBUTTON_LEFT))
+		//	std::cout << "TestGame: SHOOT is pressed!" << std::endl;
 
 		cotwin::Vector2 mouse_position = cotwin::Input::get_mouse_position();
 		std::cout << "TestGame: Mouse Position (" << mouse_position.x << ", " << mouse_position.y << ")" << std::endl;
@@ -51,7 +50,6 @@ public:
 	{
 		event->processed = true;
 
-		std::cout << "test main layer on event" << std::endl;
 		if (event->type == cotwin::ApplicationQuit)
 		{
 			// for example, save game state to file
