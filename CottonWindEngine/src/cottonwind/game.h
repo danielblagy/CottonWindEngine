@@ -17,6 +17,8 @@
 
 #include "imgui/imgui_layer.h"
 
+#include "logger.h"
+
 
 namespace cotwin
 {
