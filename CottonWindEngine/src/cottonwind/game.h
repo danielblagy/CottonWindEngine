@@ -13,12 +13,6 @@
 
 #include "render/renderer.h"
 
-//#include "vendor/imgui_sdl2_opengl3/imgui.h"
-//#include "vendor/imgui_sdl2_opengl3/imgui_impl_sdl.h"
-//#include "vendor/imgui_sdl2_opengl3/imgui_impl_opengl3.h"
-//#include <stdio.h>
-//#include <SDL.h>
-
 #include <glad/glad.h>          // Initialize with gladLoadGL()
 
 #include "imgui/imgui_layer.h"
@@ -49,19 +43,18 @@ namespace cotwin
 	class Game
 	{
 	protected:
-		// TODO : put this in private ??
-		SDL_Window* window;
-		SDL_GLContext gl_context;
-		const char* glsl_version;
-
 		// Game will stop update loop, execute on_destroy() and clean up when running is set to false
 		bool running = false;
 
 	private:
+		SDL_Window * window;
+		SDL_GLContext gl_context;
+		const char* glsl_version;
+		
+		LayerStack layer_stack;
 		ImGuiLayer* imgui_layer;
 		
 		Vector4ui8 clear_color;
-		LayerStack layer_stack;
 		double delta_cap = 0.0;
 
 	
@@ -125,7 +118,8 @@ namespace cotwin
 				// update screen with rendering
 				SDL_GL_SwapWindow(window);
 
-				accumulated_delta = 0.0;
+				//accumulated_delta = 0.0;
+				accumulated_delta -= delta_cap;
 			}
 
 			stop();
@@ -154,13 +148,13 @@ namespace cotwin
 			return running;
 		}
 
-		// uncapped by default
+		// uncapped by default (if vsync is off)
 		void set_delta_cap(double delta_in_seconds)
 		{
 			delta_cap = delta_in_seconds;
 		}
 
-		// uncapped by default
+		// uncapped by default (if vsync is off)
 		void set_fps_cap(unsigned int fps)
 		{
 			delta_cap = 1.0 / fps;

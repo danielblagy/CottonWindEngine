@@ -14,7 +14,7 @@
 
 namespace cotwin
 {
-	// A Special debug ImGui layer providede by the engine
+	// Enables other user-created layers render imgui windows
 	class ImGuiLayer : public Layer
 	{
 	private:
