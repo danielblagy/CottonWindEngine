@@ -19,7 +19,10 @@ namespace cotwin
 		~LayerStack()
 		{
 			for (Layer* layer : layers)
+			{
+				layer->on_detach();
 				delete layer;
+			}
 		}
 
 		void push_layer(Layer* layer)

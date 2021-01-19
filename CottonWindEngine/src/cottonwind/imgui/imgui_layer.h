@@ -36,11 +36,6 @@ namespace cotwin
 		{
 			
 		}
-
-		~ImGuiDebugLayer()
-		{
-			destroy_imgui();
-		}
 		
 		void on_attach() override
 		{
@@ -66,7 +61,10 @@ namespace cotwin
 
 		void on_detach() override
 		{
-			destroy_imgui();
+			// imgui cleanup
+			ImGui_ImplOpenGL3_Shutdown();
+			ImGui_ImplSDL2_Shutdown();
+			ImGui::DestroyContext();
 		}
 
 		void on_update(double delta) override
@@ -167,14 +165,6 @@ namespace cotwin
 				event->processed = true;
 			} break;
 			}
-		}
-
-	private:
-		void destroy_imgui()
-		{
-			ImGui_ImplOpenGL3_Shutdown();
-			ImGui_ImplSDL2_Shutdown();
-			ImGui::DestroyContext();
 		}
 	};
 }
