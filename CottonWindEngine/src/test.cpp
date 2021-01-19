@@ -139,7 +139,8 @@ public:
 	void on_init() override
 	{
 		attach_layer(new TestMainLayer(get_renderer()));
-		set_fps_cap(60);
+		//set_fps_cap(60);
+		enable_vsync();
 		set_render_clear_color({ 70, 100, 200, 255 });
 	}
 

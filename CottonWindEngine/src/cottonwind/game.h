@@ -148,6 +148,17 @@ namespace cotwin
 			return running;
 		}
 
+		void enable_vsync()
+		{
+			delta_cap = 0.0;
+			SDL_GL_SetSwapInterval(1);
+		}
+
+		void disable_vsync()
+		{
+			SDL_GL_SetSwapInterval(0);
+		}
+		
 		// uncapped by default (if vsync is off)
 		void set_delta_cap(double delta_in_seconds)
 		{
