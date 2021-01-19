@@ -20,6 +20,9 @@
 struct SDL_Window;
 typedef union SDL_Event SDL_Event;
 
+// NOTE : expose g_MousePressed state data to the engine (in order to process events in the cotwin::ImGuiDebugLayer)
+void set_g_mouse_pressed_state(unsigned int index, bool value);
+
 IMGUI_IMPL_API bool     ImGui_ImplSDL2_InitForOpenGL(SDL_Window* window, void* sdl_gl_context);
 IMGUI_IMPL_API bool     ImGui_ImplSDL2_InitForVulkan(SDL_Window* window);
 IMGUI_IMPL_API bool     ImGui_ImplSDL2_InitForD3D(SDL_Window* window);

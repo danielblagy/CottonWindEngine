@@ -57,7 +57,7 @@ public:
 		}
 		else if (event->type == cotwin::KeyPress)
 		{
-			std::cout << "TestGame: " << dynamic_cast<cotwin::KeyboardEvent*>(event)->keyname << " was pressed!" << std::endl;
+			std::cout << "TestGame: " << dynamic_cast<cotwin::KeyboardKeyEvent*>(event)->keyname << " was pressed!" << std::endl;
 		}
 		else if (event->type == cotwin::MouseButtonPress)
 		{

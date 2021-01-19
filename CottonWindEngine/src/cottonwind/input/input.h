@@ -38,5 +38,10 @@ namespace cotwin
 			SDL_GetMouseState(&mouse_position.x, &mouse_position.y);
 			return mouse_position;
 		}
+
+		static bool is_key_mod_pressed(unsigned int keymod)
+		{
+			return (SDL_GetModState() & keymod) != 0;
+		}
 	};
 }

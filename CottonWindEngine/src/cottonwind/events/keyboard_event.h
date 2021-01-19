@@ -5,9 +5,7 @@
 
 namespace cotwin
 {
-	// TODO : key pressed repeat event
-	
-	class KeyboardEvent : public Event
+	class KeyboardKeyEvent : public Event
 	{
 	public:
 		// uses to store SDL_Scancode
@@ -16,8 +14,21 @@ namespace cotwin
 		bool repeat;
 
 	public:
-		KeyboardEvent(unsigned int s_keycode, const char* s_keyname, bool s_repeat)
+		KeyboardKeyEvent(unsigned int s_keycode, const char* s_keyname, bool s_repeat)
 			: keycode(s_keycode), keyname(s_keyname), repeat(s_repeat)
+		{
+			category = EventCategoryKeyboard;
+		}
+	};
+
+	class KeyboardTextInputEvent : public Event
+	{
+	public:
+		const char* text;
+
+	public:
+		KeyboardTextInputEvent(char* s_text)
+			: text(s_text)
 		{
 			category = EventCategoryKeyboard;
 		}

@@ -2,7 +2,7 @@
 
 #include <cstring>
 
-//#include <SDL.h>
+#include <SDL.h>
 
 #include "events/event.h"
 #include "events/keyboard_event.h"
@@ -13,11 +13,11 @@
 
 #include "render/renderer.h"
 
-#include "vendor/imgui_sdl2_opengl3/imgui.h"
-#include "vendor/imgui_sdl2_opengl3/imgui_impl_sdl.h"
-#include "vendor/imgui_sdl2_opengl3/imgui_impl_opengl3.h"
-#include <stdio.h>
-#include <SDL.h>
+//#include "vendor/imgui_sdl2_opengl3/imgui.h"
+//#include "vendor/imgui_sdl2_opengl3/imgui_impl_sdl.h"
+//#include "vendor/imgui_sdl2_opengl3/imgui_impl_opengl3.h"
+//#include <stdio.h>
+//#include <SDL.h>
 
 #include <glad/glad.h>          // Initialize with gladLoadGL()
 
@@ -287,13 +287,22 @@ namespace cotwin
 					case SDL_KEYUP: {
 						type = KeyRelease;
 					} break;
+					case SDL_TEXTINPUT: {
+						type = TextInput;
+					} break;
 					default:
 						type = Unsupported;
 					}
 
-					if (type != Unsupported)
+					if (type == KeyPress || type == KeyRelease)
 					{
-						KeyboardEvent event(e.key.keysym.scancode, SDL_GetScancodeName(e.key.keysym.scancode), e.key.repeat);
+						KeyboardKeyEvent event(e.key.keysym.scancode, SDL_GetScancodeName(e.key.keysym.scancode), e.key.repeat);
+						event.type = type;
+						on_event(&event, &e);
+					}
+					else if (type == TextInput)
+					{
+						KeyboardTextInputEvent event(e.text.text);
 						event.type = type;
 						on_event(&event, &e);
 					}
@@ -301,7 +310,7 @@ namespace cotwin
 					{
 						Event event;
 						event.category = EventCategoryNone;
-						event.type = Unsupported;
+						event.type = type;
 						on_event(&event, &e);
 					}
 				}

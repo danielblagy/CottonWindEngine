@@ -8,6 +8,9 @@
 
 #include "../layer/layer.h"
 
+#include "../events/mouse_event.h"
+#include "../events/keyboard_event.h"
+
 
 namespace cotwin
 {
@@ -116,9 +119,55 @@ namespace cotwin
 		}
 
 		// not an override, but a different on_event function, special to the imgui (it exposes SDL_Event to imgui)
+		// basically does what ImGui_ImplSDL2_ProcessEvent does
 		void on_event(Event* event, const SDL_Event* sdl_event)
 		{
-			event->processed = ImGui_ImplSDL2_ProcessEvent(sdl_event);
+			//event->processed = ImGui_ImplSDL2_ProcessEvent(sdl_event);
+
+			ImGuiIO& io = ImGui::GetIO();
+			switch (event->type)
+			{
+			case MouseWheel:
+			{
+				Vector2 wheel = dynamic_cast<MouseWheelEvent*>(event)->wheel_scroll;
+				if (wheel.x > 0) io.MouseWheelH += 1;
+				if (wheel.x < 0) io.MouseWheelH -= 1;
+				if (wheel.y > 0) io.MouseWheel += 1;
+				if (wheel.y < 0) io.MouseWheel -= 1;
+				event->processed = true;
+			} break;
+			case MouseButtonPress:
+			{
+				unsigned int button = dynamic_cast<MouseButtonEvent*>(event)->button_code;
+				if (button == SDL_BUTTON_LEFT) set_g_mouse_pressed_state(0, true);
+				if (button == SDL_BUTTON_RIGHT) set_g_mouse_pressed_state(1, true);
+				if (button == SDL_BUTTON_MIDDLE) set_g_mouse_pressed_state(2, true);
+				event->processed = true;
+			} break;
+			case TextInput:
+			{
+				const char* text = dynamic_cast<KeyboardTextInputEvent*>(event)->text;
+				io.AddInputCharactersUTF8(text);
+				event->processed = true;
+			} break;
+			case KeyPress:
+			case KeyRelease:
+			{
+				KeyboardKeyEvent* keyboard_event = dynamic_cast<KeyboardKeyEvent*>(event);
+				int key = keyboard_event->keycode;
+				IM_ASSERT(key >= 0 && key < IM_ARRAYSIZE(io.KeysDown));
+				io.KeysDown[key] = (event->type == KeyPress);
+				io.KeyShift = ((SDL_GetModState() & KMOD_SHIFT) != 0);
+				io.KeyCtrl = ((SDL_GetModState() & KMOD_CTRL) != 0);
+				io.KeyAlt = ((SDL_GetModState() & KMOD_ALT) != 0);
+#ifdef _WIN32
+				io.KeySuper = false;
+#else
+				io.KeySuper = ((SDL_GetModState() & KMOD_GUI) != 0);
+#endif
+				event->processed = true;
+			} break;
+			}
 		}
 
 	private:

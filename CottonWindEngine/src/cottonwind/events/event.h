@@ -18,7 +18,7 @@ namespace cotwin
 		Unsupported,
 		ApplicationQuit,
 		WindowClose, WindowResize, WindowFocusGained, WindowFocusLost, WindowMove, WindowMinimize, WindowMaximize,
-		KeyPress, KeyRelease,
+		KeyPress, KeyRelease, TextInput,
 		MouseMove, MouseButtonPress, MouseButtonRelease, MouseWheel
 	};
 	
