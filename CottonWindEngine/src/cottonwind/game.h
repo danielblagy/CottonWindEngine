@@ -58,6 +58,8 @@ namespace cotwin
 		bool running = false;
 
 	private:
+		ImGuiLayer* imgui_layer;
+		
 		Vector4ui8 clear_color;
 		LayerStack layer_stack;
 		double delta_cap = 0.0;
@@ -75,9 +77,8 @@ namespace cotwin
 		{
 			on_init();
 
-			#if CW_DEBUG_MODE_ENABLED == 1
-			attach_layer(new ImGuiDebugLayer(window, gl_context, glsl_version));
-			#endif
+			imgui_layer = new ImGuiLayer(window, gl_context, glsl_version);
+			attach_layer(imgui_layer);
 			
 			Uint32 last_time = SDL_GetTicks();
 			double accumulated_delta = 0.0;
@@ -112,6 +113,14 @@ namespace cotwin
 				// update and render for each layer from the bottom to the top
 				for (Layer* layer : layer_stack)
 					layer->on_update(accumulated_delta);
+
+				// render imgui
+				imgui_layer->new_frame();
+				
+				for (Layer* layer : layer_stack)
+					layer->on_imgui_render();
+				
+				imgui_layer->render_frame();
 
 				// update screen with rendering
 				SDL_GL_SwapWindow(window);
@@ -252,7 +261,6 @@ namespace cotwin
 			return true;
 		}
 
-		// passing SDL_Event for now for imgui event processing, deal with it later
 		void on_event(Event* event)
 		{
 			// process event from the top to the bottom

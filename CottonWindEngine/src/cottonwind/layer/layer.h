@@ -22,6 +22,7 @@ namespace cotwin
 		virtual void on_detach() {}
 		virtual void on_update(double delta) {}
 		virtual void on_event(Event* event) {}
+		virtual void on_imgui_render() {}
 
 		inline void enable() { enabled = true; }
 		inline void disable() { enabled = false; }
