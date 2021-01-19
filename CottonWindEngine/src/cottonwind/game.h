@@ -131,6 +131,8 @@ namespace cotwin
 		{
 			on_destroy();
 			
+			LogTrace("CottonWind\t OpenGL & SLD2 Cleanup");
+			
 			SDL_GL_DeleteContext(gl_context);
 			SDL_DestroyWindow(window);
 			SDL_Quit();
@@ -190,7 +192,7 @@ namespace cotwin
 
 			if (sdl_init_result != 0)
 			{
-				SDL_Log("CottonWind: Unable to initialize SDL: %s", SDL_GetError());
+				LogCritical("CottonWind\t Unable to initialize SDL: %s", SDL_GetError());
 				return false;
 			}
 
@@ -237,14 +239,14 @@ namespace cotwin
 			);
 
 			if (window == NULL) {
-				SDL_Log("CottonWind: Could not create window: %s\n", SDL_GetError());
+				LogError("CottonWind\t Could not create window: %s\n", SDL_GetError());
 				return false;
 			}
 
+			LogTrace("CottonWind\t Initialized SDL2 and SDL_Window");
+
 			gl_context = SDL_GL_CreateContext(window);
 			SDL_GL_MakeCurrent(window, gl_context);
-			// TODO : deal with vsync
-			//SDL_GL_SetSwapInterval(1); // Enable vsync
 
 			// set render clear color to black by default
 			Vector4ui8 black_color = { 0, 0, 0, 0 };
@@ -253,17 +255,19 @@ namespace cotwin
 			// Initialize OpenGL loader
 			if (gladLoadGL() == 0)
 			{
-				SDL_Log("CottonWind: Failed to initialize OpenGL loader!");
+				LogError("CottonWind\t Failed to initialize OpenGL loader!");
 				return false;
 			}
+
+			LogTrace("CottonWind\t Created GL Context and initialized OpenGL Loader (glad)");
 
 			// display opengl version
 			int opengl_major_version, opengl_minor_version;
 			SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &opengl_major_version);
 			SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &opengl_minor_version);
-			SDL_Log("CottonWind: OpenGL version: %d.%d", opengl_major_version, opengl_minor_version);
+			LogDebug("CottonWind\t OpenGL version: %d.%d", opengl_major_version, opengl_minor_version);
 
-			SDL_Log("CottonWind: Game was successfully initialized");
+			LogInfo("CottonWind\t Game was successfully initialized");
 
 			return true;
 		}

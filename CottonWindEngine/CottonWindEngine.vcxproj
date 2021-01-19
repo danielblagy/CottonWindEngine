@@ -172,6 +172,7 @@
     <ClInclude Include="src\cottonwind\input\mouse_buttons.h" />
     <ClInclude Include="src\cottonwind\layer\layer.h" />
     <ClInclude Include="src\cottonwind\layer\layer_stack.h" />
+    <ClInclude Include="src\cottonwind\logger.h" />
     <ClInclude Include="src\cottonwind\math.h" />
     <ClInclude Include="src\cottonwind\render\renderer.h" />
     <ClInclude Include="src\cottonwind\vendor\glad_v3.2_core\include\glad\glad.h" />

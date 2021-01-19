@@ -152,6 +152,7 @@ public:
 
 int main(int argc, char* args[])
 {
+	cotwin::SetLogPriority(CW_LOG_PRIORITY_TRACE);
 	TestGame game(cotwin::WindowProperties("Test Game", 0, 0, 1280, 720, cotwin::Centered | cotwin::Resizable));
 	//TestGame game(cotwin::WindowProperties("Test Game", 50, 250, 1280, 720, cotwin::Borderless));
 	//TestGame game(cotwin::WindowProperties("Test Game", 0, 0, 1280, 720, cotwin::Fullscreen));
