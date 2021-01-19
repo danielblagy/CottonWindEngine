@@ -118,9 +118,8 @@ namespace cotwin
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		}
 
-		// not an override, but a different on_event function, special to the imgui (it exposes SDL_Event to imgui)
 		// basically does what ImGui_ImplSDL2_ProcessEvent does
-		void on_event(Event* event, const SDL_Event* sdl_event)
+		void on_event(Event* event)
 		{
 			//event->processed = ImGui_ImplSDL2_ProcessEvent(sdl_event);
 

@@ -253,18 +253,13 @@ namespace cotwin
 		}
 
 		// passing SDL_Event for now for imgui event processing, deal with it later
-		void on_event(Event* event, const SDL_Event* sdl_event)
+		void on_event(Event* event)
 		{
 			// process event from the top to the bottom
 			for (auto it = layer_stack.rbegin(); it	!= layer_stack.rend(); ++it)
 			{
 				if (event->processed)
 					break;
-
-				#if CW_DEBUG_MODE_ENABLED == 1
-				if (std::strcmp((*it)->get_name(), "imgui debug") == 0)
-					dynamic_cast<ImGuiDebugLayer*>(*it)->on_event(event, sdl_event);
-				#endif
 				
 				(*it)->on_event(event);
 			}
@@ -298,20 +293,20 @@ namespace cotwin
 					{
 						KeyboardKeyEvent event(e.key.keysym.scancode, SDL_GetScancodeName(e.key.keysym.scancode), e.key.repeat);
 						event.type = type;
-						on_event(&event, &e);
+						on_event(&event);
 					}
 					else if (type == TextInput)
 					{
 						KeyboardTextInputEvent event(e.text.text);
 						event.type = type;
-						on_event(&event, &e);
+						on_event(&event);
 					}
 					else
 					{
 						Event event;
 						event.category = EventCategoryNone;
 						event.type = type;
-						on_event(&event, &e);
+						on_event(&event);
 					}
 				}
 				else if (e.type >= SDL_MOUSEMOTION && e.type <= SDL_MOUSEWHEEL)
@@ -320,27 +315,27 @@ namespace cotwin
 					{
 					case SDL_MOUSEMOTION: {
 						MouseMoveEvent event({ e.motion.x, e.motion.y }, { e.motion.xrel, e.motion.yrel });
-						on_event(&event, &e);
+						on_event(&event);
 					} break;
 					case SDL_MOUSEBUTTONDOWN: {
 						MouseButtonEvent event({ e.motion.x, e.motion.y }, e.button.button, e.button.clicks == 2);
 						event.type = MouseButtonPress;
-						on_event(&event, &e);
+						on_event(&event);
 					} break;
 					case SDL_MOUSEBUTTONUP: {
 						MouseButtonEvent event({ e.motion.x, e.motion.y }, e.button.button, e.button.clicks == 2);
 						event.type = MouseButtonRelease;
-						on_event(&event, &e);
+						on_event(&event);
 					} break;
 					case SDL_MOUSEWHEEL: {
 						MouseWheelEvent event({ e.wheel.x, e.wheel.y });
-						on_event(&event, &e);
+						on_event(&event);
 					} break;
 					default: {
 						Event event;
 						event.category = EventCategoryNone;
 						event.type = Unsupported;
-						on_event(&event, &e);
+						on_event(&event);
 					}
 					}
 				}
@@ -349,7 +344,7 @@ namespace cotwin
 					Event event;
 					event.category = EventCategoryWindow;
 					event.type = ApplicationQuit;
-					on_event(&event, &e);
+					on_event(&event);
 
 					// stop the game
 					running = false;
@@ -362,45 +357,45 @@ namespace cotwin
 						Event event;
 						event.category = EventCategoryWindow;
 						event.type = WindowClose;
-						on_event(&event, &e);
+						on_event(&event);
 					} break;
 					case SDL_WINDOWEVENT_MINIMIZED: {
 						Event event;
 						event.category = EventCategoryWindow;
 						event.type = WindowMinimize;
-						on_event(&event, &e);
+						on_event(&event);
 					} break;
 					case SDL_WINDOWEVENT_MAXIMIZED: {
 						Event event;
 						event.category = EventCategoryWindow;
 						event.type = WindowMaximize;
-						on_event(&event, &e);
+						on_event(&event);
 					} break;
 					case SDL_WINDOWEVENT_FOCUS_GAINED: {
 						Event event;
 						event.category = EventCategoryWindow;
 						event.type = WindowFocusGained;
-						on_event(&event, &e);
+						on_event(&event);
 					} break;
 					case SDL_WINDOWEVENT_FOCUS_LOST: {
 						Event event;
 						event.category = EventCategoryWindow;
 						event.type = WindowFocusLost;
-						on_event(&event, &e);
+						on_event(&event);
 					} break;
 					case SDL_WINDOWEVENT_MOVED: {
 						WindowMoveEvent event({ (int)e.window.data1, (int)e.window.data2 });
-						on_event(&event, &e);
+						on_event(&event);
 					} break;
 					case SDL_WINDOWEVENT_RESIZED: {
 						WindowResizeEvent event({ (int)e.window.data1, (int)e.window.data2 });
-						on_event(&event, &e);
+						on_event(&event);
 					} break;
 					default: {
 						Event event;
 						event.category = EventCategoryNone;
 						event.type = Unsupported;
-						on_event(&event, &e);
+						on_event(&event);
 					}
 					}
 				}
