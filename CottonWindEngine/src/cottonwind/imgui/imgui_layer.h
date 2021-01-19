@@ -22,8 +22,8 @@ namespace cotwin
 		SDL_GLContext gl_context;
 		const char* glsl_version;
 
-		// TODO : Can io be initialized in constructor ??
-		ImGuiIO* io;
+		bool propagate_mouse_events = false;
+		bool propagate_keyboard_events = false;
 	
 	public:
 		ImGuiLayer(SDL_Window* s_window, SDL_GLContext s_gl_context, const char* s_glsl_version)
@@ -76,8 +76,6 @@ namespace cotwin
 		{
 			//event->processed = ImGui_ImplSDL2_ProcessEvent(sdl_event);
 
-			// MOVE TO TESTLAYER
-			/*
 			// basically do what ImGui_ImplSDL2_ProcessEvent does
 			ImGuiIO& io = ImGui::GetIO();
 			switch (event->type)
@@ -123,7 +121,21 @@ namespace cotwin
 				event->processed = true;
 			} break;
 			}
-			*/
+
+			if (propagate_mouse_events && event->category == EventCategoryMouse)
+				event->processed = false;
+			else if (propagate_keyboard_events && event->category == EventCategoryKeyboard)
+				event->processed = false;
+		}
+
+		void set_propagate_mouse_events(bool value)
+		{
+			propagate_mouse_events = value;
+		}
+
+		void set_propagate_keyboard_events(bool value)
+		{
+			propagate_keyboard_events = value;
 		}
 	};
 }
