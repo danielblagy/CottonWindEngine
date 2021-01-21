@@ -90,7 +90,7 @@ namespace cotwin
 				imgui_layer->render_frame();
 
 				// update screen with rendering
-				SDL_GL_SwapWindow(window);
+				swap_opengl_buffers(window);
 
 				//accumulated_delta = 0.0;
 				accumulated_delta -= delta_cap;

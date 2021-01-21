@@ -125,4 +125,10 @@ namespace cotwin
 		glClearColor(color->r, color->g, color->b, color->a);
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
+
+	// NOTE : for now it's a global function, it will probably move to the Renderer class
+	void swap_opengl_buffers(SDL_Window* window)
+	{
+		SDL_GL_SwapWindow(window);
+	}
 }
