@@ -32,7 +32,7 @@ namespace cotwin
 		LayerStack layer_stack;
 		ImGuiLayer* imgui_layer;
 		
-		Vector4u8 clear_color;
+		Vector4f clear_color;
 		double delta_cap = 0.0;
 
 	
@@ -74,12 +74,8 @@ namespace cotwin
 
 				// TODO : have a global WindowData struct which is updated when window events come up
 				//										(either handle that in the engine, or require it from the user)
-				// clear screen
-				int window_w, window_h;
-				SDL_GetWindowSize(window, &window_w, &window_h);
-				glViewport(0, 0, window_w, window_h);
-				glClearColor((float) clear_color.x / 255.0f, (float) clear_color.y / 255.0f, (float) clear_color.z / 255.0f, (float) clear_color.w / 255.0f);
-				glClear(GL_COLOR_BUFFER_BIT);
+				
+				clear_screen(window, &clear_color);
 				
 				// update and render for each layer from the bottom to the top
 				for (Layer* layer : layer_stack)
@@ -151,9 +147,14 @@ namespace cotwin
 			delta_cap = 1.0 / fps;
 		}
 
-		void set_render_clear_color(Vector4u8 s_clear_color)
+		void set_render_clear_color(Vector4f s_clear_color)
 		{
 			clear_color = s_clear_color;
+		}
+		
+		void set_render_clear_color(Vector4u8 s_clear_color)
+		{
+			clear_color = { (float)s_clear_color.r / 255.0f, (float)s_clear_color.g / 255.0f, (float)s_clear_color.b / 255.0f, (float)s_clear_color.a / 255.0f };
 		}
 
 		Renderer get_renderer()

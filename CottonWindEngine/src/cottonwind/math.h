@@ -41,6 +41,42 @@ namespace cotwin
 		int e[4];
 	};
 
+	union Vector2f
+	{
+		struct {
+			float x, y;
+		};
+		struct {
+			float w, h;
+		};
+		float e[2];
+	};
+
+	union Vector3f
+	{
+		struct {
+			float x, y, z;
+		};
+		struct {
+			float r, g, b;
+		};
+		float e[3];
+	};
+
+	union Vector4f
+	{
+		struct {
+			float x, y, z, w;
+		};
+		struct {
+			float r, g, b, a;
+		};
+		struct {
+			float left, top, width, height;
+		};
+		float e[4];
+	};
+
 	union Vector4u8
 	{
 		struct {

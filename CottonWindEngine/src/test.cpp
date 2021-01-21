@@ -141,7 +141,8 @@ public:
 		attach_layer(new TestMainLayer(get_renderer()));
 		//set_fps_cap(60);
 		enable_vsync();
-		set_render_clear_color({ 70, 100, 200, 255 });
+		cotwin::Vector4u8 clear_color = { 120, 70, 150, 255 };
+		set_render_clear_color(clear_color);
 	}
 
 	void on_destroy() override

@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include <glad/glad.h>
 
+#include "../math.h"
 #include "../logger.h"
 
 
@@ -113,5 +114,15 @@ namespace cotwin
 		LogDebug("CottonWind\t OpenGL version: %d.%d", opengl_major_version, opengl_minor_version);
 
 		return gl_context;
+	}
+
+	// NOTE : for now it's a global function, it will probably move to the Renderer class
+	static void clear_screen(SDL_Window* window, Vector4f* color)
+	{
+		int window_w, window_h;
+		SDL_GetWindowSize(window, &window_w, &window_h);
+		glViewport(0, 0, window_w, window_h);
+		glClearColor(color->r, color->g, color->b, color->a);
+		glClear(GL_COLOR_BUFFER_BIT);
 	}
 }
