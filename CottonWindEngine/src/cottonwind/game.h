@@ -1,8 +1,6 @@
 #pragma once
 
-#include <cstring>
-
-#include <SDL.h>
+#include "graphics/graphics.h"
 
 #include "events/event.h"
 #include "events/keyboard_event.h"
@@ -11,9 +9,7 @@
 
 #include "layer/layer_stack.h"
 
-#include "render/renderer.h"
-
-#include <glad/glad.h>          // Initialize with gladLoadGL()
+#include "graphics/renderer.h"
 
 #include "imgui/imgui_layer.h"
 
@@ -22,26 +18,6 @@
 
 namespace cotwin
 {
-	enum WindowPropertiesFlags
-	{
-		None = 0,
-		Fullscreen = 1 << 0,
-		Centered = 1 << 1,
-		Resizable = 1 << 2,
-		Borderless = 1 << 3
-	};
-	
-	struct WindowProperties
-	{
-		const char* title;
-		int left, top, width, height;
-		WindowPropertiesFlags flags;
-
-		WindowProperties(const char* s_title, int s_left, int s_top, int s_width, int s_height, unsigned int s_flags)
-			: title(s_title), left(s_left), top(s_top), width(s_width), height(s_height), flags(static_cast<WindowPropertiesFlags>(s_flags))
-		{}
-	};
-	
 	class Game
 	{
 	protected:
@@ -49,7 +25,7 @@ namespace cotwin
 		bool running = false;
 
 	private:
-		SDL_Window * window;
+		SDL_Window* window;
 		SDL_GLContext gl_context;
 		const char* glsl_version;
 		
@@ -196,76 +172,13 @@ namespace cotwin
 				return false;
 			}
 
-			// TODO : mac support (opengl)
-
-			// GL 3.0 + GLSL 130
-			glsl_version = "#version 130";
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-
-			// Create window with graphics context
-			SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-			SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-			SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-
-			if (window_properties.flags & Centered)
-			{
-				window_properties.left = SDL_WINDOWPOS_CENTERED;
-				window_properties.top = SDL_WINDOWPOS_CENTERED;
-			}
-
-			Uint32 window_flags = SDL_WINDOW_OPENGL;
-			if (window_properties.flags & Fullscreen)
-			{
-				window_flags = window_flags | SDL_WINDOW_FULLSCREEN;
-			}
-			else
-			{
-				if (window_properties.flags & Resizable)
-				{
-					window_flags = window_flags | SDL_WINDOW_RESIZABLE;
-				}
-
-				if (window_properties.flags & Borderless)
-				{
-					window_flags = window_flags | SDL_WINDOW_BORDERLESS;
-				}
-			}
-
-			window = SDL_CreateWindow(
-				window_properties.title, window_properties.left, window_properties.top, window_properties.width, window_properties.height, window_flags
-			);
-
-			if (window == NULL) {
-				LogError("CottonWind\t Could not create window: %s\n", SDL_GetError());
-				return false;
-			}
-
-			LogTrace("CottonWind\t Initialized SDL2 and SDL_Window");
-
-			gl_context = SDL_GL_CreateContext(window);
-			SDL_GL_MakeCurrent(window, gl_context);
+			glsl_version = init_opengl();
+			window = create_window(&window_properties);
+			gl_context = init_opengl_context(window);
 
 			// set render clear color to black by default
 			Vector4ui8 black_color = { 0, 0, 0, 0 };
 			set_render_clear_color(black_color);
-
-			// Initialize OpenGL loader
-			if (gladLoadGL() == 0)
-			{
-				LogError("CottonWind\t Failed to initialize OpenGL loader!");
-				return false;
-			}
-
-			LogTrace("CottonWind\t Created GL Context and initialized OpenGL Loader (glad)");
-
-			// display opengl version
-			int opengl_major_version, opengl_minor_version;
-			SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &opengl_major_version);
-			SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &opengl_minor_version);
-			LogDebug("CottonWind\t OpenGL version: %d.%d", opengl_major_version, opengl_minor_version);
 
 			LogInfo("CottonWind\t Game was successfully initialized");
 

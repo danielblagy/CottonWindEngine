@@ -12,6 +12,8 @@
 
 namespace cotwin
 {
+	// TODO : don't use SDL logging
+	
 	typedef SDL_LogPriority LogPriority;
 
 	inline void SetLogPriority(LogPriority priority)

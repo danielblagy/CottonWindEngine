@@ -165,6 +165,7 @@
     <ClInclude Include="src\cottonwind\events\mouse_event.h" />
     <ClInclude Include="src\cottonwind\events\window_event.h" />
     <ClInclude Include="src\cottonwind\game.h" />
+    <ClInclude Include="src\cottonwind\graphics\graphics.h" />
     <ClInclude Include="src\cottonwind\imgui\imgui_layer.h" />
     <ClInclude Include="src\cottonwind\input\input.h" />
     <ClInclude Include="src\cottonwind\input\keycodes.h" />
@@ -174,7 +175,7 @@
     <ClInclude Include="src\cottonwind\layer\layer_stack.h" />
     <ClInclude Include="src\cottonwind\logger.h" />
     <ClInclude Include="src\cottonwind\math.h" />
-    <ClInclude Include="src\cottonwind\render\renderer.h" />
+    <ClInclude Include="src\cottonwind\graphics\renderer.h" />
     <ClInclude Include="src\cottonwind\vendor\glad_v3.2_core\include\glad\glad.h" />
     <ClInclude Include="src\cottonwind\vendor\glad_v3.2_core\include\KHR\khrplatform.h" />
     <ClInclude Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imconfig.h" />
