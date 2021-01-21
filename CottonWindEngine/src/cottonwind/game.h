@@ -35,11 +35,39 @@ namespace cotwin
 		Vector4f clear_color;
 		double delta_cap = 0.0;
 
+		unsigned int vertex_array, vertex_buffer, index_buffer;
+
 	
 	public:
 		Game(WindowProperties window_properties)
 		{
 			running = init(window_properties);
+
+			glGenVertexArrays(1, &vertex_array);
+			glBindVertexArray(vertex_array);
+
+			glGenBuffers(1, &vertex_buffer);
+			glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+
+			float vertices[3 * 3] = {
+				-0.5f, -0.5f, 0.0f,
+				0.5f, -0.5f, 0.0f,
+				0.0f, 0.5f, 0.0f
+			};
+
+			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, NULL);
+
+			glGenBuffers(1, &index_buffer);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
+
+			unsigned int indices[3] = {
+				0, 1, 2
+			};
+
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 		}
 
 		virtual ~Game() = default;
@@ -76,6 +104,9 @@ namespace cotwin
 				//										(either handle that in the engine, or require it from the user)
 				
 				clear_screen(window, &clear_color);
+
+				glBindVertexArray(vertex_array);
+				glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, NULL);
 				
 				// update and render for each layer from the bottom to the top
 				for (Layer* layer : layer_stack)
