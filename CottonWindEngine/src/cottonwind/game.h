@@ -1,6 +1,6 @@
 #pragma once
 
-#include "graphics/graphics.h"
+#include "graphics/opengl/opengl_graphics.h"
 
 #include "events/event.h"
 #include "events/keyboard_event.h"
@@ -25,9 +25,7 @@ namespace cotwin
 		bool running = false;
 
 	private:
-		SDL_Window* window;
-		SDL_GLContext gl_context;
-		const char* glsl_version;
+		OpenGLGraphics* graphics;
 		
 		LayerStack layer_stack;
 		ImGuiLayer* imgui_layer;
@@ -42,32 +40,6 @@ namespace cotwin
 		Game(WindowProperties window_properties)
 		{
 			running = init(window_properties);
-
-			glGenVertexArrays(1, &vertex_array);
-			glBindVertexArray(vertex_array);
-
-			glGenBuffers(1, &vertex_buffer);
-			glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-
-			float vertices[3 * 3] = {
-				-0.5f, -0.5f, 0.0f,
-				0.5f, -0.5f, 0.0f,
-				0.0f, 0.5f, 0.0f
-			};
-
-			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, NULL);
-
-			glGenBuffers(1, &index_buffer);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
-
-			unsigned int indices[3] = {
-				0, 1, 2
-			};
-
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 		}
 
 		virtual ~Game() = default;
@@ -76,7 +48,8 @@ namespace cotwin
 		{
 			on_init();
 
-			imgui_layer = new ImGuiLayer(window, gl_context, glsl_version);
+			// TODO : imgui layer won't work with SDLGraphics
+			imgui_layer = new ImGuiLayer(graphics->get_window(), graphics->get_gl_context(), graphics->get_glsl_version());
 			attach_layer(imgui_layer);
 			
 			Uint32 last_time = SDL_GetTicks();
@@ -103,10 +76,8 @@ namespace cotwin
 				// TODO : have a global WindowData struct which is updated when window events come up
 				//										(either handle that in the engine, or require it from the user)
 				
-				clear_screen(window, &clear_color);
-
-				glBindVertexArray(vertex_array);
-				glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, NULL);
+				// clear screen
+				graphics->clear_screen(&clear_color);
 				
 				// update and render for each layer from the bottom to the top
 				for (Layer* layer : layer_stack)
@@ -121,7 +92,7 @@ namespace cotwin
 				imgui_layer->render_frame();
 
 				// update screen with rendering
-				swap_opengl_buffers(window);
+				graphics->present();
 
 				//accumulated_delta = 0.0;
 				accumulated_delta -= delta_cap;
@@ -134,11 +105,7 @@ namespace cotwin
 		{
 			on_destroy();
 			
-			LogTrace("CottonWind\t OpenGL & SLD2 Cleanup");
-			
-			SDL_GL_DeleteContext(gl_context);
-			SDL_DestroyWindow(window);
-			SDL_Quit();
+			graphics->destroy();
 		}
 
 		void attach_layer(Layer* layer)
@@ -196,25 +163,14 @@ namespace cotwin
 	private:
 		bool init(WindowProperties window_properties)
 		{
-			int sdl_init_result = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER);
-
-			if (sdl_init_result != 0)
-			{
-				LogCritical("CottonWind\t Unable to initialize SDL: %s", SDL_GetError());
-				return false;
-			}
-
-			glsl_version = init_opengl();
-			window = create_window(&window_properties);
-			gl_context = init_opengl_context(window);
-
 			// set render clear color to black by default
 			Vector4u8 black_color = { 0, 0, 0, 0 };
 			set_render_clear_color(black_color);
+			
+			// harcoded for now
+			graphics = new OpenGLGraphics();
 
-			LogInfo("CottonWind\t Game was successfully initialized");
-
-			return true;
+			return graphics->init(&window_properties);
 		}
 
 		void on_event(Event* event)

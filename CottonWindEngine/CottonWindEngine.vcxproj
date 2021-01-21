@@ -166,6 +166,12 @@
     <ClInclude Include="src\cottonwind\events\window_event.h" />
     <ClInclude Include="src\cottonwind\game.h" />
     <ClInclude Include="src\cottonwind\graphics\graphics.h" />
+    <ClInclude Include="src\cottonwind\graphics\opengl\buffer_layout.h" />
+    <ClInclude Include="src\cottonwind\graphics\opengl\opengl_graphics.h" />
+    <ClInclude Include="src\cottonwind\graphics\opengl\index_buffer.h" />
+    <ClInclude Include="src\cottonwind\graphics\opengl\vertex_array.h" />
+    <ClInclude Include="src\cottonwind\graphics\opengl\vertex_buffer.h" />
+    <ClInclude Include="src\cottonwind\graphics\sdl2\sdl_graphics.h" />
     <ClInclude Include="src\cottonwind\imgui\imgui_layer.h" />
     <ClInclude Include="src\cottonwind\input\input.h" />
     <ClInclude Include="src\cottonwind\input\keycodes.h" />
