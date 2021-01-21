@@ -5,7 +5,7 @@
 
 namespace cotwin
 {
-	union Vector2
+	union Vector2i
 	{
 		struct {
 			int x, y;
@@ -16,7 +16,7 @@ namespace cotwin
 		int e[2];
 	};
 
-	union Vector3
+	union Vector3i
 	{
 		struct {
 			int x, y, z;
@@ -27,7 +27,7 @@ namespace cotwin
 		int e[3];
 	};
 
-	union Vector4
+	union Vector4i
 	{
 		struct {
 			int x, y, z, w;
@@ -41,7 +41,7 @@ namespace cotwin
 		int e[4];
 	};
 
-	union Vector4ui8
+	union Vector4u8
 	{
 		struct {
 			uint8_t x, y, z, w;

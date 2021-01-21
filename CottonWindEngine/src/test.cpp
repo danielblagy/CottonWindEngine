@@ -13,8 +13,8 @@ class TestMainLayer : public cotwin::Layer
 {
 private:
 	cotwin::Renderer renderer;
-	cotwin::Vector4ui8 orange_color = { 255, 165, 0 };
-	cotwin::Vector4ui8 yellow_color = { 255, 255, 0 };
+	cotwin::Vector4u8 orange_color = { 255, 165, 0 };
+	cotwin::Vector4u8 yellow_color = { 255, 255, 0 };
 
 	// gui state
 	ImVec4 color;
@@ -51,7 +51,7 @@ public:
 		//if (cotwin::Input::is_mouse_button_pressed(CW_MOUSEBUTTON_LEFT))
 		//	std::cout << "TestGame: SHOOT is pressed!" << std::endl;
 
-		cotwin::Vector2 mouse_position = cotwin::Input::get_mouse_position();
+		cotwin::Vector2i mouse_position = cotwin::Input::get_mouse_position();
 		std::cout << "TestGame: Mouse Position (" << mouse_position.x << ", " << mouse_position.y << ")" << std::endl;
 	}
 
@@ -74,12 +74,12 @@ public:
 		}
 		else if (event->type == cotwin::WindowMove)
 		{
-			cotwin::Vector2 new_position = dynamic_cast<cotwin::WindowMoveEvent*>(event)->new_position;
+			cotwin::Vector2i new_position = dynamic_cast<cotwin::WindowMoveEvent*>(event)->new_position;
 			std::cout << "TestGame: window move (" << new_position.x << ", " << new_position.y << ")" << std::endl;
 		}
 		else if (event->type == cotwin::WindowResize)
 		{
-			cotwin::Vector2 new_size = dynamic_cast<cotwin::WindowResizeEvent*>(event)->new_size;
+			cotwin::Vector2i new_size = dynamic_cast<cotwin::WindowResizeEvent*>(event)->new_size;
 			std::cout << "TestGame: window resize (" << new_size.x << ", " << new_size.y << ")" << std::endl;
 		}
 		else

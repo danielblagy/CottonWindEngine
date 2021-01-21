@@ -32,7 +32,7 @@ namespace cotwin
 		LayerStack layer_stack;
 		ImGuiLayer* imgui_layer;
 		
-		Vector4ui8 clear_color;
+		Vector4u8 clear_color;
 		double delta_cap = 0.0;
 
 	
@@ -151,7 +151,7 @@ namespace cotwin
 			delta_cap = 1.0 / fps;
 		}
 
-		void set_render_clear_color(Vector4ui8 s_clear_color)
+		void set_render_clear_color(Vector4u8 s_clear_color)
 		{
 			clear_color = s_clear_color;
 		}
@@ -177,7 +177,7 @@ namespace cotwin
 			gl_context = init_opengl_context(window);
 
 			// set render clear color to black by default
-			Vector4ui8 black_color = { 0, 0, 0, 0 };
+			Vector4u8 black_color = { 0, 0, 0, 0 };
 			set_render_clear_color(black_color);
 
 			LogInfo("CottonWind\t Game was successfully initialized");

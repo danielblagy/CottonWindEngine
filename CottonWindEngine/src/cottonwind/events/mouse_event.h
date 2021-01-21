@@ -11,10 +11,10 @@ namespace cotwin
 	class MouseEvent : public Event
 	{
 	public:
-		Vector2 cursor_position;
+		Vector2i cursor_position;
 
 	protected:
-		MouseEvent(Vector2 s_cursor_position)
+		MouseEvent(Vector2i s_cursor_position)
 			: cursor_position(s_cursor_position)
 		{
 			category = EventCategoryMouse;
@@ -24,10 +24,10 @@ namespace cotwin
 	class MouseMoveEvent : public MouseEvent
 	{
 	public:
-		Vector2 relative_motion;
+		Vector2i relative_motion;
 
 	public:
-		MouseMoveEvent(Vector2 s_cursor_position, Vector2 s_relative_motion)
+		MouseMoveEvent(Vector2i s_cursor_position, Vector2i s_relative_motion)
 			: MouseEvent(s_cursor_position), relative_motion(s_relative_motion)
 		{
 			type = MouseMove;
@@ -41,7 +41,7 @@ namespace cotwin
 		bool double_clicked;
 
 	public:
-		MouseButtonEvent(Vector2 s_cursor_position, unsigned int s_button_code, bool s_double_clicked)
+		MouseButtonEvent(Vector2i s_cursor_position, unsigned int s_button_code, bool s_double_clicked)
 			: MouseEvent(s_cursor_position), button_code(s_button_code), double_clicked(s_double_clicked)
 		{}
 	};
@@ -51,10 +51,10 @@ namespace cotwin
 	public:
 		// x is the amount scrolled horizontally, positive to the right and negative to the left
 		// y is the amount scrolled vertically, positive away from the user and negative towards the user
-		Vector2 wheel_scroll;
+		Vector2i wheel_scroll;
 
 	public:
-		MouseWheelEvent(Vector2 s_wheel_scroll)
+		MouseWheelEvent(Vector2i s_wheel_scroll)
 			: wheel_scroll(s_wheel_scroll)
 		{
 			category = EventCategoryMouse;

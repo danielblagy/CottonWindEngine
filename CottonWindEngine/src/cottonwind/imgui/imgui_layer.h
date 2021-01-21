@@ -82,7 +82,7 @@ namespace cotwin
 			{
 			case MouseWheel:
 			{
-				Vector2 wheel = dynamic_cast<MouseWheelEvent*>(event)->wheel_scroll;
+				Vector2i wheel = dynamic_cast<MouseWheelEvent*>(event)->wheel_scroll;
 				if (wheel.x > 0) io.MouseWheelH += 1;
 				if (wheel.x < 0) io.MouseWheelH -= 1;
 				if (wheel.y > 0) io.MouseWheel += 1;

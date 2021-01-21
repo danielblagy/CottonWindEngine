@@ -31,9 +31,9 @@ namespace cotwin
 			return SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(button);
 		}
 
-		static Vector2 get_mouse_position()
+		static Vector2i get_mouse_position()
 		{
-			Vector2 mouse_position;
+			Vector2i mouse_position;
 			SDL_PumpEvents();
 			SDL_GetMouseState(&mouse_position.x, &mouse_position.y);
 			return mouse_position;
