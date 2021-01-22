@@ -129,40 +129,4 @@ namespace cotwin
 		inline SDL_GLContext get_gl_context() { return gl_context; }
 		inline const char* get_glsl_version() { return glsl_version; }
 	};
-
-	// NOTE : just a test of opengl
-	void init_render_data(unsigned int* vertex_array, unsigned int* vertex_buffer, unsigned int* index_buffer)
-	{
-		glGenVertexArrays(1, vertex_array);
-		glBindVertexArray(*vertex_array);
-
-		glGenBuffers(1, vertex_buffer);
-		glBindBuffer(GL_ARRAY_BUFFER, *vertex_buffer);
-
-		float vertices[3 * 3] = {
-			-0.5f, -0.5f, 0.0f,
-			0.5f, -0.5f, 0.0f,
-			0.0f, 0.5f, 0.0f
-		};
-
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, NULL);
-
-		glGenBuffers(1, index_buffer);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *index_buffer);
-
-		unsigned int indices[3] = {
-			0, 1, 2
-		};
-
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-	}
-
-	void draw_triangle(unsigned int* vertex_array)
-	{
-		glBindVertexArray(*vertex_array);
-		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, NULL);
-	}
 }

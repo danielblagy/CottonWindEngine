@@ -53,6 +53,9 @@ namespace cotwin
 #ifdef CW_GRAPHICS_SDL2
 			// since SDL render functions require SDL_Render instance, supply it
 			Renderer2D::set_render_instance(graphics.get_sdl_renderer());
+#elif defined CW_GRAPHICS_OPENGL
+			// since SDL OpenGL render functions require SDL_Window instance, supply it
+			Renderer2D::set_window_instance(graphics.get_window());
 #endif
 		}
 
