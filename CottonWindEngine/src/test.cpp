@@ -94,8 +94,6 @@ public:
 
 	void on_attach() override
 	{
-		init_imgui();
-		
 		color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 		show_demo_window = true;
 		show_another_window = false;
