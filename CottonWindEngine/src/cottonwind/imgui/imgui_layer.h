@@ -26,38 +26,25 @@ namespace cotwin
 		bool propagate_keyboard_events = false;
 	
 	public:
-		ImGuiLayer(SDL_Window* s_window, SDL_GLContext s_gl_context, const char* s_glsl_version)
-			: Layer("imgui debug"), window(s_window), gl_context(s_gl_context), glsl_version(s_glsl_version)
+		ImGuiLayer(OpenGLGraphics* graphics)
+			: Layer("imgui debug"), window(graphics->get_window()), gl_context(graphics->get_gl_context()), glsl_version(graphics->get_glsl_version())
 		{
 			
 		}
 		
+		// if you override on_attach, you will have to call init_imgui() yourself
 		void on_attach() override
 		{
-			IMGUI_CHECKVERSION();
-			ImGui::CreateContext();
-			ImGuiIO& io = ImGui::GetIO(); (void)io;
-			//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-			//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-
-			// Setup Dear ImGui style
-			ImGui::StyleColorsDark();
-			//ImGui::StyleColorsClassic();
-			
-			// Setup Platform/Renderer bindings
-			ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
-			ImGui_ImplOpenGL3_Init(glsl_version);
+			init_imgui();
 		}
 
+		// if you override on_detach, you will have to call destroy_imgui() yourself
 		void on_detach() override
 		{
-			// imgui cleanup
-			ImGui_ImplOpenGL3_Shutdown();
-			ImGui_ImplSDL2_Shutdown();
-			ImGui::DestroyContext();
+			destroy_imgui();
 		}
 
-		void new_frame()
+		void new_imgui_frame()
 		{
 			// Start the Dear ImGui frame
 			ImGui_ImplOpenGL3_NewFrame();
@@ -65,7 +52,7 @@ namespace cotwin
 			ImGui::NewFrame();
 		}
 
-		void render_frame()
+		void render_imgui_frame()
 		{
 			// Rendering
 			ImGui::Render();
@@ -136,6 +123,32 @@ namespace cotwin
 		void set_propagate_keyboard_events(bool value)
 		{
 			propagate_keyboard_events = value;
+		}
+
+	protected:
+		void init_imgui()
+		{
+			IMGUI_CHECKVERSION();
+			ImGui::CreateContext();
+			ImGuiIO& io = ImGui::GetIO(); (void)io;
+			//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+			//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+			// Setup Dear ImGui style
+			ImGui::StyleColorsDark();
+			//ImGui::StyleColorsClassic();
+
+			// Setup Platform/Renderer bindings
+			ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
+			ImGui_ImplOpenGL3_Init(glsl_version);
+		}
+
+		void destroy_imgui()
+		{
+			// imgui cleanup
+			ImGui_ImplOpenGL3_Shutdown();
+			ImGui_ImplSDL2_Shutdown();
+			ImGui::DestroyContext();
 		}
 	};
 }

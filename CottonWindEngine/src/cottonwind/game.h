@@ -32,7 +32,6 @@ namespace cotwin
 #endif
 		
 		LayerStack layer_stack;
-		ImGuiLayer* imgui_layer;
 		
 		Vector4f clear_color;
 		double delta_cap = 0.0;
@@ -51,10 +50,6 @@ namespace cotwin
 		void start()
 		{
 			on_init();
-
-			// TODO : imgui layer won't work with SDLGraphics
-			imgui_layer = new ImGuiLayer(graphics.get_window(), graphics.get_gl_context(), graphics.get_glsl_version());
-			attach_layer(imgui_layer);
 			
 			Uint32 last_time = SDL_GetTicks();
 			double accumulated_delta = 0.0;
@@ -86,14 +81,6 @@ namespace cotwin
 				// update and render for each layer from the bottom to the top
 				for (Layer* layer : layer_stack)
 					layer->on_update(accumulated_delta);
-
-				// render imgui
-				imgui_layer->new_frame();
-				
-				for (Layer* layer : layer_stack)
-					layer->on_imgui_render();
-				
-				imgui_layer->render_frame();
 
 				// update screen with rendering
 				graphics.present();
@@ -157,6 +144,11 @@ namespace cotwin
 		void set_render_clear_color(Vector4u8 s_clear_color)
 		{
 			clear_color = { (float)s_clear_color.r / 255.0f, (float)s_clear_color.g / 255.0f, (float)s_clear_color.b / 255.0f, (float)s_clear_color.a / 255.0f };
+		}
+
+		Graphics* get_graphics()
+		{
+			return &graphics;
 		}
 
 		Renderer get_renderer()
