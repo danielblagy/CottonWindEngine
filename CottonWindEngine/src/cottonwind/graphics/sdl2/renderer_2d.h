@@ -10,8 +10,7 @@ namespace cotwin
 	// Whatever graphics implementation, each Renderer class should have clear() and flush() functions
 	// that follow the same function declaration
 
-	// since SDL2 requires SDL_Render instance to render stuff,
-	// I make this a simple class (methods aren't static)
+	// SDL2 requires SDL_Render instance to render stuff
 	class Renderer2D
 	{
 	private:

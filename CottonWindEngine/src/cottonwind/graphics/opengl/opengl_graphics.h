@@ -125,20 +125,6 @@ namespace cotwin
 			SDL_GL_SetSwapInterval(0);
 		}
 
-		void clear_screen(Vector4f* color)
-		{
-			int window_w, window_h;
-			SDL_GetWindowSize(window, &window_w, &window_h);
-			glViewport(0, 0, window_w, window_h);
-			glClearColor(color->r, color->g, color->b, color->a);
-			glClear(GL_COLOR_BUFFER_BIT);
-		}
-
-		void present()
-		{
-			SDL_GL_SwapWindow(window);
-		}
-
 		inline SDL_Window* get_window() { return window; }
 		inline SDL_GLContext get_gl_context() { return gl_context; }
 		inline const char* get_glsl_version() { return glsl_version; }
