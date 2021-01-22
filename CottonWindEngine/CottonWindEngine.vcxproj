@@ -161,6 +161,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\cottonwind\events\event.h" />
+    <ClInclude Include="src\cottonwind\events\event_dispatcher.h" />
     <ClInclude Include="src\cottonwind\events\keyboard_event.h" />
     <ClInclude Include="src\cottonwind\events\mouse_event.h" />
     <ClInclude Include="src\cottonwind\events\window_event.h" />
