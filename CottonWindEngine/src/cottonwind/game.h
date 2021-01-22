@@ -25,7 +25,11 @@ namespace cotwin
 		bool running = false;
 
 	private:
-		OpenGLGraphics* graphics;
+#ifdef CW_GRAPHICS_SDL2
+		SDLGraphics graphics;
+#elif defined CW_GRAPHICS_OPENGL
+		OpenGLGraphics graphics;
+#endif
 		
 		LayerStack layer_stack;
 		ImGuiLayer* imgui_layer;
@@ -49,7 +53,7 @@ namespace cotwin
 			on_init();
 
 			// TODO : imgui layer won't work with SDLGraphics
-			imgui_layer = new ImGuiLayer(graphics->get_window(), graphics->get_gl_context(), graphics->get_glsl_version());
+			imgui_layer = new ImGuiLayer(graphics.get_window(), graphics.get_gl_context(), graphics.get_glsl_version());
 			attach_layer(imgui_layer);
 			
 			Uint32 last_time = SDL_GetTicks();
@@ -77,7 +81,7 @@ namespace cotwin
 				//										(either handle that in the engine, or require it from the user)
 				
 				// clear screen
-				graphics->clear_screen(&clear_color);
+				graphics.clear_screen(&clear_color);
 				
 				// update and render for each layer from the bottom to the top
 				for (Layer* layer : layer_stack)
@@ -92,7 +96,7 @@ namespace cotwin
 				imgui_layer->render_frame();
 
 				// update screen with rendering
-				graphics->present();
+				graphics.present();
 
 				//accumulated_delta = 0.0;
 				accumulated_delta -= delta_cap;
@@ -105,7 +109,7 @@ namespace cotwin
 		{
 			on_destroy();
 			
-			graphics->destroy();
+			graphics.destroy();
 		}
 
 		void attach_layer(Layer* layer)
@@ -166,11 +170,8 @@ namespace cotwin
 			// set render clear color to black by default
 			Vector4u8 black_color = { 0, 0, 0, 0 };
 			set_render_clear_color(black_color);
-			
-			// harcoded for now
-			graphics = new OpenGLGraphics();
 
-			return graphics->init(&window_properties);
+			return graphics.init(&window_properties);
 		}
 
 		void on_event(Event* event)

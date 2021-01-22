@@ -1,6 +1,7 @@
 #include <iostream>
 
 #define CW_DEBUG_MODE_ENABLED 1
+#define CW_GRAPHICS_OPENGL
 
 #include "cottonwind/game.h"
 #include "cottonwind/input/input.h"
