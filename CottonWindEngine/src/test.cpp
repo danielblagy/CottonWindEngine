@@ -13,13 +13,12 @@
 class TestMainLayer : public cotwin::Layer
 {
 private:
-	cotwin::Renderer2D renderer;
 	cotwin::Vector4u8 orange_color = { 255, 165, 0 };
 	cotwin::Vector4u8 yellow_color = { 255, 255, 0 };
 
 public:
-	TestMainLayer(cotwin::Renderer2D s_renderer)
-		: cotwin::Layer("main"), renderer(s_renderer)
+	TestMainLayer()
+		: cotwin::Layer("main")
 	{}
 
 	void on_attach() override
@@ -34,8 +33,8 @@ public:
 
 	void on_update(double delta) override
 	{
-		renderer.draw_rect({ 50, 50, 50, 50 }, orange_color);
-		renderer.fill_rect({ 500, 450, 120, 60 }, yellow_color);
+		cotwin::Renderer2D::draw_rect({ 50, 50, 50, 50 }, orange_color);
+		cotwin::Renderer2D::fill_rect({ 500, 450, 120, 60 }, yellow_color);
 		
 		if (cotwin::Input::is_key_pressed(CW_KEY_F))
 			std::cout << "TestGame: JUMP is pressed!" << std::endl;
@@ -155,7 +154,7 @@ public:
 
 	void on_init() override
 	{
-		attach_layer(new TestMainLayer(get_renderer()));
+		attach_layer(new TestMainLayer());
 		
 		//cotwin::OpenGLGraphics* graphics = dynamic_cast<cotwin::OpenGLGraphics*>(get_graphics());
 		//attach_layer(new DubugInfoLayer(graphics));

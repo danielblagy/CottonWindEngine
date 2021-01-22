@@ -33,7 +33,6 @@ namespace cotwin
 // TODO : Simply use generic Graphics class with new ...() for graphics instance, since it will only be created once
 #ifdef CW_GRAPHICS_SDL2
 		SDLGraphics graphics;
-		Renderer2D renderer;
 #elif defined CW_GRAPHICS_OPENGL
 		OpenGLGraphics graphics;
 #endif
@@ -53,7 +52,7 @@ namespace cotwin
 
 #ifdef CW_GRAPHICS_SDL2
 			// since SDL render functions require SDL_Render instance, supply it
-			renderer.set_render_instance(graphics.get_sdl_renderer());
+			Renderer2D::set_render_instance(graphics.get_sdl_renderer());
 #endif
 		}
 
@@ -88,14 +87,14 @@ namespace cotwin
 				//										(either handle that in the engine, or require it from the user)
 				
 				// clear screen
-				renderer.clear(&clear_color);
+				Renderer2D::clear(&clear_color);
 				
 				// update and render for each layer from the bottom to the top
 				for (Layer* layer : layer_stack)
 					layer->on_update(accumulated_delta);
 
 				// update screen with rendering
-				renderer.flush();
+				Renderer2D::flush();
 
 				//accumulated_delta = 0.0;
 				accumulated_delta -= delta_cap;
@@ -160,11 +159,6 @@ namespace cotwin
 		Graphics* get_graphics()
 		{
 			return &graphics;
-		}
-
-		Renderer2D get_renderer()
-		{
-			return renderer;
 		}
 
 	private:

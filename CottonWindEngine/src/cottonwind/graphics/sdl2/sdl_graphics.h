@@ -67,6 +67,8 @@ namespace cotwin
 				SDL_Log("CottonWind: Could not create renderer: %s\n", SDL_GetError());
 				return false;
 			}
+
+			return true;
 		}
 		
 		void destroy() override
