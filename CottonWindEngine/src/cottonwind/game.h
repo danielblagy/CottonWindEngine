@@ -127,13 +127,12 @@ namespace cotwin
 
 		void enable_vsync()
 		{
-			delta_cap = 0.0;
-			SDL_GL_SetSwapInterval(1);
+			graphics.enable_vsync(&delta_cap);
 		}
 
 		void disable_vsync()
 		{
-			SDL_GL_SetSwapInterval(0);
+			graphics.disable_vsync(&delta_cap);
 		}
 		
 		// uncapped by default (if vsync is off)

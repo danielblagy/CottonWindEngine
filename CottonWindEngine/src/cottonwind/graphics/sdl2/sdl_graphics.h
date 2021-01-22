@@ -61,7 +61,7 @@ namespace cotwin
 
 			LogTrace("CottonWind\t Initialized SDL2 and SDL_Window");
 
-			renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+			renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
 			if (renderer == NULL) {
 				SDL_Log("CottonWind: Could not create renderer: %s\n", SDL_GetError());

@@ -36,6 +36,19 @@ namespace cotwin
 		virtual bool init(WindowProperties* window_properties) = 0;
 		virtual void destroy() = 0;
 
+		virtual void enable_vsync(double* delta_cap)
+		{
+			SDL_DisplayMode display_mode;
+			SDL_GetCurrentDisplayMode(0, &display_mode);
+			int fps = display_mode.refresh_rate;
+			*delta_cap = 1.0 / fps;
+		}
+
+		virtual void disable_vsync(double* delta_cap)
+		{
+			*delta_cap = 0.0;
+		}
+
 	protected:
 		Graphics() {}
 		virtual ~Graphics() = default;

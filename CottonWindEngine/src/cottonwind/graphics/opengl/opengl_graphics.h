@@ -113,6 +113,18 @@ namespace cotwin
 			SDL_Quit();
 		}
 
+		void enable_vsync(double* delta_cap) override
+		{
+			*delta_cap = 0.0;
+			SDL_GL_SetSwapInterval(1);
+		}
+
+		void disable_vsync(double* delta_cap) override
+		{
+			*delta_cap = 0.0;
+			SDL_GL_SetSwapInterval(0);
+		}
+
 		void clear_screen(Vector4f* color)
 		{
 			int window_w, window_h;
