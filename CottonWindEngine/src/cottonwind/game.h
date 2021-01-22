@@ -1,5 +1,6 @@
 #pragma once
 
+#include "graphics/sdl2/sdl_graphics.h"
 #include "graphics/opengl/opengl_graphics.h"
 
 #include "events/event.h"
@@ -9,11 +10,15 @@
 
 #include "layer/layer_stack.h"
 
-#include "graphics/renderer.h"
-
 #include "imgui/imgui_layer.h"
 
 #include "logger.h"
+
+#ifdef CW_GRAPHICS_SDL2
+#include "graphics/sdl2/renderer_2d.h"
+#elif defined CW_GRAPHICS_OPENGL
+#include "graphics/opengl/renderer_2d.h"
+#endif
 
 
 namespace cotwin
@@ -25,8 +30,10 @@ namespace cotwin
 		bool running = false;
 
 	private:
+// TODO : Simply use generic Graphics class with new ...() for graphics instance, since it will only be created once
 #ifdef CW_GRAPHICS_SDL2
 		SDLGraphics graphics;
+		Renderer2D renderer;
 #elif defined CW_GRAPHICS_OPENGL
 		OpenGLGraphics graphics;
 #endif
@@ -43,6 +50,11 @@ namespace cotwin
 		Game(WindowProperties window_properties)
 		{
 			running = init(window_properties);
+
+#ifdef CW_GRAPHICS_SDL2
+			// since SDL render functions require SDL_Render instance, supply it
+			renderer.set_render_instance(graphics.get_sdl_renderer());
+#endif
 		}
 
 		virtual ~Game() = default;
@@ -76,14 +88,14 @@ namespace cotwin
 				//										(either handle that in the engine, or require it from the user)
 				
 				// clear screen
-				graphics.clear_screen(&clear_color);
+				renderer.clear(&clear_color);
 				
 				// update and render for each layer from the bottom to the top
 				for (Layer* layer : layer_stack)
 					layer->on_update(accumulated_delta);
 
 				// update screen with rendering
-				graphics.present();
+				renderer.flush();
 
 				//accumulated_delta = 0.0;
 				accumulated_delta -= delta_cap;
@@ -151,9 +163,9 @@ namespace cotwin
 			return &graphics;
 		}
 
-		Renderer get_renderer()
+		Renderer2D get_renderer()
 		{
-			return Renderer();
+			return renderer;
 		}
 
 	private:

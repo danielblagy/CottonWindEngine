@@ -36,10 +36,6 @@ namespace cotwin
 		virtual bool init(WindowProperties* window_properties) = 0;
 		virtual void destroy() = 0;
 
-		// TODO : should these be in Renderer ??
-		virtual void clear_screen(Vector4f* color) = 0;
-		virtual void present() = 0;
-
 	protected:
 		Graphics() {}
 		virtual ~Graphics() = default;

@@ -1,7 +1,7 @@
 #include <iostream>
 
 #define CW_DEBUG_MODE_ENABLED 1
-#define CW_GRAPHICS_OPENGL
+#define CW_GRAPHICS_SDL2
 
 #include "cottonwind/game.h"
 #include "cottonwind/input/input.h"
@@ -13,12 +13,12 @@
 class TestMainLayer : public cotwin::Layer
 {
 private:
-	cotwin::Renderer renderer;
+	cotwin::Renderer2D renderer;
 	cotwin::Vector4u8 orange_color = { 255, 165, 0 };
 	cotwin::Vector4u8 yellow_color = { 255, 255, 0 };
 
 public:
-	TestMainLayer(cotwin::Renderer s_renderer)
+	TestMainLayer(cotwin::Renderer2D s_renderer)
 		: cotwin::Layer("main"), renderer(s_renderer)
 	{}
 
@@ -157,8 +157,8 @@ public:
 	{
 		attach_layer(new TestMainLayer(get_renderer()));
 		
-		cotwin::OpenGLGraphics* graphics = dynamic_cast<cotwin::OpenGLGraphics*>(get_graphics());
-		attach_layer(new DubugInfoLayer(graphics));
+		//cotwin::OpenGLGraphics* graphics = dynamic_cast<cotwin::OpenGLGraphics*>(get_graphics());
+		//attach_layer(new DubugInfoLayer(graphics));
 
 		enable_vsync();
 		cotwin::Vector4u8 clear_color = { 120, 70, 150, 255 };

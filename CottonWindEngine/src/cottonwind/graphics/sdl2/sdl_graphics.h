@@ -61,7 +61,7 @@ namespace cotwin
 
 			LogTrace("CottonWind\t Initialized SDL2 and SDL_Window");
 
-			renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+			renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
 			if (renderer == NULL) {
 				SDL_Log("CottonWind: Could not create renderer: %s\n", SDL_GetError());
@@ -70,23 +70,15 @@ namespace cotwin
 		}
 		
 		void destroy() override
-		{}
-
-		void clear_screen(Vector4f* color) override
 		{
-			SDL_SetRenderDrawColor(
-				renderer,
-				unsigned int(color->r * 255.0f),
-				unsigned int(color->g * 255.0f),
-				unsigned int(color->b * 255.0f),
-				unsigned int(color->a * 255.0f)
-			);
-			SDL_RenderClear(renderer);
+			SDL_DestroyRenderer(renderer);
+			SDL_DestroyWindow(window);
+			SDL_Quit();
 		}
-		
-		void present() override
+
+		SDL_Renderer* get_sdl_renderer()
 		{
-			SDL_RenderPresent(renderer);
+			return renderer;
 		}
 	};
 }

@@ -104,7 +104,7 @@ namespace cotwin
 			return true;
 		}
 
-		void destroy()
+		void destroy() override
 		{
 			LogTrace("CottonWind\t OpenGL & SLD2 Cleanup");
 
@@ -122,7 +122,7 @@ namespace cotwin
 			glClear(GL_COLOR_BUFFER_BIT);
 		}
 
-		void present() override
+		void present()
 		{
 			SDL_GL_SwapWindow(window);
 		}

@@ -181,7 +181,7 @@
     <ClInclude Include="src\cottonwind\layer\layer_stack.h" />
     <ClInclude Include="src\cottonwind\logger.h" />
     <ClInclude Include="src\cottonwind\math.h" />
-    <ClInclude Include="src\cottonwind\graphics\renderer.h" />
+    <ClInclude Include="src\cottonwind\graphics\sdl2\renderer_2d.h" />
     <ClInclude Include="src\cottonwind\vendor\glad_v3.2_core\include\glad\glad.h" />
     <ClInclude Include="src\cottonwind\vendor\glad_v3.2_core\include\KHR\khrplatform.h" />
     <ClInclude Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imconfig.h" />
