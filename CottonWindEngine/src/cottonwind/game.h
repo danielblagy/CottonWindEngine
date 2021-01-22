@@ -212,14 +212,12 @@ namespace cotwin
 
 					if (type == KeyPress || type == KeyRelease)
 					{
-						KeyboardKeyEvent event(e.key.keysym.scancode, SDL_GetScancodeName(e.key.keysym.scancode), e.key.repeat);
-						event.type = type;
+						KeyboardEvent event(type, e.key.keysym.scancode, SDL_GetScancodeName(e.key.keysym.scancode), e.key.repeat);
 						on_event(&event);
 					}
 					else if (type == TextInput)
 					{
-						KeyboardTextInputEvent event(e.text.text);
-						event.type = type;
+						KeyboardEvent event(e.text.text);
 						on_event(&event);
 					}
 					else
@@ -235,21 +233,19 @@ namespace cotwin
 					switch (e.type)
 					{
 					case SDL_MOUSEMOTION: {
-						MouseMoveEvent event({ e.motion.x, e.motion.y }, { e.motion.xrel, e.motion.yrel });
+						MouseEvent event({ e.motion.x, e.motion.y }, { e.motion.xrel, e.motion.yrel });
 						on_event(&event);
 					} break;
 					case SDL_MOUSEBUTTONDOWN: {
-						MouseButtonEvent event({ e.motion.x, e.motion.y }, e.button.button, e.button.clicks == 2);
-						event.type = MouseButtonPress;
+						MouseEvent event(MouseButtonPress, { e.motion.x, e.motion.y }, e.button.button, e.button.clicks == 2);
 						on_event(&event);
 					} break;
 					case SDL_MOUSEBUTTONUP: {
-						MouseButtonEvent event({ e.motion.x, e.motion.y }, e.button.button, e.button.clicks == 2);
-						event.type = MouseButtonRelease;
+						MouseEvent event(MouseButtonRelease, { e.motion.x, e.motion.y }, e.button.button, e.button.clicks == 2);
 						on_event(&event);
 					} break;
 					case SDL_MOUSEWHEEL: {
-						MouseWheelEvent event({ e.wheel.x, e.wheel.y });
+						MouseEvent event({ e.wheel.x, e.wheel.y });
 						on_event(&event);
 					} break;
 					default: {
@@ -305,11 +301,11 @@ namespace cotwin
 						on_event(&event);
 					} break;
 					case SDL_WINDOWEVENT_MOVED: {
-						WindowMoveEvent event({ (int)e.window.data1, (int)e.window.data2 });
+						WindowEvent event(WindowMove, { (int)e.window.data1, (int)e.window.data2 });
 						on_event(&event);
 					} break;
 					case SDL_WINDOWEVENT_RESIZED: {
-						WindowResizeEvent event({ (int)e.window.data1, (int)e.window.data2 });
+						WindowEvent event(WindowResize, { (int)e.window.data1, (int)e.window.data2 });
 						on_event(&event);
 					} break;
 					default: {

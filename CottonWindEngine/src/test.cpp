@@ -63,20 +63,20 @@ public:
 		}
 		else if (event->type == cotwin::KeyPress)
 		{
-			std::cout << "TestGame: " << dynamic_cast<cotwin::KeyboardKeyEvent*>(event)->keyname << " was pressed!" << std::endl;
+			std::cout << "TestGame: " << dynamic_cast<cotwin::KeyboardEvent*>(event)->data.key.keyname << " was pressed!" << std::endl;
 		}
 		else if (event->type == cotwin::MouseButtonPress)
 		{
-			std::cout << "TestGame: " << dynamic_cast<cotwin::MouseButtonEvent*>(event)->button_code << " mouse button was pressed!" << std::endl;
+			std::cout << "TestGame: " << dynamic_cast<cotwin::MouseEvent*>(event)->data.button.button_code << " mouse button was pressed!" << std::endl;
 		}
 		else if (event->type == cotwin::WindowMove)
 		{
-			cotwin::Vector2i new_position = dynamic_cast<cotwin::WindowMoveEvent*>(event)->new_position;
+			cotwin::Vector2i new_position = dynamic_cast<cotwin::WindowEvent*>(event)->data.new_position;
 			std::cout << "TestGame: window move (" << new_position.x << ", " << new_position.y << ")" << std::endl;
 		}
 		else if (event->type == cotwin::WindowResize)
 		{
-			cotwin::Vector2i new_size = dynamic_cast<cotwin::WindowResizeEvent*>(event)->new_size;
+			cotwin::Vector2i new_size = dynamic_cast<cotwin::WindowEvent*>(event)->data.new_size;
 			std::cout << "TestGame: window resize (" << new_size.x << ", " << new_size.y << ")" << std::endl;
 		}
 		else

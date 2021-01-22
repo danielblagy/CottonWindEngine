@@ -5,7 +5,7 @@
 
 namespace cotwin
 {
-	class KeyboardKeyEvent : public Event
+	/*class KeyboardKeyEvent : public Event
 	{
 	public:
 		// uses to store SDL_Scancode
@@ -31,6 +31,38 @@ namespace cotwin
 			: text(s_text)
 		{
 			category = EventCategoryKeyboard;
+		}
+	};*/
+
+	class KeyboardEvent : public Event
+	{
+	public:
+		union
+		{
+			struct
+			{
+				unsigned int keycode; // uses to store SDL_Scancode
+				const char* keyname;
+				bool repeat;
+			} key;
+			const char* text;
+		} data;
+
+	public:
+		KeyboardEvent(EventType s_type, unsigned int keycode, const char* keyname, bool repeat)
+		{
+			category = EventCategoryKeyboard;
+			type = s_type;
+			data.key.keycode = keycode;
+			data.key.keyname = keyname;
+			data.key.repeat = repeat;
+		}
+		
+		KeyboardEvent(char* text)
+		{
+			category = EventCategoryKeyboard;
+			type = TextInput;
+			data.text = text;
 		}
 	};
 }

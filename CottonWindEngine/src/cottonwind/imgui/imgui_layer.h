@@ -79,7 +79,7 @@ namespace cotwin
 			{
 			case MouseWheel:
 			{
-				Vector2i wheel = dynamic_cast<MouseWheelEvent*>(event)->wheel_scroll;
+				Vector2i wheel = dynamic_cast<MouseEvent*>(event)->data.wheel_movement;
 				if (wheel.x > 0) io.MouseWheelH += 1;
 				if (wheel.x < 0) io.MouseWheelH -= 1;
 				if (wheel.y > 0) io.MouseWheel += 1;
@@ -88,7 +88,7 @@ namespace cotwin
 			} break;
 			case MouseButtonPress:
 			{
-				unsigned int button = dynamic_cast<MouseButtonEvent*>(event)->button_code;
+				unsigned int button = dynamic_cast<MouseEvent*>(event)->data.button.button_code;
 				if (button == SDL_BUTTON_LEFT) set_g_mouse_pressed_state(0, true);
 				if (button == SDL_BUTTON_RIGHT) set_g_mouse_pressed_state(1, true);
 				if (button == SDL_BUTTON_MIDDLE) set_g_mouse_pressed_state(2, true);
@@ -96,15 +96,15 @@ namespace cotwin
 			} break;
 			case TextInput:
 			{
-				const char* text = dynamic_cast<KeyboardTextInputEvent*>(event)->text;
+				const char* text = dynamic_cast<KeyboardEvent*>(event)->data.text;
 				io.AddInputCharactersUTF8(text);
 				event->processed = true;
 			} break;
 			case KeyPress:
 			case KeyRelease:
 			{
-				KeyboardKeyEvent* keyboard_event = dynamic_cast<KeyboardKeyEvent*>(event);
-				int key = keyboard_event->keycode;
+				KeyboardEvent* keyboard_event = dynamic_cast<KeyboardEvent*>(event);
+				int key = keyboard_event->data.key.keycode;
 				IM_ASSERT(key >= 0 && key < IM_ARRAYSIZE(io.KeysDown));
 				io.KeysDown[key] = (event->type == KeyPress);
 				io.KeyShift = ((SDL_GetModState() & KMOD_SHIFT) != 0);
