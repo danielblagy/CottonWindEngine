@@ -19,7 +19,7 @@ namespace cotwin
 
 			if (sdl_init_result != 0)
 			{
-				LogCritical("CottonWind\t Unable to initialize SDL: %s", SDL_GetError());
+				Logger::Critical("CottonWind\t Unable to initialize SDL: %s", SDL_GetError());
 				return false;
 			}
 
@@ -55,11 +55,11 @@ namespace cotwin
 			);
 
 			if (window == NULL) {
-				LogError("CottonWind\t Could not create window: %s\n", SDL_GetError());
+				Logger::Error("CottonWind\t Could not create window: %s\n", SDL_GetError());
 				return false;
 			}
 
-			LogTrace("CottonWind\t Initialized SDL2 and SDL_Window");
+			Logger::Trace("CottonWind\t Initialized SDL2 and SDL_Window");
 
 			renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 

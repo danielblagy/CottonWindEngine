@@ -23,7 +23,7 @@ namespace cotwin
 
 			if (sdl_init_result != 0)
 			{
-				LogCritical("CottonWind\t Unable to initialize SDL: %s", SDL_GetError());
+				Logger::Critical("CottonWind\t Unable to initialize SDL: %s", SDL_GetError());
 				return false;
 			}
 
@@ -75,11 +75,11 @@ namespace cotwin
 			);
 
 			if (window == NULL) {
-				LogError("CottonWind\t Could not create window: %s\n", SDL_GetError());
+				Logger::Error("CottonWind\t Could not create window: %s\n", SDL_GetError());
 				return false;
 			}
 
-			LogTrace("CottonWind\t Initialized SDL2 and SDL_Window");
+			Logger::Trace("CottonWind\t Initialized SDL2 and SDL_Window");
 
 			// create gl context and set it up for rendering into an OpenGL window
 			
@@ -89,24 +89,24 @@ namespace cotwin
 			// Initialize OpenGL loader
 			if (gladLoadGL() == 0)
 			{
-				LogError("CottonWind\t Failed to initialize OpenGL loader!");
+				Logger::Error("CottonWind\t Failed to initialize OpenGL loader!");
 				return false;
 			}
 
-			LogTrace("CottonWind\t Created GL Context and initialized OpenGL Loader (glad)");
+			Logger::Trace("CottonWind\t Created GL Context and initialized OpenGL Loader (glad)");
 
 			// display opengl version
 			int opengl_major_version, opengl_minor_version;
 			SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &opengl_major_version);
 			SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &opengl_minor_version);
-			LogDebug("CottonWind\t OpenGL version: %d.%d", opengl_major_version, opengl_minor_version);
+			Logger::Debug("CottonWind\t OpenGL version: %d.%d", opengl_major_version, opengl_minor_version);
 
 			return true;
 		}
 
 		void destroy() override
 		{
-			LogTrace("CottonWind\t OpenGL & SLD2 Cleanup");
+			Logger::Trace("CottonWind\t OpenGL & SLD2 Cleanup");
 
 			SDL_GL_DeleteContext(gl_context);
 			SDL_DestroyWindow(window);
