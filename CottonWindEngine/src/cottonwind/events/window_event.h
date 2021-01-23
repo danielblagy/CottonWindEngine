@@ -21,6 +21,12 @@ namespace cotwin
 		} data;
 
 	public:
+		WindowEvent(EventType s_type)
+		{
+			category = EventCategoryWindow;
+			type = s_type;
+		}
+		
 		WindowEvent(EventType s_type, Vector2i s_data)
 		{
 			category = EventCategoryWindow;

@@ -7,6 +7,7 @@
 #include "cottonwind/input/input.h"
 #include "cottonwind/input/keycodes.h"
 #include "cottonwind/input/mouse_buttons.h"
+#include "cottonwind/events/event_dispatcher.h"
 
 
 // layer where the main game logic and render is
@@ -48,40 +49,56 @@ public:
 		//if (cotwin::Input::is_mouse_button_pressed(CW_MOUSEBUTTON_LEFT))
 		//	std::cout << "TestGame: SHOOT is pressed!" << std::endl;
 
-		cotwin::Vector2i mouse_position = cotwin::Input::get_mouse_position();
-		std::cout << "TestGame: Mouse Position (" << mouse_position.x << ", " << mouse_position.y << ")" << std::endl;
+		//cotwin::Vector2i mouse_position = cotwin::Input::get_mouse_position();
+		//std::cout << "TestGame: Mouse Position (" << mouse_position.x << ", " << mouse_position.y << ")" << std::endl;
 	}
 
 	void on_event(cotwin::Event* event) override
 	{
 		event->processed = true;
 
-		if (event->type == cotwin::ApplicationQuit)
+		if (event->type == cotwin::Unsupported)
 		{
-			// for example, save game state to file
-			std::cout << "TestGame: Game is stopping! (ApplicationQuit)" << std::endl;
-		}
-		else if (event->type == cotwin::KeyPress)
-		{
-			std::cout << "TestGame: " << dynamic_cast<cotwin::KeyboardEvent*>(event)->data.key.keyname << " was pressed!" << std::endl;
-		}
-		else if (event->type == cotwin::MouseButtonPress)
-		{
-			std::cout << "TestGame: " << dynamic_cast<cotwin::MouseEvent*>(event)->data.button.button_code << " mouse button was pressed!" << std::endl;
-		}
-		else if (event->type == cotwin::WindowMove)
-		{
-			cotwin::Vector2i new_position = dynamic_cast<cotwin::WindowEvent*>(event)->data.new_position;
-			std::cout << "TestGame: window move (" << new_position.x << ", " << new_position.y << ")" << std::endl;
-		}
-		else if (event->type == cotwin::WindowResize)
-		{
-			cotwin::Vector2i new_size = dynamic_cast<cotwin::WindowEvent*>(event)->data.new_size;
-			std::cout << "TestGame: window resize (" << new_size.x << ", " << new_size.y << ")" << std::endl;
+			event->processed = false;
 		}
 		else
-			event->processed = false;
+		{
+			cotwin::EventDispatcher::dispatch(this, event, cotwin::ApplicationQuit, &TestMainLayer::on_app_quit);
+			cotwin::EventDispatcher::dispatch(this, event, cotwin::WindowMove, &TestMainLayer::on_window_move);
+			cotwin::EventDispatcher::dispatch(this, event, cotwin::WindowResize, &TestMainLayer::on_window_resize);
+			cotwin::EventDispatcher::dispatch(this, event, cotwin::KeyPress, &TestMainLayer::on_key_press);
+			cotwin::EventDispatcher::dispatch(this, event, cotwin::MouseButtonPress, &TestMainLayer::on_mouse_button_press);
+		}
 	}
+
+	void on_app_quit(cotwin::WindowEvent* event)
+	{
+		// for example, save game state to file
+		std::cout << "TestGame: Game is stopping! (ApplicationQuit)" << std::endl;
+	}
+
+	void on_window_move(cotwin::WindowEvent* event)
+	{
+		cotwin::Vector2i new_position = event->data.new_position;
+		std::cout << "TestGame: window move (" << new_position.x << ", " << new_position.y << ")" << std::endl;
+	}
+
+	void on_window_resize(cotwin::WindowEvent* event)
+	{
+		cotwin::Vector2i new_size = event->data.new_size;
+		std::cout << "TestGame: window resize (" << new_size.x << ", " << new_size.y << ")" << std::endl;
+	}
+
+	void on_key_press(cotwin::KeyboardEvent* event)
+	{
+		std::cout << "TestGame: " << event->data.key.keyname << " was pressed!" << std::endl;
+	}
+
+	void on_mouse_button_press(cotwin::MouseEvent* event)
+	{
+		std::cout << "TestGame: " << event->data.button.button_code << " mouse button was pressed!" << std::endl;
+	}
+
 };
 
 class DubugInfoLayer : public cotwin::ImGuiLayer
