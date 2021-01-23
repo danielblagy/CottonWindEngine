@@ -271,33 +271,23 @@ namespace cotwin
 					switch (e.window.event)
 					{
 					case SDL_WINDOWEVENT_CLOSE: {
-						Event event;
-						event.category = EventCategoryWindow;
-						event.type = WindowClose;
+						WindowEvent event(WindowClose);
 						on_event(&event);
 					} break;
 					case SDL_WINDOWEVENT_MINIMIZED: {
-						Event event;
-						event.category = EventCategoryWindow;
-						event.type = WindowMinimize;
+						WindowEvent event(WindowMinimize);
 						on_event(&event);
 					} break;
 					case SDL_WINDOWEVENT_MAXIMIZED: {
-						Event event;
-						event.category = EventCategoryWindow;
-						event.type = WindowMaximize;
+						WindowEvent event(WindowMaximize);
 						on_event(&event);
 					} break;
 					case SDL_WINDOWEVENT_FOCUS_GAINED: {
-						Event event;
-						event.category = EventCategoryWindow;
-						event.type = WindowFocusGained;
+						WindowEvent event(WindowFocusGained);
 						on_event(&event);
 					} break;
 					case SDL_WINDOWEVENT_FOCUS_LOST: {
-						Event event;
-						event.category = EventCategoryWindow;
-						event.type = WindowFocusLost;
+						WindowEvent event(WindowFocusLost);
 						on_event(&event);
 					} break;
 					case SDL_WINDOWEVENT_MOVED: {

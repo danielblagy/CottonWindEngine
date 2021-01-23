@@ -68,6 +68,8 @@ public:
 			cotwin::EventDispatcher::dispatch(this, event, cotwin::WindowResize, &TestMainLayer::on_window_resize);
 			cotwin::EventDispatcher::dispatch(this, event, cotwin::KeyPress, &TestMainLayer::on_key_press);
 			cotwin::EventDispatcher::dispatch(this, event, cotwin::MouseButtonPress, &TestMainLayer::on_mouse_button_press);
+			cotwin::EventDispatcher::dispatch(this, event, cotwin::WindowFocusGained, &TestMainLayer::on_window_focus);
+			cotwin::EventDispatcher::dispatch(this, event, cotwin::WindowFocusLost, &TestMainLayer::on_window_unfocus);
 		}
 	}
 
@@ -97,6 +99,16 @@ public:
 	void on_mouse_button_press(cotwin::MouseEvent* event)
 	{
 		std::cout << "TestGame: " << event->data.button.button_code << " mouse button was pressed!" << std::endl;
+	}
+
+	void on_window_focus(cotwin::WindowEvent* event)
+	{
+		std::cout << "TestGame: window focus gained" << std::endl;
+	}
+
+	void on_window_unfocus(cotwin::WindowEvent* event)
+	{
+		std::cout << "TestGame: window focus lost" << std::endl;
 	}
 
 };
