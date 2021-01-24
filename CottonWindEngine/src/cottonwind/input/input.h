@@ -2,7 +2,7 @@
 
 #include <SDL.h>
 
-#include "../math.h"
+#include "../vendor/glm/glm.hpp"
 
 
 namespace cotwin
@@ -31,9 +31,9 @@ namespace cotwin
 			return SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(button);
 		}
 
-		static Vector2i get_mouse_position()
+		static glm::ivec2 get_mouse_position()
 		{
-			Vector2i mouse_position;
+			glm::ivec2 mouse_position;
 			SDL_PumpEvents();
 			SDL_GetMouseState(&mouse_position.x, &mouse_position.y);
 			return mouse_position;

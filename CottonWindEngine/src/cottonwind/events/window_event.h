@@ -2,7 +2,7 @@
 
 #include "event.h"
 
-#include "../math.h"
+#include "../vendor/glm/glm.hpp"
 
 
 namespace cotwin
@@ -13,11 +13,11 @@ namespace cotwin
 		union
 		{
 			// window move
-			Vector2i new_position;
+			glm::ivec2 new_position;
 			// window resize
-			Vector2i new_size;
+			glm::ivec2 new_size;
 			// just a generic name
-			Vector2i data;
+			glm::ivec2 data;
 		} data;
 
 	public:
@@ -27,7 +27,7 @@ namespace cotwin
 			type = s_type;
 		}
 		
-		WindowEvent(EventType s_type, Vector2i s_data)
+		WindowEvent(EventType s_type, glm::ivec2 s_data)
 		{
 			category = EventCategoryWindow;
 			type = s_type;

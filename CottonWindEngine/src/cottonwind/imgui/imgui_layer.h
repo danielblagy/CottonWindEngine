@@ -79,7 +79,7 @@ namespace cotwin
 			{
 			case MouseWheel:
 			{
-				Vector2i wheel = dynamic_cast<MouseEvent*>(event)->data.wheel_movement;
+				glm::ivec2 wheel = dynamic_cast<MouseEvent*>(event)->data.wheel_movement;
 				if (wheel.x > 0) io.MouseWheelH += 1;
 				if (wheel.x < 0) io.MouseWheelH -= 1;
 				if (wheel.y > 0) io.MouseWheel += 1;

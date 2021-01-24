@@ -3,7 +3,7 @@
 #include <SDL.h>
 #include <glad/glad.h>
 
-#include "../../math.h"
+#include "../../vendor/glm/glm.hpp"
 
 
 namespace cotwin
@@ -27,12 +27,12 @@ namespace cotwin
 			window = s_window;
 		}
 		
-		static void clear(Vector4f* color)
+		static void clear(const glm::vec4& color)
 		{
 			int window_w, window_h;
 			SDL_GetWindowSize(window, &window_w, &window_h);
 			glViewport(0, 0, window_w, window_h);
-			glClearColor(color->r, color->g, color->b, color->a);
+			glClearColor(color.r, color.g, color.b, color.a);
 			glClear(GL_COLOR_BUFFER_BIT);
 		}
 

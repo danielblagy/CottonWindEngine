@@ -39,7 +39,7 @@ namespace cotwin
 		
 		LayerStack layer_stack;
 		
-		Vector4f clear_color;
+		glm::vec4 clear_color;
 		double delta_cap = 0.0;
 
 		unsigned int vertex_array, vertex_buffer, index_buffer;
@@ -90,7 +90,7 @@ namespace cotwin
 				//										(either handle that in the engine, or require it from the user)
 				
 				// clear screen
-				Renderer2D::clear(&clear_color);
+				Renderer2D::clear(clear_color);
 				
 				// update and render for each layer from the bottom to the top
 				for (Layer* layer : layer_stack)
@@ -149,12 +149,12 @@ namespace cotwin
 			delta_cap = 1.0 / fps;
 		}
 
-		void set_render_clear_color(Vector4f s_clear_color)
+		void set_render_clear_color(glm::vec4 s_clear_color)
 		{
 			clear_color = s_clear_color;
 		}
 		
-		void set_render_clear_color(Vector4u8 s_clear_color)
+		void set_render_clear_color(glm::u8vec4 s_clear_color)
 		{
 			clear_color = { (float)s_clear_color.r / 255.0f, (float)s_clear_color.g / 255.0f, (float)s_clear_color.b / 255.0f, (float)s_clear_color.a / 255.0f };
 		}
@@ -168,7 +168,7 @@ namespace cotwin
 		bool init(WindowProperties window_properties)
 		{
 			// set render clear color to black by default
-			Vector4u8 black_color = { 0, 0, 0, 0 };
+			glm::vec4 black_color = { 0.0f, 0.0f, 0.0f, 0.0f };
 			set_render_clear_color(black_color);
 
 			return graphics.init(&window_properties);

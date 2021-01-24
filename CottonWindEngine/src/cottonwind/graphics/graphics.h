@@ -2,8 +2,6 @@
 
 #include <SDL.h>
 
-#include "../math.h"
-
 
 namespace cotwin
 {

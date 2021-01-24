@@ -17,8 +17,8 @@
 class TestMainLayer : public cotwin::Layer
 {
 private:
-	cotwin::Vector4u8 orange_color = { 255, 165, 0 };
-	cotwin::Vector4u8 yellow_color = { 255, 255, 0 };
+	glm::u8vec4 orange_color = { 255, 165, 0, 255 };
+	glm::u8vec4 yellow_color = { 255, 255, 0, 255 };
 
 public:
 	TestMainLayer()
@@ -84,13 +84,13 @@ public:
 
 	void on_window_move(cotwin::WindowEvent* event)
 	{
-		cotwin::Vector2i new_position = event->data.new_position;
+		glm::ivec2 new_position = event->data.new_position;
 		std::cout << "TestGame: window move (" << new_position.x << ", " << new_position.y << ")" << std::endl;
 	}
 
 	void on_window_resize(cotwin::WindowEvent* event)
 	{
-		cotwin::Vector2i new_size = event->data.new_size;
+		glm::ivec2 new_size = event->data.new_size;
 		std::cout << "TestGame: window resize (" << new_size.x << ", " << new_size.y << ")" << std::endl;
 	}
 
@@ -198,7 +198,7 @@ public:
 		//attach_layer(new DubugInfoLayer(graphics));
 
 		enable_vsync();
-		cotwin::Vector4u8 clear_color = { 120, 70, 150, 255 };
+		glm::u8vec4 clear_color = { 120, 70, 150, 255 };
 		set_render_clear_color(clear_color);
 	}
 

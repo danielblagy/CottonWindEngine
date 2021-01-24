@@ -1,7 +1,7 @@
 #pragma once
 
 #include "event.h"
-#include "../math.h"
+#include "../vendor/glm/glm.hpp"
 
 
 namespace cotwin
@@ -14,22 +14,22 @@ namespace cotwin
 			// mouse move
 			struct
 			{
-				Vector2i cursor_position;
-				Vector2i relative_motion;
+				glm::ivec2 cursor_position;
+				glm::ivec2 relative_motion;
 			} move;
 			// mouse button
 			struct
 			{
-				Vector2i cursor_position;
+				glm::ivec2 cursor_position;
 				unsigned int button_code;
 				bool double_clicked;
 			} button;
 			// mouse wheel
-			Vector2i wheel_movement;
+			glm::ivec2 wheel_movement;
 		} data;
 
 	public:
-		MouseEvent(Vector2i cursor_position, Vector2i relative_motion)
+		MouseEvent(glm::ivec2 cursor_position, glm::ivec2 relative_motion)
 		{
 			category = EventCategoryMouse;
 			type = MouseMove;
@@ -37,7 +37,7 @@ namespace cotwin
 			data.move.relative_motion = relative_motion;
 		}
 
-		MouseEvent(EventType s_type, Vector2i cursor_position, unsigned int button_code, bool double_clicked)
+		MouseEvent(EventType s_type, glm::ivec2 cursor_position, unsigned int button_code, bool double_clicked)
 		{
 			category = EventCategoryMouse;
 			type = s_type;
@@ -46,7 +46,7 @@ namespace cotwin
 			data.button.double_clicked = double_clicked;
 		}
 
-		MouseEvent(Vector2i wheel_movement)
+		MouseEvent(glm::ivec2 wheel_movement)
 		{
 			category = EventCategoryMouse;
 			type = MouseMove;
