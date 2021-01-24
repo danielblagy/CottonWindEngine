@@ -10,7 +10,7 @@
 #include "cottonwind/events/event_dispatcher.h"
 
 //#include "cottonwind/scene/scene.h"
-#include "cottonwind/vendor/entt/entt.hpp"
+//#include "cottonwind/vendor/entt/entt.hpp"
 
 
 // layer where the main game logic and render is

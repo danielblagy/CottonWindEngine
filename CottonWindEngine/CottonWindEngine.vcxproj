@@ -90,9 +90,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>D:\work\projects\CottonWindEngine\CottonWindEngine\src\cottonwind\vendor\glad_v3.2_core\include;D:\work\libraries\C++\SDL2-2.0.14\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <RuntimeTypeInfo>
+      </RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>D:\work\libraries\C++\SDL2-2.0.14\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -105,9 +108,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>D:\work\projects\CottonWindEngine\CottonWindEngine\src\cottonwind\vendor\glad_v3.2_core\include;D:\work\libraries\C++\SDL2-2.0.14\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <RuntimeTypeInfo>
+      </RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>D:\work\libraries\C++\SDL2-2.0.14\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -122,9 +128,12 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>D:\work\projects\CottonWindEngine\CottonWindEngine\src\cottonwind\vendor\glad_v3.2_core\include;D:\work\libraries\C++\SDL2-2.0.14\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <RuntimeTypeInfo>
+      </RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -141,9 +150,12 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>D:\work\projects\CottonWindEngine\CottonWindEngine\src\cottonwind\vendor\glad_v3.2_core\include;D:\work\libraries\C++\SDL2-2.0.14\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <RuntimeTypeInfo>
+      </RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
