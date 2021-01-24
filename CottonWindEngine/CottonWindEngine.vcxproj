@@ -92,6 +92,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>D:\work\projects\CottonWindEngine\CottonWindEngine\src\cottonwind\vendor\glad_v3.2_core\include;D:\work\libraries\C++\SDL2-2.0.14\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>D:\work\libraries\C++\SDL2-2.0.14\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -106,6 +107,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>D:\work\projects\CottonWindEngine\CottonWindEngine\src\cottonwind\vendor\glad_v3.2_core\include;D:\work\libraries\C++\SDL2-2.0.14\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>D:\work\libraries\C++\SDL2-2.0.14\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -122,6 +124,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>D:\work\projects\CottonWindEngine\CottonWindEngine\src\cottonwind\vendor\glad_v3.2_core\include;D:\work\libraries\C++\SDL2-2.0.14\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -140,6 +143,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>D:\work\projects\CottonWindEngine\CottonWindEngine\src\cottonwind\vendor\glad_v3.2_core\include;D:\work\libraries\C++\SDL2-2.0.14\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -184,6 +188,8 @@
     <ClInclude Include="src\cottonwind\logger.h" />
     <ClInclude Include="src\cottonwind\math.h" />
     <ClInclude Include="src\cottonwind\graphics\sdl2\renderer_2d.h" />
+    <ClInclude Include="src\cottonwind\scene\scene.h" />
+    <ClInclude Include="src\cottonwind\vendor\entt\entt.hpp" />
     <ClInclude Include="src\cottonwind\vendor\glad_v3.2_core\include\glad\glad.h" />
     <ClInclude Include="src\cottonwind\vendor\glad_v3.2_core\include\KHR\khrplatform.h" />
     <ClInclude Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imconfig.h" />
