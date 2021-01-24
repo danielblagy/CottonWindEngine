@@ -1,7 +1,7 @@
 #include <iostream>
 
 #define CW_DEBUG_MODE_ENABLED 1
-#define CW_GRAPHICS_OPENGL
+#define CW_GRAPHICS_SDL2
 
 #include "cottonwind/game.h"
 #include "cottonwind/input/input.h"
@@ -19,6 +19,10 @@ class TestMainLayer : public cotwin::Layer
 private:
 	glm::u8vec4 orange_color = { 255, 165, 0, 255 };
 	glm::u8vec4 yellow_color = { 255, 255, 0, 255 };
+	glm::u8vec4 gray_color = { 50, 50, 50, 255 };
+
+	glm::ivec2 A_point = { 200, 600 };
+	glm::ivec2 B_point = { 800, 300 };
 
 public:
 	TestMainLayer()
@@ -29,7 +33,7 @@ public:
 	{
 		std::cout << "test main layer on attach" << std::endl;
 		// for OpenGL Renderer2D test
-		cotwin::Renderer2D::init_render_data();
+		//cotwin::Renderer2D::init_render_data();
 	}
 
 	void on_detach() override
@@ -40,11 +44,13 @@ public:
 	void on_update(double delta) override
 	{
 		// for SDL Renderer2D test
-		//cotwin::Renderer2D::draw_rect({ 50, 50, 50, 50 }, orange_color);
-		//cotwin::Renderer2D::fill_rect({ 500, 450, 120, 60 }, yellow_color);
+		cotwin::Renderer2D::draw_rect({ 50, 50, 50, 50 }, orange_color);
+		cotwin::Renderer2D::fill_rect({ 500, 450, 120, 60 }, yellow_color);
+		cotwin::Renderer2D::draw_line(A_point, B_point, gray_color);
+		cotwin::Renderer2D::draw_point(20, 650, {255,0,0,255});
 		
 		// for OpenGL Renderer2D test
-		cotwin::Renderer2D::draw_triangle();
+		//cotwin::Renderer2D::draw_triangle();
 		
 		if (cotwin::Input::is_key_pressed(CW_KEY_F))
 			std::cout << "TestGame: JUMP is pressed!" << std::endl;
