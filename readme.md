@@ -4,7 +4,6 @@ C++ SDL2 OpenGL Header-Only Game Engine/Framework
 ### Core
 - [ ] Scene abstaction (ecs)
 - [ ] Audio
--  
 - [x] Game application framework class
 - [x] Delta time handling
 - [x] VSync handling
@@ -12,6 +11,7 @@ C++ SDL2 OpenGL Header-Only Game Engine/Framework
 - [x] Layers system
 - [x] Input polling
 ### Utility
+- [ ] 2D Camera abstraction
 - [ ] AABB Collision
 - [ ] Random generator
 - [ ] Advanced collision

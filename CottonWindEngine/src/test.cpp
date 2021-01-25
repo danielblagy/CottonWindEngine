@@ -1,5 +1,3 @@
-#include <iostream>
-
 #define CW_DEBUG_MODE_ENABLED 1
 //#define CW_MODERN_OPENGL
 
@@ -24,14 +22,14 @@ public:
 
 	void on_attach() override
 	{
-		std::cout << "test main layer on attach" << std::endl;
+		cotwin::Logger::Trace("test main layer on attach");
 		// for OpenGL Renderer2D test
 		//cotwin::Renderer2D::init_render_data();
 	}
 
 	void on_detach() override
 	{
-		std::cout << "test main layer on detach" << std::endl;
+		cotwin::Logger::Trace("test main layer on detach");
 	}
 
 	void on_update(double delta) override
@@ -46,13 +44,13 @@ public:
 		//cotwin::Renderer2D::draw_triangle();
 		
 		if (cotwin::Input::is_key_pressed(CW_KEY_F))
-			std::cout << "TestGame: JUMP is pressed!" << std::endl;
+			cotwin::Logger::Debug("TestGame: JUMP is pressed!");
 
 		//if (cotwin::Input::is_mouse_button_pressed(CW_MOUSEBUTTON_LEFT))
-		//	std::cout << "TestGame: SHOOT is pressed!" << std::endl;
+			//cotwin::Logger::Debug("TestGame: SHOOT is pressed!");
 
 		//cotwin::Vector2i mouse_position = cotwin::Input::get_mouse_position();
-		//std::cout << "TestGame: Mouse Position (" << mouse_position.x << ", " << mouse_position.y << ")" << std::endl;
+		//cotwin::Logger::Debug("TestGame: Mouse Position (%d, %d)", mouse_position.x, mouse_position.y);;
 	}
 
 	void on_event(cotwin::Event* event) override
@@ -78,39 +76,39 @@ public:
 	void on_app_quit(cotwin::WindowEvent* event)
 	{
 		// for example, save game state to file
-		std::cout << "TestGame: Game is stopping! (ApplicationQuit)" << std::endl;
+		cotwin::Logger::Debug("TestGame: Game is stopping! (ApplicationQuit)");
 	}
 
 	void on_window_move(cotwin::WindowEvent* event)
 	{
 		glm::ivec2 new_position = event->data.new_position;
-		std::cout << "TestGame: window move (" << new_position.x << ", " << new_position.y << ")" << std::endl;
+		cotwin::Logger::Debug("TestGame: window move (%d, %d)", new_position.x, new_position.y);
 	}
 
 	void on_window_resize(cotwin::WindowEvent* event)
 	{
 		glm::ivec2 new_size = event->data.new_size;
-		std::cout << "TestGame: window resize (" << new_size.x << ", " << new_size.y << ")" << std::endl;
+		cotwin::Logger::Debug("TestGame: window resize (%d, %d)", new_size.x, new_size.y);
 	}
 
 	void on_key_press(cotwin::KeyboardEvent* event)
 	{
-		std::cout << "TestGame: " << event->data.key.keyname << " was pressed!" << std::endl;
+		cotwin::Logger::Debug("TestGame: %s was pressed!", event->data.key.keyname);
 	}
 
 	void on_mouse_button_press(cotwin::MouseEvent* event)
 	{
-		std::cout << "TestGame: " << event->data.button.button_code << " mouse button was pressed!" << std::endl;
+		cotwin::Logger::Debug("TestGame: %d mouse button was pressed!", event->data.button.button_code);
 	}
 
 	void on_window_focus(cotwin::WindowEvent* event)
 	{
-		std::cout << "TestGame: window focus gained" << std::endl;
+		cotwin::Logger::Debug("TestGame: window focus gained");
 	}
 
 	void on_window_unfocus(cotwin::WindowEvent* event)
 	{
-		std::cout << "TestGame: window focus lost" << std::endl;
+		cotwin::Logger::Debug("TestGame: window focus lost");
 	}
 
 };
@@ -186,7 +184,7 @@ public:
 	TestGame(cotwin::WindowProperties window_properties)
 		: Game(window_properties)
 	{
-		std::cout << "test game constructor" << std::endl;
+		cotwin::Logger::Trace("test game constructor");
 	}
 
 	void on_init() override
@@ -203,7 +201,7 @@ public:
 
 	void on_destroy() override
 	{
-		std::cout << "test game destroy" << std::endl;
+		cotwin::Logger::Trace("test game destroy");
 	}
 };
 
