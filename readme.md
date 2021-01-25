@@ -2,23 +2,32 @@
 C++ SDL2 OpenGL Header-Only Game Engine/Framework
 ## To Do
 ### Core
+- [ ] Scene abstaction (ecs)
+- [ ] Audio
+-  
 - [x] Game application framework class
 - [x] Delta time handling
 - [x] VSync handling
 - [x] Event system
 - [x] Layers system
 - [x] Input polling
-- [ ] Scene abstaction (ecs)
-- [ ] Audio
 ### Utility
+- [ ] AABB Collision
+- [ ] Random generator
+- [ ] Advanced collision
+- [ ] 2D Physics
+
 - [x] Logger
 - [x] Event dispatcher
 - [x] ImGui Layer (mostly for debugging)
 ### SDL2 Rendering (2D)
-- [x] Render functions for point, line, rect primitives
 - [ ] Render functions for circle, triangle primitives
 - [ ] Texture rendering
 - [ ] Text rendering
+- [ ] Texture resource management
+- [ ] Sprite animation
+
+- [x] Render functions for point, line, rect primitives
 ### Modern OpenGL Rendering
 - [ ] Abstractions for buffers
 - [ ] Shader abstraction
