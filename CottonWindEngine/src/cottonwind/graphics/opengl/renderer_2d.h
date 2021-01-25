@@ -10,6 +10,10 @@ namespace cotwin
 {
 	// Whatever graphics implementation, each Renderer class should have clear() and flush() functions
 	// that follow the same function declaration
+	//
+	// static void clear(const glm::vec4& color)
+	// 
+	// static void flush()
 
 	// OpenGL with SDL2 requires SDL_Window instance to clear/flush
 	class Renderer2D
