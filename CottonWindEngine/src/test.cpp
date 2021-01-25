@@ -15,15 +15,13 @@ private:
 	glm::ivec2 A_point = { 200, 600 };
 	glm::ivec2 B_point = { 800, 300 };
 
-	cotwin::ResourceManager* resource_manager;
+	cotwin::ResourceManager resource_manager;
 	cotwin::Texture test_texture;
 
 public:
-	TestMainLayer(cotwin::ResourceManager* s_resource_manager)
-		: cotwin::Layer("main")
-	{
-		resource_manager = s_resource_manager;
-	}
+	TestMainLayer(cotwin::ResourceManager s_resource_manager)
+		: cotwin::Layer("main"), resource_manager(s_resource_manager)
+	{}
 
 	void on_attach() override
 	{
@@ -31,7 +29,7 @@ public:
 		// for OpenGL Renderer2D test
 		//cotwin::Renderer2D::init_render_data();
 
-		test_texture = resource_manager->load_texture("src/test/resources/textures/test_texture.bmp");
+		test_texture = resource_manager.load_texture("src/test/resources/textures/test_texture.bmp");
 	}
 
 	void on_detach() override
@@ -198,7 +196,7 @@ public:
 
 	void on_init() override
 	{
-		attach_layer(new TestMainLayer(resource_manager));
+		attach_layer(new TestMainLayer(construct_resource_manager()));
 		
 		//cotwin::OpenGLGraphics* graphics = dynamic_cast<cotwin::OpenGLGraphics*>(get_graphics());
 		//attach_layer(new DubugInfoLayer(graphics));

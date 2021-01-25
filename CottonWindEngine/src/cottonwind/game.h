@@ -34,11 +34,8 @@ namespace cotwin
 		OpenGLGraphics graphics;
 #else
 		SDLGraphics graphics;
-	protected:
-		ResourceManager* resource_manager;
 #endif
 	
-	private:
 		LayerStack layer_stack;
 		
 		glm::vec4 clear_color;
@@ -56,8 +53,6 @@ namespace cotwin
 			// since SDL OpenGL render functions require SDL_Window instance, supply it
 			Renderer2D::set_window_instance(graphics.get_window());
 #else
-			resource_manager = new ResourceManager(graphics.get_sdl_renderer());
-			
 			// since SDL render functions require SDL_Render instance, supply it
 			Renderer2D::set_render_instance(graphics.get_sdl_renderer());
 #endif
@@ -115,7 +110,6 @@ namespace cotwin
 			on_destroy();
 			
 			graphics.destroy();
-			delete resource_manager;
 		}
 
 		void attach_layer(Layer* layer)
@@ -167,6 +161,15 @@ namespace cotwin
 		Graphics* get_graphics()
 		{
 			return &graphics;
+		}
+
+		ResourceManager construct_resource_manager()
+		{
+#ifdef CW_MODERN_OPENGL
+			// TODO
+#else
+			return ResourceManager(graphics.get_sdl_renderer());
+#endif
 		}
 
 	private:
