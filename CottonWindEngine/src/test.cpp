@@ -197,6 +197,8 @@ public:
 		enable_vsync();
 		glm::u8vec4 clear_color = { 120, 70, 150, 255 };
 		set_render_clear_color(clear_color);
+
+		cotwin::Texture& test_texture = resource_manager->load_texture("src/test/resources/textures/test_texture.bmp");
 	}
 
 	void on_destroy() override
