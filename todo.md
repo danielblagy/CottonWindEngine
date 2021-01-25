@@ -9,6 +9,7 @@
 - [x] Layers system
 - [x] Input polling
 ## Utility
+- [ ] Resource Manager (textures, audio)
 - [ ] 2D Camera abstraction
 - [ ] AABB Collision
 - [ ] Random generator
@@ -20,9 +21,10 @@
 - [x] ImGui Layer (mostly for debugging)
 ## SDL2 Rendering (2D)
 - [ ] Render functions for circle, triangle primitives
-- [ ] Texture rendering
+- [x] Texture rendering (basic texture struct & render function)
+- [ ] Advanced texture rendering (rotation, color/blend/alpha mod)
 - [ ] Text rendering
-- [ ] Texture resource management
+- [ ] Sprites
 - [ ] Sprite animation
 
 - [x] Render functions for point, line, rect primitives

@@ -115,6 +115,7 @@ namespace cotwin
 			on_destroy();
 			
 			graphics.destroy();
+			delete resource_manager;
 		}
 
 		void attach_layer(Layer* layer)

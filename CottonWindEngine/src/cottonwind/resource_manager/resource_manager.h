@@ -37,6 +37,13 @@ namespace cotwin
 			: renderer_handle(s_renderer_handle)
 		{}
 
+		~ResourceManager()
+		{
+			// TODO : will unordered_map destructor call destructor for Texture ??
+			for (auto i : textures)
+				SDL_DestroyTexture(i.second.texture_handle);
+		}
+
 		Texture& load_texture(const char* filepath)
 		{
 			SDL_Surface* loading_surface = SDL_LoadBMP(filepath);
