@@ -202,7 +202,7 @@
     <ClInclude Include="src\cottonwind\util\logger.h" />
     <ClInclude Include="src\cottonwind\graphics\sdl2\renderer_2d.h" />
     <ClInclude Include="src\cottonwind\scene\scene.h" />
-    <ClInclude Include="src\cottonwind\vendor\entt\entt.hpp" />
+    <ClInclude Include="src\cottonwind\vendor\ecs\ECS.h" />
     <ClInclude Include="src\cottonwind\vendor\glad_v3.2_core\include\glad\glad.h" />
     <ClInclude Include="src\cottonwind\vendor\glad_v3.2_core\include\KHR\khrplatform.h" />
     <ClInclude Include="src\cottonwind\vendor\glm\common.hpp" />

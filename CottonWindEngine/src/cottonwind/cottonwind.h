@@ -15,6 +15,6 @@
 #include "util/logger.h"
 #include "util/event_dispatcher.h"
 
-//#include "scene/scene.h"
+#include "scene/scene.h"
 
 #include "game.h"
