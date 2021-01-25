@@ -1,8 +1,8 @@
 #pragma once
 
-#include "window_event.h"
-#include "keyboard_event.h"
-#include "mouse_event.h"
+#include "../events/window_event.h"
+#include "../events/keyboard_event.h"
+#include "../events/mouse_event.h"
 
 #include <map>
 

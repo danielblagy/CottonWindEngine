@@ -3,7 +3,7 @@
 #include "../graphics.h"
 #include <glad/glad.h>
 
-#include "../../logger.h"
+#include "../../util/logger.h"
 
 
 namespace cotwin

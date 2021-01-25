@@ -12,7 +12,7 @@
 
 #include "imgui/imgui_layer.h"
 
-#include "logger.h"
+#include "util/logger.h"
 
 #ifdef CW_GRAPHICS_SDL2
 #include "graphics/sdl2/renderer_2d.h"

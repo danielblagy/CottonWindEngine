@@ -4,7 +4,7 @@
 
 #include "../vendor/entt/entt.hpp"
 
-#include "../logger.h"
+#include "../util/logger.h"
 
 
 namespace cotwin

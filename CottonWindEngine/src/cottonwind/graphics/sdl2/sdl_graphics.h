@@ -2,7 +2,7 @@
 
 #include "../graphics.h"
 
-#include "../../logger.h"
+#include "../../util/logger.h"
 
 
 namespace cotwin

@@ -176,11 +176,9 @@
     <ClCompile Include="src\test.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\cottonwind\ecs\component.h" />
-    <ClInclude Include="src\cottonwind\ecs\system.h" />
-    <ClInclude Include="src\cottonwind\ecs\entity.h" />
+    <ClInclude Include="src\cottonwind\cottonwind.h" />
     <ClInclude Include="src\cottonwind\events\event.h" />
-    <ClInclude Include="src\cottonwind\events\event_dispatcher.h" />
+    <ClInclude Include="src\cottonwind\util\event_dispatcher.h" />
     <ClInclude Include="src\cottonwind\events\keyboard_event.h" />
     <ClInclude Include="src\cottonwind\events\mouse_event.h" />
     <ClInclude Include="src\cottonwind\events\window_event.h" />
@@ -200,7 +198,7 @@
     <ClInclude Include="src\cottonwind\input\mouse_buttons.h" />
     <ClInclude Include="src\cottonwind\layer\layer.h" />
     <ClInclude Include="src\cottonwind\layer\layer_stack.h" />
-    <ClInclude Include="src\cottonwind\logger.h" />
+    <ClInclude Include="src\cottonwind\util\logger.h" />
     <ClInclude Include="src\cottonwind\graphics\sdl2\renderer_2d.h" />
     <ClInclude Include="src\cottonwind\scene\scene.h" />
     <ClInclude Include="src\cottonwind\vendor\entt\entt.hpp" />

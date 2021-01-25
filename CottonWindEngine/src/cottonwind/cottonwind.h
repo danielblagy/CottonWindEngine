@@ -12,7 +12,8 @@
 #include "input/keymods.h"
 #include "input/mouse_buttons.h"
 
-#include "logger.h"
+#include "util/logger.h"
+#include "util/event_dispatcher.h"
 
 //#include "scene/scene.h"
 

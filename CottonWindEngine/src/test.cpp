@@ -3,14 +3,7 @@
 #define CW_DEBUG_MODE_ENABLED 1
 #define CW_GRAPHICS_SDL2
 
-#include "cottonwind/game.h"
-#include "cottonwind/input/input.h"
-#include "cottonwind/input/keycodes.h"
-#include "cottonwind/input/mouse_buttons.h"
-#include "cottonwind/events/event_dispatcher.h"
-
-//#include "cottonwind/scene/scene.h"
-//#include "cottonwind/vendor/entt/entt.hpp"
+#include "cottonwind/cottonwind.h"
 
 
 // layer where the main game logic and render is
