@@ -178,6 +178,8 @@
   <ItemGroup>
     <ClInclude Include="src\cottonwind\cottonwind.h" />
     <ClInclude Include="src\cottonwind\events\event.h" />
+    <ClInclude Include="src\cottonwind\graphics\sdl2\texture.h" />
+    <ClInclude Include="src\cottonwind\graphics\sdl2\texture_resource_manager.h" />
     <ClInclude Include="src\cottonwind\resource_manager\resource_manager.h" />
     <ClInclude Include="src\cottonwind\util\event_dispatcher.h" />
     <ClInclude Include="src\cottonwind\events\keyboard_event.h" />

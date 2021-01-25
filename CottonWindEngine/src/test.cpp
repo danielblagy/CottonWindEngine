@@ -45,7 +45,7 @@ public:
 		cotwin::Renderer2D::draw_line(A_point, B_point, gray_color);
 		cotwin::Renderer2D::draw_point(20, 650, {255,0,0,255});
 
-		cotwin::Renderer2D::render_texture(test_texture, { 200, 200, test_texture.width, test_texture.height });
+		cotwin::Renderer2D::render_texture(test_texture, { 200, 200, test_texture.get_width(), test_texture.get_height() });
 		
 		// for OpenGL Renderer2D test
 		//cotwin::Renderer2D::draw_triangle();
