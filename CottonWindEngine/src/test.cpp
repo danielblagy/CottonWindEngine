@@ -15,16 +15,23 @@ private:
 	glm::ivec2 A_point = { 200, 600 };
 	glm::ivec2 B_point = { 800, 300 };
 
+	cotwin::ResourceManager* resource_manager;
+	cotwin::Texture test_texture;
+
 public:
-	TestMainLayer()
+	TestMainLayer(cotwin::ResourceManager* s_resource_manager)
 		: cotwin::Layer("main")
-	{}
+	{
+		resource_manager = s_resource_manager;
+	}
 
 	void on_attach() override
 	{
 		cotwin::Logger::Trace("test main layer on attach");
 		// for OpenGL Renderer2D test
 		//cotwin::Renderer2D::init_render_data();
+
+		test_texture = resource_manager->load_texture("src/test/resources/textures/test_texture.bmp");
 	}
 
 	void on_detach() override
@@ -39,6 +46,8 @@ public:
 		cotwin::Renderer2D::fill_rect({ 500, 450, 120, 60 }, yellow_color);
 		cotwin::Renderer2D::draw_line(A_point, B_point, gray_color);
 		cotwin::Renderer2D::draw_point(20, 650, {255,0,0,255});
+
+		cotwin::Renderer2D::render_texture(test_texture, { 200, 200, test_texture.width, test_texture.height });
 		
 		// for OpenGL Renderer2D test
 		//cotwin::Renderer2D::draw_triangle();
@@ -189,7 +198,7 @@ public:
 
 	void on_init() override
 	{
-		attach_layer(new TestMainLayer());
+		attach_layer(new TestMainLayer(resource_manager));
 		
 		//cotwin::OpenGLGraphics* graphics = dynamic_cast<cotwin::OpenGLGraphics*>(get_graphics());
 		//attach_layer(new DubugInfoLayer(graphics));
@@ -197,8 +206,6 @@ public:
 		enable_vsync();
 		glm::u8vec4 clear_color = { 120, 70, 150, 255 };
 		set_render_clear_color(clear_color);
-
-		cotwin::Texture& test_texture = resource_manager->load_texture("src/test/resources/textures/test_texture.bmp");
 	}
 
 	void on_destroy() override

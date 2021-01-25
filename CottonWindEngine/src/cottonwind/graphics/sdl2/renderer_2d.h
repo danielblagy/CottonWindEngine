@@ -4,6 +4,8 @@
 
 #include "../../vendor/glm/glm.hpp"
 
+#include "../../resource_manager/resource_manager.h"
+
 
 namespace cotwin
 {
@@ -86,6 +88,12 @@ namespace cotwin
 			SDL_Rect sdl_rect = { rect.x, rect.y, rect.z, rect.w };
 			SDL_SetRenderDrawColor(renderer, draw_color.r, draw_color.g, draw_color.b, draw_color.a);
 			SDL_RenderFillRect(renderer, &sdl_rect);
+		}
+
+		static void render_texture(const Texture& texture, const glm::ivec4& bounds)
+		{
+			SDL_Rect rect = { bounds[0], bounds[1], bounds[2], bounds[3] };
+			SDL_RenderCopy(renderer, texture.texture_handle, NULL, &rect);
 		}
 	};
 
