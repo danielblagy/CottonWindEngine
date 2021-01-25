@@ -1,8 +1,5 @@
 #pragma once
 
-#include "graphics/sdl2/sdl_graphics.h"
-#include "graphics/opengl/opengl_graphics.h"
-
 #include "events/event.h"
 #include "events/keyboard_event.h"
 #include "events/mouse_event.h"
@@ -10,14 +7,15 @@
 
 #include "layer/layer_stack.h"
 
-#include "imgui/imgui_layer.h"
-
 #include "util/logger.h"
 
-#ifdef CW_GRAPHICS_SDL2
-#include "graphics/sdl2/renderer_2d.h"
-#elif defined CW_GRAPHICS_OPENGL
+#ifdef CW_MODERN_OPENGL
+#include "graphics/opengl/opengl_graphics.h"
 #include "graphics/opengl/renderer_2d.h"
+#include "imgui/imgui_layer.h"
+#else
+#include "graphics/sdl2/sdl_graphics.h"
+#include "graphics/sdl2/renderer_2d.h"
 #endif
 
 
@@ -31,10 +29,10 @@ namespace cotwin
 
 	private:
 // TODO : Simply use generic Graphics class with new ...() for graphics instance, since it will only be created once
-#ifdef CW_GRAPHICS_SDL2
-		SDLGraphics graphics;
-#elif defined CW_GRAPHICS_OPENGL
+#ifdef CW_MODERN_OPENGL
 		OpenGLGraphics graphics;
+#else
+		SDLGraphics graphics;
 #endif
 		
 		LayerStack layer_stack;
@@ -50,12 +48,12 @@ namespace cotwin
 		{
 			running = init(window_properties);
 
-#ifdef CW_GRAPHICS_SDL2
-			// since SDL render functions require SDL_Render instance, supply it
-			Renderer2D::set_render_instance(graphics.get_sdl_renderer());
-#elif defined CW_GRAPHICS_OPENGL
+#ifdef CW_MODERN_OPENGL
 			// since SDL OpenGL render functions require SDL_Window instance, supply it
 			Renderer2D::set_window_instance(graphics.get_window());
+#else
+			// since SDL render functions require SDL_Render instance, supply it
+			Renderer2D::set_render_instance(graphics.get_sdl_renderer());
 #endif
 		}
 

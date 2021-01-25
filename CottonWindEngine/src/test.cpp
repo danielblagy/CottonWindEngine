@@ -1,7 +1,7 @@
 #include <iostream>
 
 #define CW_DEBUG_MODE_ENABLED 1
-#define CW_GRAPHICS_SDL2
+//#define CW_MODERN_OPENGL
 
 #include "cottonwind/cottonwind.h"
 
@@ -115,7 +115,7 @@ public:
 
 };
 
-class DubugInfoLayer : public cotwin::ImGuiLayer
+/*class DubugInfoLayer : public cotwin::ImGuiLayer
 {
 private:
 	// gui state
@@ -178,7 +178,7 @@ public:
 
 		render_imgui_frame();
 	}
-};
+};*/
 
 class TestGame : public cotwin::Game
 {
