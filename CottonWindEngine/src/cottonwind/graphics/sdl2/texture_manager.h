@@ -17,18 +17,28 @@ namespace cotwin
 	class TextureManager
 	{
 	private:
-		static SDL_Renderer * renderer_handle;
-		static std::unordered_map<std::string, Texture> textures;
+		SDL_Renderer* renderer_handle = 0;
+		std::unordered_map<std::string, Texture> textures;
 
 	public:
-		static void free_textures()
+		static TextureManager& get_instance()
 		{
-			// TODO : will unordered_map destructor call destructor for Texture ??
-			for (auto i : textures)
-				SDL_DestroyTexture(i.second.texture_handle);
+			static TextureManager instance;
+			return instance;
 		}
 
 		static Texture& load_texture(const char* filepath)
+		{
+			return get_instance().load_texture_internal(filepath);
+		}
+
+		static Texture& get_texture(const char* filepath)
+		{
+			return get_instance().get_texture_internal(filepath);
+		}
+
+	private:
+		Texture& load_texture_internal(const char* filepath)
 		{
 			SDL_Surface* loading_surface = SDL_LoadBMP(filepath);
 			if (!loading_surface)
@@ -49,7 +59,7 @@ namespace cotwin
 			return textures[filepath];
 		}
 
-		static Texture& get_texture(const char* filepath)
+		Texture& get_texture_internal(const char* filepath)
 		{
 			std::string filepath_str = filepath;
 			if (textures.count(filepath_str))
@@ -58,16 +68,28 @@ namespace cotwin
 			}
 			else
 			{
-				return load_texture(filepath);
+				return load_texture_internal(filepath);
 			}
 		}
 
-	private:
+		static void set_renderer_handle(SDL_Renderer* s_renderer_handle)
+		{
+			get_instance().renderer_handle = s_renderer_handle;
+		}
+
 		TextureManager() {}
+
+		~TextureManager()
+		{
+			// TODO : will unordered_map destructor call destructor for Texture ??
+			for (auto i : textures)
+				SDL_DestroyTexture(i.second.texture_handle);
+		}
+
+		// explicitly disallow copying
+		TextureManager(const TextureManager&) = delete;
+		TextureManager& operator= (const TextureManager&) = delete;
 
 		friend Game;
 	};
-
-	SDL_Renderer* TextureManager::renderer_handle = 0;
-	std::unordered_map<std::string, Texture> TextureManager::textures;
 }

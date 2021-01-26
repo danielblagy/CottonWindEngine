@@ -105,7 +105,7 @@ namespace cotwin
 		{
 			on_destroy();
 			
-			TextureManager::free_textures();
+			//TextureManager::free_textures();
 			
 			graphics.destroy();
 		}
@@ -166,7 +166,7 @@ namespace cotwin
 #ifdef CW_MODERN_OPENGL
 			// TODO
 #else
-			TextureManager::renderer_handle = graphics.get_sdl_renderer();
+			TextureManager::set_renderer_handle(graphics.get_sdl_renderer());
 #endif
 		}
 
