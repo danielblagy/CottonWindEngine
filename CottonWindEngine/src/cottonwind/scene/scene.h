@@ -50,7 +50,7 @@ namespace cotwin
 			return entity;
 		}
 		
-		void on_update(double delta)
+		void on_update(float delta)
 		{}
 	};
 }

@@ -40,7 +40,7 @@ public:
 		cotwin::Logger::Trace("test main layer on detach");
 	}
 
-	void on_update(double delta) override
+	void on_update(float delta) override
 	{
 		// for SDL Renderer2D test
 		cotwin::Renderer2D::draw_rect({ 50, 50, 50, 50 }, orange_color);
@@ -155,7 +155,7 @@ public:
 		show_another_window = false;
 	}
 
-	void on_update(double delta) override
+	void on_update(float delta) override
 	{
 		new_imgui_frame();
 

@@ -34,7 +34,7 @@ namespace cotwin
 		virtual bool init(WindowProperties* window_properties) = 0;
 		virtual void destroy() = 0;
 
-		virtual void enable_vsync(double* delta_cap)
+		virtual void enable_vsync(float* delta_cap)
 		{
 			SDL_DisplayMode display_mode;
 			SDL_GetCurrentDisplayMode(0, &display_mode);
@@ -42,7 +42,7 @@ namespace cotwin
 			*delta_cap = 1.0 / fps;
 		}
 
-		virtual void disable_vsync(double* delta_cap)
+		virtual void disable_vsync(float* delta_cap)
 		{
 			*delta_cap = 0.0;
 		}

@@ -39,7 +39,7 @@ namespace cotwin
 		LayerStack layer_stack;
 		
 		glm::vec4 clear_color;
-		double delta_cap = 0.0;
+		float delta_cap = 0.0;
 
 		unsigned int vertex_array, vertex_buffer, index_buffer;
 
@@ -67,7 +67,7 @@ namespace cotwin
 			on_init();
 			
 			Uint32 last_time = SDL_GetTicks();
-			double accumulated_delta = 0.0;
+			float accumulated_delta = 0.0;
 
 			while (running)
 			{
@@ -76,7 +76,7 @@ namespace cotwin
 				last_time = current_time;
 
 				// time delta in seconds
-				double current_frame_delta = ms_passed / 1000.0;
+				float current_frame_delta = ms_passed / 1000.0;
 
 				accumulated_delta += current_frame_delta;
 
@@ -141,7 +141,7 @@ namespace cotwin
 		}
 		
 		// uncapped by default (if vsync is off)
-		void set_delta_cap(double delta_in_seconds)
+		void set_delta_cap(float delta_in_seconds)
 		{
 			delta_cap = delta_in_seconds;
 		}
