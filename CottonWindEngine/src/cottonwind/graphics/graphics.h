@@ -39,12 +39,12 @@ namespace cotwin
 			SDL_DisplayMode display_mode;
 			SDL_GetCurrentDisplayMode(0, &display_mode);
 			int fps = display_mode.refresh_rate;
-			*delta_cap = 1.0 / fps;
+			*delta_cap = 1.0f / fps;
 		}
 
 		virtual void disable_vsync(float* delta_cap)
 		{
-			*delta_cap = 0.0;
+			*delta_cap = 0.0f;
 		}
 
 	protected:

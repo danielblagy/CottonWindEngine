@@ -14,12 +14,9 @@ private:
 	glm::ivec2 A_point = { 200, 600 };
 	glm::ivec2 B_point = { 800, 300 };
 
-	cotwin::Texture test_texture;
-	cotwin::Sprite player_sprite;
-	
-	cotwin::Texture sensei_running_texture;
-	cotwin::Sprite sensei_sprite;
-	cotwin::Animation* sensei_animation;
+	cotwin::Entity* player_entity;
+
+	cotwin::Scene scene;
 
 public:
 	TestMainLayer()
@@ -32,22 +29,16 @@ public:
 		// for OpenGL Renderer2D test
 		//cotwin::Renderer2D::init_render_data();
 
-		test_texture = cotwin::ResourceManager::load_texture("src/test/resources/textures/test_texture.bmp");
-		sensei_running_texture = cotwin::ResourceManager::load_texture("src/test/resources/textures/sensei_running.bmp");
+		cotwin::Texture test_texture = cotwin::ResourceManager::load_texture("src/test/resources/textures/test_texture.bmp");
 
+		cotwin::Sprite player_sprite;
 		player_sprite.texture = test_texture;
 		player_sprite.texture_rect = { 0, 0, player_sprite.texture.get_width(), player_sprite.texture.get_height() };
 		player_sprite.rect = { 700, 500, 100, 100 };
 
-		sensei_sprite.texture = sensei_running_texture;
-		sensei_sprite.rect = { 800, 500, 100, 100 };
-
-		sensei_animation = new cotwin::Animation(sensei_sprite, 1.0f);
-		for (int i = 0; i < 12; i++)
-		{
-			sensei_animation->add_frame(glm::ivec4{ i * 24, 0, 24, 24 });
-		}
-		sensei_animation->refresh();
+		player_entity = scene.create_entity("player");
+		player_entity->assign<cotwin::TransformComponent>(glm::vec4{ 700, 500, 100, 100 }, glm::vec2{ 0.0f, 0.0f });
+		player_entity->assign<cotwin::SpriteComponent>(player_sprite);
 	}
 
 	void on_detach() override
@@ -62,15 +53,6 @@ public:
 		cotwin::Renderer2D::fill_rect({ 500, 450, 120, 60 }, yellow_color);
 		cotwin::Renderer2D::draw_line(A_point, B_point, gray_color);
 		cotwin::Renderer2D::draw_point(20, 650, {255,0,0,255});
-
-		cotwin::Renderer2D::render_texture(test_texture, { 200, 200, test_texture.get_width(), test_texture.get_height() });
-
-		cotwin::Renderer2D::render_sprite(player_sprite);
-
-		cotwin::Logger::Debug("%d  %d  %d  %d",
-			sensei_sprite.texture_rect.x, sensei_sprite.texture_rect.y, sensei_sprite.texture_rect.z, sensei_sprite.texture_rect.w);
-		sensei_animation->update(delta);
-		cotwin::Renderer2D::render_sprite(sensei_sprite);
 		
 		// for OpenGL Renderer2D test
 		//cotwin::Renderer2D::draw_triangle();
@@ -79,14 +61,32 @@ public:
 			cotwin::Logger::Debug("TestGame: JUMP is pressed!");
 
 		if (cotwin::Input::is_key_pressed(CW_KEY_LEFT))
-			player_sprite.rect.x -= 1;
+		{
+			ECS::ComponentHandle<cotwin::TransformComponent> transform = player_entity->get<cotwin::TransformComponent>();
+			transform.isValid();	// should return true if entity has that component
+			transform->center.x -= 1.0f;
+		}
 		else if (cotwin::Input::is_key_pressed(CW_KEY_RIGHT))
-			player_sprite.rect.x += 1;
+		{
+			ECS::ComponentHandle<cotwin::TransformComponent> transform = player_entity->get<cotwin::TransformComponent>();
+			transform.isValid();	// should return true if entity has that component
+			transform->center.x += 1.0f;
+		}
 		
 		if (cotwin::Input::is_key_pressed(CW_KEY_UP))
-			player_sprite.rect.y -= 1;
+		{
+			ECS::ComponentHandle<cotwin::TransformComponent> transform = player_entity->get<cotwin::TransformComponent>();
+			transform.isValid();	// should return true if entity has that component
+			transform->center.y -= 1.0f;
+		}
 		else if (cotwin::Input::is_key_pressed(CW_KEY_DOWN))
-			player_sprite.rect.y += 1;
+		{
+			ECS::ComponentHandle<cotwin::TransformComponent> transform = player_entity->get<cotwin::TransformComponent>();
+			transform.isValid();	// should return true if entity has that component
+			transform->center.y += 1.0f;
+		}
+
+		scene.on_update(delta);
 
 		//if (cotwin::Input::is_mouse_button_pressed(CW_MOUSEBUTTON_LEFT))
 			//cotwin::Logger::Debug("TestGame: SHOOT is pressed!");

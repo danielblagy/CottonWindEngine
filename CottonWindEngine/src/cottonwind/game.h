@@ -76,7 +76,7 @@ namespace cotwin
 				last_time = current_time;
 
 				// time delta in seconds
-				float current_frame_delta = ms_passed / 1000.0;
+				float current_frame_delta = ms_passed / 1000.0f;
 
 				accumulated_delta += current_frame_delta;
 
@@ -149,7 +149,7 @@ namespace cotwin
 		// uncapped by default (if vsync is off)
 		void set_fps_cap(unsigned int fps)
 		{
-			delta_cap = 1.0 / fps;
+			delta_cap = 1.0f / fps;
 		}
 
 		void set_render_clear_color(glm::vec4 s_clear_color)
