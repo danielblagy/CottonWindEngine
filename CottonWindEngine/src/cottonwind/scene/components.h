@@ -2,7 +2,7 @@
 
 #include "../vendor/glm/glm.hpp"
 
-#include "../graphics/sprite.h"
+#include "../graphics/texture.h"
 
 #include <string>
 
@@ -28,21 +28,24 @@ namespace cotwin
 		TransformComponent()
 		{}
 		
-		TransformComponent(glm::vec2 s_center, glm::vec2 s_velocity)
+		TransformComponent(const glm::vec2& s_center, const glm::vec2& s_velocity)
 			: center(s_center), velocity(s_velocity)
 		{}
 	};
 
 	struct SpriteComponent
 	{
-		// TODO : move sprite data from graphics/sprite.h to this component
-		Sprite sprite;
+		// TODO : maybe make this a pointer
+		Texture texture;
+		glm::ivec4 texture_rect; // x, y, area_width, area_height;
+		glm::ivec4 rect; // x, y, width, height;
+
 		bool active;
 
 		// TODO : add center offset for transform
 
-		SpriteComponent(Sprite s_sprite)
-			: sprite(s_sprite), active(true)
+		SpriteComponent(Texture s_texture, const glm::ivec4& s_texture_rect, const glm::ivec4& s_rect)
+			: texture(s_texture), texture_rect(s_texture_rect), rect(s_rect), active(true)
 		{}
 	};
 }

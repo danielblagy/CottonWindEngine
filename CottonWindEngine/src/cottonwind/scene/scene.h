@@ -39,8 +39,8 @@ namespace cotwin
 			{
 				ent->with<TransformComponent, SpriteComponent>([&](ECS::ComponentHandle<TransformComponent> transform, ECS::ComponentHandle<SpriteComponent> sprite) {
 					// TODO : add center offset to sprite for transform
-					sprite->sprite.rect.x = glm::round(transform->center.x);
-					sprite->sprite.rect.y = glm::round(transform->center.y);
+					sprite->rect.x = glm::round(transform->center.x);
+					sprite->rect.y = glm::round(transform->center.y);
 				});
 			}
 			
@@ -76,7 +76,7 @@ namespace cotwin
 				ent->with<SpriteComponent>([&](ECS::ComponentHandle<SpriteComponent> sprite) {
 					if (sprite->active)
 					{
-						Renderer2D::render_sprite(sprite->sprite);
+						Renderer2D::render_texture(sprite->texture, sprite->texture_rect, sprite->rect);
 					}
 				});
 			}

@@ -31,14 +31,11 @@ public:
 
 		cotwin::Texture test_texture = cotwin::ResourceManager::load_texture("src/test/resources/textures/test_texture.bmp");
 
-		cotwin::Sprite player_sprite;
-		player_sprite.texture = test_texture;
-		player_sprite.texture_rect = { 0, 0, player_sprite.texture.get_width(), player_sprite.texture.get_height() };
-		player_sprite.rect = { 700, 500, 100, 100 };
-
 		player_entity = scene.create_entity("player");
-		player_entity->assign<cotwin::TransformComponent>(glm::vec4{ 700, 500, 100, 100 }, glm::vec2{ 0.0f, 0.0f });
-		player_entity->assign<cotwin::SpriteComponent>(player_sprite);
+		player_entity->assign<cotwin::TransformComponent>(glm::vec4{ 700.0f, 500.0f, 100.0f, 100.0f }, glm::vec2{ 0.0f, 0.0f });
+		player_entity->assign<cotwin::SpriteComponent>(
+			test_texture, glm::ivec4{ 0, 0, test_texture.get_width(), test_texture.get_height() }, glm::ivec4{ 700, 500, 100, 100 }
+		);
 	}
 
 	void on_detach() override

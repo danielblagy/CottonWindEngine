@@ -5,7 +5,6 @@
 #include "../../vendor/glm/glm.hpp"
 
 #include "texture.h"
-#include "../sprite.h"
 
 
 namespace cotwin
@@ -97,11 +96,11 @@ namespace cotwin
 			SDL_RenderCopy(renderer, texture.texture_handle, NULL, &rect);
 		}
 
-		static void render_sprite(const Sprite& sprite)
+		static void render_texture(const Texture& texture, const glm::ivec4& texture_rect, const glm::ivec4& rect)
 		{
-			SDL_Rect texture_rect = { sprite.texture_rect[0], sprite.texture_rect[1], sprite.texture_rect[2], sprite.texture_rect[3] };
-			SDL_Rect sprite_rect = { sprite.rect[0], sprite.rect[1], sprite.rect[2], sprite.rect[3] };
-			SDL_RenderCopy(renderer, sprite.texture.texture_handle, &texture_rect, &sprite_rect);
+			SDL_Rect texture_area_rect = { texture_rect[0], texture_rect[1], texture_rect[2], texture_rect[3] };
+			SDL_Rect sprite_rect = { rect[0], rect[1], rect[2], rect[3] };
+			SDL_RenderCopy(renderer, texture.texture_handle, &texture_area_rect, &sprite_rect);
 		}
 	};
 
