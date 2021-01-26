@@ -16,6 +16,10 @@ private:
 
 	cotwin::Texture test_texture;
 	cotwin::Sprite player_sprite;
+	
+	cotwin::Texture sensei_running_texture;
+	cotwin::Sprite sensei_sprite;
+	cotwin::Animation* sensei_animation;
 
 public:
 	TestMainLayer()
@@ -29,10 +33,21 @@ public:
 		//cotwin::Renderer2D::init_render_data();
 
 		test_texture = cotwin::ResourceManager::load_texture("src/test/resources/textures/test_texture.bmp");
+		sensei_running_texture = cotwin::ResourceManager::load_texture("src/test/resources/textures/sensei_running.bmp");
 
 		player_sprite.texture = test_texture;
 		player_sprite.texture_rect = { 0, 0, player_sprite.texture.get_width(), player_sprite.texture.get_height() };
 		player_sprite.rect = { 700, 500, 100, 100 };
+
+		sensei_sprite.texture = sensei_running_texture;
+		sensei_sprite.rect = { 800, 500, 100, 100 };
+
+		sensei_animation = new cotwin::Animation(sensei_sprite, 1.0f);
+		for (int i = 0; i < 12; i++)
+		{
+			sensei_animation->add_frame(glm::ivec4{ i * 24, 0, 24, 24 });
+		}
+		sensei_animation->refresh();
 	}
 
 	void on_detach() override
@@ -51,6 +66,11 @@ public:
 		cotwin::Renderer2D::render_texture(test_texture, { 200, 200, test_texture.get_width(), test_texture.get_height() });
 
 		cotwin::Renderer2D::render_sprite(player_sprite);
+
+		cotwin::Logger::Debug("%d  %d  %d  %d",
+			sensei_sprite.texture_rect.x, sensei_sprite.texture_rect.y, sensei_sprite.texture_rect.z, sensei_sprite.texture_rect.w);
+		sensei_animation->update(delta);
+		cotwin::Renderer2D::render_sprite(sensei_sprite);
 		
 		// for OpenGL Renderer2D test
 		//cotwin::Renderer2D::draw_triangle();

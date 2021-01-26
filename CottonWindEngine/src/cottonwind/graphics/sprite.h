@@ -2,6 +2,7 @@
 
 #include "texture.h"
 
+
 namespace cotwin
 {
 	struct Sprite
