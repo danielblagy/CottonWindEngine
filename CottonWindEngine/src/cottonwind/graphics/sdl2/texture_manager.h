@@ -12,25 +12,23 @@
 
 namespace cotwin
 {
+	class Game;
+	
 	class TextureManager
 	{
 	private:
-		SDL_Renderer * renderer_handle;
-		std::unordered_map<std::string, Texture> textures;
+		static SDL_Renderer * renderer_handle;
+		static std::unordered_map<std::string, Texture> textures;
 
 	public:
-		TextureManager(SDL_Renderer* s_renderer_handle)
-			: renderer_handle(s_renderer_handle)
-		{}
-
-		~TextureManager()
+		static void free_textures()
 		{
 			// TODO : will unordered_map destructor call destructor for Texture ??
 			for (auto i : textures)
 				SDL_DestroyTexture(i.second.texture_handle);
 		}
 
-		Texture& load_texture(const char* filepath)
+		static Texture& load_texture(const char* filepath)
 		{
 			SDL_Surface* loading_surface = SDL_LoadBMP(filepath);
 			if (!loading_surface)
@@ -51,7 +49,7 @@ namespace cotwin
 			return textures[filepath];
 		}
 
-		Texture& get_texture(const char* filepath)
+		static Texture& get_texture(const char* filepath)
 		{
 			std::string filepath_str = filepath;
 			if (textures.count(filepath_str))
@@ -63,5 +61,13 @@ namespace cotwin
 				return load_texture(filepath);
 			}
 		}
+
+	private:
+		TextureManager() {}
+
+		friend Game;
 	};
+
+	SDL_Renderer* TextureManager::renderer_handle = 0;
+	std::unordered_map<std::string, Texture> TextureManager::textures;
 }

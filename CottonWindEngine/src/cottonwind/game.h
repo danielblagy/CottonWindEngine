@@ -16,7 +16,7 @@
 #else
 #include "graphics/sdl2/sdl_graphics.h"
 #include "graphics/sdl2/renderer_2d.h"
-#include "resource_manager/resource_manager.h"
+#include "graphics/texture.h"
 #endif
 
 
@@ -56,6 +56,8 @@ namespace cotwin
 			// since SDL render functions require SDL_Render instance, supply it
 			Renderer2D::set_render_instance(graphics.get_sdl_renderer());
 #endif
+
+			construct_texture_manager();
 		}
 
 		virtual ~Game() = default;
@@ -108,6 +110,8 @@ namespace cotwin
 		void stop()
 		{
 			on_destroy();
+			
+			TextureManager::free_textures();
 			
 			graphics.destroy();
 		}
@@ -163,12 +167,12 @@ namespace cotwin
 			return &graphics;
 		}
 
-		ResourceManager construct_resource_manager()
+		void construct_texture_manager()
 		{
 #ifdef CW_MODERN_OPENGL
 			// TODO
 #else
-			return ResourceManager(graphics.get_sdl_renderer());
+			TextureManager::renderer_handle = graphics.get_sdl_renderer();
 #endif
 		}
 

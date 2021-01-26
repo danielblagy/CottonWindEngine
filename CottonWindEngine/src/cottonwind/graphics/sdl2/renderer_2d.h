@@ -4,7 +4,7 @@
 
 #include "../../vendor/glm/glm.hpp"
 
-#include "../../resource_manager/resource_manager.h"
+#include "texture.h"
 
 
 namespace cotwin

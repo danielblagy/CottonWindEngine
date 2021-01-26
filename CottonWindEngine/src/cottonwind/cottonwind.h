@@ -17,4 +17,6 @@
 
 #include "scene/scene.h"
 
+#include "resource_manager/resource_manager.h"
+
 #include "game.h"
