@@ -54,8 +54,8 @@ namespace cotwin
 }
 
 #ifdef CW_MODERN_OPENGL
-#include "opengl/opengl_graphics.h"
+#include "opengl/graphics.h"
 #include "../imgui/imgui_layer.h"
 #else
-#include "sdl2/sdl_graphics.h"
+#include "sdl2/graphics.h"
 #endif
