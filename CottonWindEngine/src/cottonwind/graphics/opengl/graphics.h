@@ -3,6 +3,8 @@
 #include "../graphics.h"
 #include <glad/glad.h>
 
+#include "renderer_2d.h"
+
 #include "../../util/logger.h"
 
 
@@ -100,6 +102,9 @@ namespace cotwin
 			SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &opengl_major_version);
 			SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &opengl_minor_version);
 			Logger::Debug("CottonWind\t OpenGL version: %d.%d", opengl_major_version, opengl_minor_version);
+
+			// since SDL OpenGL render functions require SDL_Window instance, supply it
+			Renderer2D::set_window_instance(window);
 
 			return true;
 		}

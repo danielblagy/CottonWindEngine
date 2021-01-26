@@ -12,7 +12,7 @@
 
 namespace cotwin
 {
-	class Game;
+	class SDLGraphics;
 	
 	class TextureManager
 	{
@@ -90,6 +90,6 @@ namespace cotwin
 		TextureManager(const TextureManager&) = delete;
 		TextureManager& operator= (const TextureManager&) = delete;
 
-		friend Game;
+		friend SDLGraphics;
 	};
 }

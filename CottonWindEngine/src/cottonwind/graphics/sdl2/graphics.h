@@ -2,6 +2,9 @@
 
 #include "../graphics.h"
 
+#include "renderer_2d.h"
+#include "texture_manager.h"
+
 #include "../../util/logger.h"
 
 
@@ -68,6 +71,12 @@ namespace cotwin
 				return false;
 			}
 
+			// since SDL render functions require SDL_Render instance, supply it
+			Renderer2D::set_render_instance(renderer);
+
+			// init sdl renderer handle for the SDL TextureManager
+			TextureManager::set_renderer_handle(renderer);
+
 			return true;
 		}
 		
@@ -76,11 +85,6 @@ namespace cotwin
 			SDL_DestroyRenderer(renderer);
 			SDL_DestroyWindow(window);
 			SDL_Quit();
-		}
-
-		SDL_Renderer* get_sdl_renderer()
-		{
-			return renderer;
 		}
 	};
 }
