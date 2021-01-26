@@ -15,6 +15,7 @@ private:
 	glm::ivec2 B_point = { 800, 300 };
 
 	cotwin::Texture test_texture;
+	cotwin::Sprite player_sprite;
 
 public:
 	TestMainLayer()
@@ -28,6 +29,10 @@ public:
 		//cotwin::Renderer2D::init_render_data();
 
 		test_texture = cotwin::ResourceManager::load_texture("src/test/resources/textures/test_texture.bmp");
+
+		player_sprite.texture = test_texture;
+		player_sprite.texture_rect = { 0, 0, player_sprite.texture.get_width(), player_sprite.texture.get_height() };
+		player_sprite.rect = { 700, 500, 100, 100 };
 	}
 
 	void on_detach() override
@@ -44,12 +49,24 @@ public:
 		cotwin::Renderer2D::draw_point(20, 650, {255,0,0,255});
 
 		cotwin::Renderer2D::render_texture(test_texture, { 200, 200, test_texture.get_width(), test_texture.get_height() });
+
+		cotwin::Renderer2D::render_sprite(player_sprite);
 		
 		// for OpenGL Renderer2D test
 		//cotwin::Renderer2D::draw_triangle();
 		
 		if (cotwin::Input::is_key_pressed(CW_KEY_F))
 			cotwin::Logger::Debug("TestGame: JUMP is pressed!");
+
+		if (cotwin::Input::is_key_pressed(CW_KEY_LEFT))
+			player_sprite.rect.x -= 1;
+		else if (cotwin::Input::is_key_pressed(CW_KEY_RIGHT))
+			player_sprite.rect.x += 1;
+		
+		if (cotwin::Input::is_key_pressed(CW_KEY_UP))
+			player_sprite.rect.y -= 1;
+		else if (cotwin::Input::is_key_pressed(CW_KEY_DOWN))
+			player_sprite.rect.y += 1;
 
 		//if (cotwin::Input::is_mouse_button_pressed(CW_MOUSEBUTTON_LEFT))
 			//cotwin::Logger::Debug("TestGame: SHOOT is pressed!");

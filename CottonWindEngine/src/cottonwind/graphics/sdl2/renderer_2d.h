@@ -5,6 +5,7 @@
 #include "../../vendor/glm/glm.hpp"
 
 #include "texture.h"
+#include "../sprite.h"
 
 
 namespace cotwin
@@ -94,6 +95,13 @@ namespace cotwin
 		{
 			SDL_Rect rect = { bounds[0], bounds[1], bounds[2], bounds[3] };
 			SDL_RenderCopy(renderer, texture.texture_handle, NULL, &rect);
+		}
+
+		static void render_sprite(const Sprite& sprite)
+		{
+			SDL_Rect texture_rect = { sprite.texture_rect[0], sprite.texture_rect[1], sprite.texture_rect[2], sprite.texture_rect[3] };
+			SDL_Rect sprite_rect = { sprite.rect[0], sprite.rect[1], sprite.rect[2], sprite.rect[3] };
+			SDL_RenderCopy(renderer, sprite.texture.texture_handle, &texture_rect, &sprite_rect);
 		}
 	};
 
