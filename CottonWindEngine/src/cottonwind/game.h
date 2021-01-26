@@ -9,15 +9,9 @@
 
 #include "util/logger.h"
 
-#ifdef CW_MODERN_OPENGL
-#include "graphics/opengl/opengl_graphics.h"
-#include "graphics/opengl/renderer_2d.h"
-#include "imgui/imgui_layer.h"
-#else
-#include "graphics/sdl2/sdl_graphics.h"
-#include "graphics/sdl2/renderer_2d.h"
+#include "graphics/graphics.h"
+#include "graphics/renderer.h"
 #include "graphics/texture.h"
-#endif
 
 
 namespace cotwin

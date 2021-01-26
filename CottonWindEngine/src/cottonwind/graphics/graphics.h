@@ -52,3 +52,10 @@ namespace cotwin
 		virtual ~Graphics() = default;
 	};
 }
+
+#ifdef CW_MODERN_OPENGL
+#include "opengl/opengl_graphics.h"
+#include "../imgui/imgui_layer.h"
+#else
+#include "sdl2/sdl_graphics.h"
+#endif
