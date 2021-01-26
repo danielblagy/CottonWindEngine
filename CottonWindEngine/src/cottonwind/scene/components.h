@@ -5,6 +5,7 @@
 #include "../graphics/texture.h"
 
 #include <string>
+#include <vector>
 
 
 namespace cotwin
@@ -18,7 +19,7 @@ namespace cotwin
 		{}
 	};
 	
-	// TODO : these components for now are only for 2D
+	// TODO : label these components as 2D ?? (e.g. Transform2DComponent)
 	
 	struct TransformComponent
 	{
@@ -46,6 +47,25 @@ namespace cotwin
 
 		SpriteComponent(Texture s_texture, const glm::ivec4& s_texture_rect, const glm::ivec4& s_rect)
 			: texture(s_texture), texture_rect(s_texture_rect), rect(s_rect), active(true)
+		{}
+	};
+
+	struct AnimationComponent
+	{
+		float frequency;
+		float count;
+		std::vector<glm::ivec4> frames;
+		std::size_t i = 0;
+
+		// NOTE: count in initialized to frequency to force resfresh() in AnimationSystem on init, so that
+		//	sprite component is initialized to a proper texture_rect
+		
+		AnimationComponent(float s_frequency)
+			: frequency(s_frequency), count(s_frequency)
+		{}
+
+		AnimationComponent(float s_frequency, const std::vector<glm::ivec4>& s_frames)
+			: frequency(s_frequency), count(s_frequency), frames(s_frames)
 		{}
 	};
 }

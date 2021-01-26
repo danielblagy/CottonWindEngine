@@ -82,6 +82,48 @@ namespace cotwin
 			}
 		}
 	};
+
+	class AnimationSystem : public ECS::EntitySystem
+	{
+	public:
+		AnimationSystem()
+		{}
+
+		virtual ~AnimationSystem()
+		{}
+
+		virtual void tick(ECS::World* world, float deltaTime) override
+		{
+			for (Entity* ent : world->each<SpriteComponent>())
+			{
+				// TODO : maybe get entities with AnimationComponent, and then check if it has SpriteComponent,
+				//			and if not, log error message
+				ent->with<SpriteComponent, AnimationComponent>([&](
+					ECS::ComponentHandle<SpriteComponent> sprite, ECS::ComponentHandle<AnimationComponent> animation
+				) {
+					if (sprite->active)
+					{
+						animation->count += deltaTime;
+
+						if (animation->count >= animation->frequency)
+						{
+							sprite->texture_rect = animation->frames.at(animation->i);
+							animation->i++;
+							if (animation->i >= animation->frames.size())
+								refresh(animation, sprite);
+							animation->count -= animation->frequency;
+						}
+					}
+				});
+			}
+		}
+
+		void refresh(ECS::ComponentHandle<AnimationComponent> animation, ECS::ComponentHandle<SpriteComponent> sprite)
+		{
+			sprite->texture_rect = animation->frames.at(0);
+			animation->i = 1;
+		}
+	};
 	
 	class Scene
 	{
@@ -93,6 +135,7 @@ namespace cotwin
 		{
 			world = ECS::World::createWorld();
 			world->registerSystem(new TransformSpriteSystem());
+			world->registerSystem(new AnimationSystem());
 			world->registerSystem(new SpriteRenderSystem());
 		}
 

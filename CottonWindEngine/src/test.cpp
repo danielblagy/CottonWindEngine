@@ -15,6 +15,7 @@ private:
 	glm::ivec2 B_point = { 800, 300 };
 
 	cotwin::Entity* player_entity;
+	cotwin::Entity* sensei_entity;
 
 	cotwin::Scene scene;
 
@@ -29,13 +30,27 @@ public:
 		// for OpenGL Renderer2D test
 		//cotwin::Renderer2D::init_render_data();
 
-		cotwin::Texture test_texture = cotwin::ResourceManager::load_texture("src/test/resources/textures/test_texture.bmp");
+		cotwin::Texture& test_texture = cotwin::ResourceManager::load_texture("src/test/resources/textures/test_texture.bmp");
+		cotwin::Texture& sensei_texture = cotwin::ResourceManager::load_texture("src/test/resources/textures/sensei_running.bmp");
 
 		player_entity = scene.create_entity("player");
 		player_entity->assign<cotwin::TransformComponent>(glm::vec4{ 700.0f, 500.0f, 100.0f, 100.0f }, glm::vec2{ 0.0f, 0.0f });
 		player_entity->assign<cotwin::SpriteComponent>(
 			test_texture, glm::ivec4{ 0, 0, test_texture.get_width(), test_texture.get_height() }, glm::ivec4{ 700, 500, 100, 100 }
 		);
+
+		sensei_entity = scene.create_entity("sensei");
+		sensei_entity->assign<cotwin::TransformComponent>(glm::vec4{ 900.0f, 500.0f, 100.0f, 100.0f }, glm::vec2{ 0.0f, 0.0f });
+		sensei_entity->assign<cotwin::SpriteComponent>(
+			// here texture_rect is initialized with zeros, since it will be initialized later on by AnimationSystem
+			sensei_texture, glm::ivec4{ 0, 0, 0, 0 }, glm::ivec4{ 900, 500, 100, 100 }
+		);
+		
+		ECS::ComponentHandle<cotwin::AnimationComponent> animation = sensei_entity->assign<cotwin::AnimationComponent>(1.0f);
+		for (int i = 0; i < 12; i++)
+		{
+			animation->frames.push_back(glm::ivec4{ i * 24, 0, 24, 24 });
+		}
 	}
 
 	void on_detach() override

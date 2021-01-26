@@ -178,7 +178,6 @@
   <ItemGroup>
     <ClInclude Include="src\cottonwind\cottonwind.h" />
     <ClInclude Include="src\cottonwind\events\event.h" />
-    <ClInclude Include="src\cottonwind\graphics\animation.h" />
     <ClInclude Include="src\cottonwind\graphics\renderer.h" />
     <ClInclude Include="src\cottonwind\graphics\sdl2\texture.h" />
     <ClInclude Include="src\cottonwind\graphics\sdl2\texture_manager.h" />
