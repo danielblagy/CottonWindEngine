@@ -15,6 +15,9 @@ namespace cotwin
 	// just do that for now to conceal implementation details
 	typedef ECS::Entity Entity;
 
+	template<typename T>
+	using ComponentHandle = ECS::ComponentHandle<T>; // typedef for ECS::ComponentHandle
+
 	// update sprite's position with transform position
 	class TransformSpriteSystem : public ECS::EntitySystem
 	{

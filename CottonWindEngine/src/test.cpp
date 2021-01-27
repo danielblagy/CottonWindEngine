@@ -47,7 +47,7 @@ public:
 			sensei_texture, glm::ivec4{ 0, 0, 0, 0 }, glm::ivec4{ 900, 500, 100, 100 }
 		);
 		
-		ECS::ComponentHandle<cotwin::AnimationComponent> animation = sensei_entity->assign<cotwin::AnimationComponent>(1.0f);
+		cotwin::ComponentHandle<cotwin::AnimationComponent> animation = sensei_entity->assign<cotwin::AnimationComponent>(1.0f);
 		for (int i = 0; i < 12; i++)
 		{
 			animation->frames.push_back(glm::ivec4{ i * 24, 0, 24, 24 });
@@ -81,26 +81,26 @@ public:
 
 		if (cotwin::Input::is_key_pressed(CW_KEY_LEFT))
 		{
-			ECS::ComponentHandle<cotwin::TransformComponent> transform = player_entity->get<cotwin::TransformComponent>();
+			cotwin::ComponentHandle<cotwin::TransformComponent> transform = player_entity->get<cotwin::TransformComponent>();
 			transform.isValid();	// should return true if entity has that component
 			transform->center.x -= 1.0f;
 		}
 		else if (cotwin::Input::is_key_pressed(CW_KEY_RIGHT))
 		{
-			ECS::ComponentHandle<cotwin::TransformComponent> transform = player_entity->get<cotwin::TransformComponent>();
+			cotwin::ComponentHandle<cotwin::TransformComponent> transform = player_entity->get<cotwin::TransformComponent>();
 			transform.isValid();	// should return true if entity has that component
 			transform->center.x += 1.0f;
 		}
 		
 		if (cotwin::Input::is_key_pressed(CW_KEY_UP))
 		{
-			ECS::ComponentHandle<cotwin::TransformComponent> transform = player_entity->get<cotwin::TransformComponent>();
+			cotwin::ComponentHandle<cotwin::TransformComponent> transform = player_entity->get<cotwin::TransformComponent>();
 			transform.isValid();	// should return true if entity has that component
 			transform->center.y -= 1.0f;
 		}
 		else if (cotwin::Input::is_key_pressed(CW_KEY_DOWN))
 		{
-			ECS::ComponentHandle<cotwin::TransformComponent> transform = player_entity->get<cotwin::TransformComponent>();
+			cotwin::ComponentHandle<cotwin::TransformComponent> transform = player_entity->get<cotwin::TransformComponent>();
 			transform.isValid();	// should return true if entity has that component
 			transform->center.y += 1.0f;
 		}
