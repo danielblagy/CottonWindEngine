@@ -6,6 +6,8 @@
 
 #include "texture.h"
 
+#include <SDL_ttf.h>
+
 
 namespace cotwin
 {
@@ -101,6 +103,37 @@ namespace cotwin
 			SDL_Rect texture_area_rect = { texture_rect[0], texture_rect[1], texture_rect[2], texture_rect[3] };
 			SDL_Rect sprite_rect = { rect[0], rect[1], rect[2], rect[3] };
 			SDL_RenderCopy(renderer, texture.texture_handle, &texture_area_rect, &sprite_rect);
+		}
+
+		static void render_text(const char* text, TTF_Font* font, SDL_Color color)
+		{
+			//Render text surface
+			SDL_Surface* textSurface = TTF_RenderText_Solid(font, text, color);
+			if (textSurface == NULL)
+			{
+				printf("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
+			}
+			else
+			{
+				//Create texture from surface pixels
+				SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, textSurface);
+				if (texture == NULL)
+				{
+					printf("Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError());
+				}
+
+				//Get rid of old surface
+				SDL_FreeSurface(textSurface);
+
+				int texture_width, texture_height;
+				SDL_QueryTexture(texture, NULL, NULL, &texture_width, &texture_height);
+				
+				Texture text_texture = Texture(texture, texture_width, texture_height);
+				
+				render_texture(text_texture, { 0, 0, texture_width, texture_height }, { 200, 200, texture_width, texture_height });
+
+				SDL_DestroyTexture(text_texture.texture_handle);
+			}
 		}
 	};
 
