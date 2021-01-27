@@ -6,7 +6,11 @@
 
 #include "texture.h"
 
-#include <SDL_ttf.h>
+#include "find_sdl_ttf.h"
+
+#ifdef CW_SDL_TTF_AVAILABLE
+#include "font.h"
+#endif
 
 
 namespace cotwin
@@ -105,10 +109,11 @@ namespace cotwin
 			SDL_RenderCopy(renderer, texture.texture_handle, &texture_area_rect, &sprite_rect);
 		}
 
-		static void render_text(const char* text, TTF_Font* font, SDL_Color color)
+#ifdef CW_SDL_TTF_AVAILABLE
+		static void render_text(const char* text, const Font& font, SDL_Color color)
 		{
 			//Render text surface
-			SDL_Surface* textSurface = TTF_RenderText_Solid(font, text, color);
+			SDL_Surface* textSurface = TTF_RenderText_Solid(font.font_handle, text, color);
 			if (textSurface == NULL)
 			{
 				printf("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
@@ -135,6 +140,7 @@ namespace cotwin
 				SDL_DestroyTexture(text_texture.texture_handle);
 			}
 		}
+#endif
 	};
 
 	SDL_Renderer* Renderer2D::renderer = 0;

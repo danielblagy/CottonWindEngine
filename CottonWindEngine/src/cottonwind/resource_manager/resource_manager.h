@@ -9,6 +9,7 @@
 
 #include "../graphics/texture.h"
 #include "../audio/audio.h"
+#include "../graphics/font.h"
 
 
 namespace cotwin
@@ -44,6 +45,16 @@ namespace cotwin
 		static Audio& get_audio(const char* filepath)
 		{
 			return get_instance().get_audio_internal(filepath);
+		}
+
+		static Font& load_font(const char* filepath, int point_size)
+		{
+			return FontManager::load_font(filepath, point_size);
+		}
+
+		static Font& get_font(const char* filepath)
+		{
+			return FontManager::get_font(filepath);
 		}
 
 	private:

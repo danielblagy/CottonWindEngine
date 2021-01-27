@@ -81,7 +81,7 @@ namespace cotwin
 		}
 		
 		virtual void destroy() override
-		{
+		{	
 			SDL_DestroyRenderer(renderer);
 			SDL_DestroyWindow(window);
 			SDL_Quit();

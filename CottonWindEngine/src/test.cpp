@@ -2,9 +2,6 @@
 
 #include "cottonwind/cottonwind.h"
 
-// SDL2_ttf test
-#include <SDL_ttf.h>
-
 
 // layer where the main game logic and render is
 class TestMainLayer : public cotwin::Layer
@@ -22,9 +19,6 @@ private:
 	cotwin::Entity* audio_snap_entity;
 
 	cotwin::Scene scene;
-
-	// SDL2_ttf test
-	TTF_Font* font;
 
 public:
 	TestMainLayer()
@@ -65,32 +59,13 @@ public:
 		audio_snap_entity = scene.create_entity("snapper");
 		audio_snap_entity->assign<cotwin::AudioEffectComponent>(snap_audio);
 
-		// for SDL2_ttf test
-		
-		//Initialize SDL_ttf
-		if (TTF_Init() == -1)
-		{
-			printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
-		}
-
-		//Open the font
-		font = TTF_OpenFont("src/test/resources/fonts/Lato/Lato-Regular.ttf", 28);
-		if (font == NULL)
-		{
-			printf("Failed to load the font SDL_ttf Error: %s\n", TTF_GetError());
-		}
+		// load font
+		cotwin::ResourceManager::load_font("src/test/resources/fonts/Lato/Lato-Regular.ttf", 28);
 	}
 
 	virtual void on_detach() override
 	{
 		cotwin::Logger::Trace("test main layer on detach");
-
-		// for SDL2_ttf test
-		
-		//Free global font
-		TTF_CloseFont(font);
-		
-		TTF_Quit();
 	}
 
 	virtual void on_update(float delta) override
@@ -142,7 +117,11 @@ public:
 		//cotwin::Logger::Debug("TestGame: Mouse Position (%d, %d)", mouse_position.x, mouse_position.y);;
 
 		// for SDL2_ttf test
-		cotwin::Renderer2D::render_text("Hello World! This is CottonWind!", font, {255, 255, 255, 255});
+		cotwin::Renderer2D::render_text(
+			"Hello World! This is CottonWind!",
+			cotwin::ResourceManager::get_font("src/test/resources/fonts/Lato/Lato-Regular.ttf"),
+			{255, 255, 255, 255}
+		);
 	}
 
 	virtual void on_event(cotwin::Event* event) override

@@ -179,7 +179,11 @@
     <ClInclude Include="src\cottonwind\audio\audio.h" />
     <ClInclude Include="src\cottonwind\cottonwind.h" />
     <ClInclude Include="src\cottonwind\events\event.h" />
+    <ClInclude Include="src\cottonwind\graphics\sdl2\find_sdl_ttf.h" />
+    <ClInclude Include="src\cottonwind\graphics\font.h" />
     <ClInclude Include="src\cottonwind\graphics\renderer.h" />
+    <ClInclude Include="src\cottonwind\graphics\sdl2\font.h" />
+    <ClInclude Include="src\cottonwind\graphics\sdl2\font_manager.h" />
     <ClInclude Include="src\cottonwind\graphics\sdl2\texture.h" />
     <ClInclude Include="src\cottonwind\graphics\sdl2\texture_manager.h" />
     <ClInclude Include="src\cottonwind\graphics\texture.h" />
