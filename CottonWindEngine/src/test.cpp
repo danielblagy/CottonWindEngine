@@ -120,7 +120,15 @@ public:
 		cotwin::Renderer2D::render_text(
 			"Hello World! This is CottonWind!",
 			cotwin::ResourceManager::get_font("src/test/resources/fonts/Lato/Lato-Regular.ttf"),
-			{255, 255, 255, 255}
+			{255, 255, 255, 255},
+			{ 200, 200 }
+		);
+
+		cotwin::Renderer2D::render_text(
+			("FPS: " + std::to_string(1.0f / delta) + "  delta: " + std::to_string(delta)).c_str(),
+			cotwin::ResourceManager::get_font("src/test/resources/fonts/Lato/Lato-Regular.ttf"),
+			{ 255, 255, 255, 255 },
+			{ 800, 300 }
 		);
 	}
 
@@ -271,6 +279,7 @@ public:
 		//attach_layer(new DubugInfoLayer(graphics));
 
 		enable_vsync();
+		//set_fps_cap(120);
 		glm::u8vec4 clear_color = { 120, 70, 150, 255 };
 		set_render_clear_color(clear_color);
 	}

@@ -84,8 +84,14 @@ namespace cotwin
 				// update screen with rendering
 				Renderer2D::flush();
 
-				//accumulated_delta = 0.0;
-				accumulated_delta -= delta_cap;
+				if (delta_cap)
+				{
+					accumulated_delta -= delta_cap;
+				}
+				else
+				{
+					accumulated_delta = 0.0f;
+				}
 			}
 
 			stop();

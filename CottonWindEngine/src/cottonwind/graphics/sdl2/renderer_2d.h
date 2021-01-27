@@ -110,7 +110,7 @@ namespace cotwin
 		}
 
 #ifdef CW_SDL_TTF_AVAILABLE
-		static void render_text(const char* text, const Font& font, SDL_Color color)
+		static void render_text(const char* text, const Font& font, SDL_Color color, const glm::ivec2& position)
 		{
 			//Render text surface
 			SDL_Surface* textSurface = TTF_RenderText_Solid(font.font_handle, text, color);
@@ -135,7 +135,11 @@ namespace cotwin
 				
 				Texture text_texture = Texture(texture, texture_width, texture_height);
 				
-				render_texture(text_texture, { 0, 0, texture_width, texture_height }, { 200, 200, texture_width, texture_height });
+				render_texture(
+					text_texture,
+					{ 0, 0, texture_width, texture_height },
+					{ position.x, position.y, texture_width, texture_height }
+				);
 
 				SDL_DestroyTexture(text_texture.texture_handle);
 			}
