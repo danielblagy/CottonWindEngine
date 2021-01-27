@@ -19,6 +19,8 @@ private:
 
 	cotwin::Scene scene;
 
+	cotwin::Audio snap_audio;
+
 public:
 	TestMainLayer()
 		: cotwin::Layer("main")
@@ -51,6 +53,10 @@ public:
 		{
 			animation->frames.push_back(glm::ivec4{ i * 24, 0, 24, 24 });
 		}
+
+		// Audio test
+		snap_audio = cotwin::ResourceManager::load_audio("src/test/resources/audio/snap.wav");
+		snap_audio.play();
 	}
 
 	void on_detach() override
@@ -148,6 +154,9 @@ public:
 	void on_key_press(cotwin::KeyboardEvent* event)
 	{
 		cotwin::Logger::Debug("TestGame: %s was pressed!", event->data.key.keyname);
+
+		if (event->data.key.keycode == CW_KEY_G)
+			cotwin::ResourceManager::get_audio("src/test/resources/audio/snap.wav").play();
 	}
 
 	void on_mouse_button_press(cotwin::MouseEvent* event)

@@ -19,6 +19,4 @@
 
 #include "resource_manager/resource_manager.h"
 
-//#include "graphics/animation.h"
-
 #include "game.h"
