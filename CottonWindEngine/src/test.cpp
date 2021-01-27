@@ -25,7 +25,7 @@ public:
 		: cotwin::Layer("main")
 	{}
 
-	void on_attach() override
+	virtual void on_attach() override
 	{
 		cotwin::Logger::Trace("test main layer on attach");
 		// for OpenGL Renderer2D test
@@ -60,12 +60,12 @@ public:
 		audio_snap_entity->assign<cotwin::AudioEffectComponent>(snap_audio);
 	}
 
-	void on_detach() override
+	virtual void on_detach() override
 	{
 		cotwin::Logger::Trace("test main layer on detach");
 	}
 
-	void on_update(float delta) override
+	virtual void on_update(float delta) override
 	{
 		// for SDL Renderer2D test
 		cotwin::Renderer2D::draw_rect({ 50, 50, 50, 50 }, orange_color);
@@ -114,7 +114,7 @@ public:
 		//cotwin::Logger::Debug("TestGame: Mouse Position (%d, %d)", mouse_position.x, mouse_position.y);;
 	}
 
-	void on_event(cotwin::Event* event) override
+	virtual void on_event(cotwin::Event* event) override
 	{
 		event->processed = true;
 
@@ -192,14 +192,14 @@ public:
 		: ImGuiLayer(graphics)
 	{}
 
-	void on_attach() override
+	virtual void on_attach() override
 	{
 		color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 		show_demo_window = true;
 		show_another_window = false;
 	}
 
-	void on_update(float delta) override
+	virtual void on_update(float delta) override
 	{
 		new_imgui_frame();
 
@@ -253,7 +253,7 @@ public:
 		cotwin::Logger::Trace("test game constructor");
 	}
 
-	void on_init() override
+	virtual void on_init() override
 	{
 		attach_layer(new TestMainLayer());
 		
@@ -265,7 +265,7 @@ public:
 		set_render_clear_color(clear_color);
 	}
 
-	void on_destroy() override
+	virtual void on_destroy() override
 	{
 		cotwin::Logger::Trace("test game destroy");
 	}

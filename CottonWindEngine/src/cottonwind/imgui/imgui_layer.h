@@ -11,6 +11,8 @@
 #include "../events/mouse_event.h"
 #include "../events/keyboard_event.h"
 
+#include "../graphics/opengl/graphics.h"
+
 
 namespace cotwin
 {
@@ -46,7 +48,7 @@ namespace cotwin
 			ImGui_ImplOpenGL3_Init(glsl_version);
 		}
 
-		~ImGuiLayer() override
+		virtual ~ImGuiLayer() override
 		{
 			// imgui cleanup
 			ImGui_ImplOpenGL3_Shutdown();
@@ -69,7 +71,7 @@ namespace cotwin
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		}
 
-		void on_event(Event* event) override
+		virtual void on_event(Event* event) override
 		{
 			//event->processed = ImGui_ImplSDL2_ProcessEvent(sdl_event);
 

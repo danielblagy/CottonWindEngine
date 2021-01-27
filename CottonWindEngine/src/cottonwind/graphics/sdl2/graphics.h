@@ -16,7 +16,7 @@ namespace cotwin
 		SDL_Renderer* renderer;
 
 	public:
-		bool init(WindowProperties* window_properties) override
+		virtual bool init(WindowProperties* window_properties) override
 		{
 			int sdl_init_result = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER);
 
@@ -80,7 +80,7 @@ namespace cotwin
 			return true;
 		}
 		
-		void destroy() override
+		virtual void destroy() override
 		{
 			SDL_DestroyRenderer(renderer);
 			SDL_DestroyWindow(window);

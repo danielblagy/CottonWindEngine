@@ -17,7 +17,7 @@ namespace cotwin
 		const char* glsl_version;
 
 	public:
-		bool init(WindowProperties* window_properties) override
+		virtual bool init(WindowProperties* window_properties) override
 		{
 			// initialize SDL & OpenGL
 
@@ -109,7 +109,7 @@ namespace cotwin
 			return true;
 		}
 
-		void destroy() override
+		virtual void destroy() override
 		{
 			Logger::Trace("CottonWind\t OpenGL & SLD2 Cleanup");
 
@@ -118,13 +118,13 @@ namespace cotwin
 			SDL_Quit();
 		}
 
-		void enable_vsync(float* delta_cap) override
+		virtual void enable_vsync(float* delta_cap) override
 		{
 			*delta_cap = 0.0;
 			SDL_GL_SetSwapInterval(1);
 		}
 
-		void disable_vsync(float* delta_cap) override
+		virtual void disable_vsync(float* delta_cap) override
 		{
 			*delta_cap = 0.0;
 			SDL_GL_SetSwapInterval(0);
