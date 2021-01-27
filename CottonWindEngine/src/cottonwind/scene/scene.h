@@ -94,7 +94,7 @@ namespace cotwin
 
 		virtual void tick(ECS::World* world, float deltaTime) override
 		{
-			for (Entity* ent : world->each<SpriteComponent>())
+			for (Entity* ent : world->each<SpriteComponent, AnimationComponent>())
 			{
 				// TODO : maybe get entities with AnimationComponent, and then check if it has SpriteComponent,
 				//			and if not, log error message
@@ -124,6 +124,30 @@ namespace cotwin
 			animation->i = 1;
 		}
 	};
+
+	class AudioSystem : public ECS::EntitySystem
+	{
+	public:
+		AudioSystem()
+		{}
+
+		virtual ~AudioSystem()
+		{}
+
+		virtual void tick(ECS::World* world, float deltaTime) override
+		{
+			for (Entity* ent : world->each<AudioEffectComponent>())
+			{
+				ent->with<AudioEffectComponent>([&](ECS::ComponentHandle<AudioEffectComponent> audio_effect) {
+					if (audio_effect->play)
+					{
+						audio_effect->audio.play();
+						audio_effect->play = false;
+					}
+				});
+			}
+		}
+	};
 	
 	class Scene
 	{
@@ -137,6 +161,7 @@ namespace cotwin
 			world->registerSystem(new TransformSpriteSystem());
 			world->registerSystem(new AnimationSystem());
 			world->registerSystem(new SpriteRenderSystem());
+			world->registerSystem(new AudioSystem());
 		}
 
 		~Scene()

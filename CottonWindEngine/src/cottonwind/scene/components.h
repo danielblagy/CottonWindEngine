@@ -3,6 +3,7 @@
 #include "../vendor/glm/glm.hpp"
 
 #include "../graphics/texture.h"
+#include "../audio/audio.h"
 
 #include <string>
 #include <vector>
@@ -16,6 +17,16 @@ namespace cotwin
 
 		TagComponent(std::string s_tag)
 			: tag(s_tag)
+		{}
+	};
+
+	struct AudioEffectComponent
+	{
+		Audio audio;
+		bool play;
+
+		AudioEffectComponent(Audio& s_audio)
+			: audio(s_audio), play(false)
 		{}
 	};
 	

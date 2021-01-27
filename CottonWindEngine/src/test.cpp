@@ -16,10 +16,9 @@ private:
 
 	cotwin::Entity* player_entity;
 	cotwin::Entity* sensei_entity;
+	cotwin::Entity* audio_snap_entity;
 
 	cotwin::Scene scene;
-
-	cotwin::Audio snap_audio;
 
 public:
 	TestMainLayer()
@@ -55,8 +54,10 @@ public:
 		}
 
 		// Audio test
-		snap_audio = cotwin::ResourceManager::load_audio("src/test/resources/audio/snap.wav");
-		snap_audio.play();
+		cotwin::Audio& snap_audio = cotwin::ResourceManager::load_audio("src/test/resources/audio/snap.wav");
+		
+		audio_snap_entity = scene.create_entity("snapper");
+		audio_snap_entity->assign<cotwin::AudioEffectComponent>(snap_audio);
 	}
 
 	void on_detach() override
@@ -156,7 +157,9 @@ public:
 		cotwin::Logger::Debug("TestGame: %s was pressed!", event->data.key.keyname);
 
 		if (event->data.key.keycode == CW_KEY_G)
-			cotwin::ResourceManager::get_audio("src/test/resources/audio/snap.wav").play();
+		{
+			audio_snap_entity->get<cotwin::AudioEffectComponent>()->play = true;
+		}
 	}
 
 	void on_mouse_button_press(cotwin::MouseEvent* event)
