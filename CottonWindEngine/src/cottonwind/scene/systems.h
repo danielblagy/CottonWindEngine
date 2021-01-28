@@ -35,29 +35,12 @@ namespace cotwin
 
 		virtual void tick(ECS::World* world, float deltaTime) override
 		{
-			//world->each<TransformComponent, SpriteComponent>([&](
-			//	Entity* ent, ECS::ComponentHandle<TransformComponent> transform, ECS::ComponentHandle<SpriteComponent> sprite
-			//) {
-			//	// TODO : add center offset to sprite for transform
-			//	sprite->sprite.rect.x = glm::round(transform->center.x);
-			//	sprite->sprite.rect.y = glm::round(transform->center.y);
-			//});
-
-			for (Entity* ent : world->each<TransformComponent, SpriteComponent>())
+			for (Entity* ent : world->each<TransformComponent>())
 			{
-				ent->with<TransformComponent, SpriteComponent>([&](ECS::ComponentHandle<TransformComponent> transform, ECS::ComponentHandle<SpriteComponent> sprite) {
-					// TODO : add center offset to sprite for transform
-					sprite->rect.x = glm::round(transform->center.x);
-					sprite->rect.y = glm::round(transform->center.y);
+				ent->with<TransformComponent>([&](ECS::ComponentHandle<TransformComponent> transform) {
+					transform->center += transform->velocity;
 				});
 			}
-
-			/*for (Entity* ent : world->each<Position>())
-			{
-			ent->with<Position>([&](ComponentHandle<Position> position) {
-			position->y += gravityAmount * deltaTime;
-			});
-			}*/
 		}
 	};
 
@@ -85,18 +68,19 @@ namespace cotwin
 			{
 				ComponentHandle<TransformComponent> transform = camera_entity->get<TransformComponent>();
 
-				// TODO : change this to velocity, once TransfromSystem implements it
 				if (Input::is_key_pressed(CW_KEY_A))
-					transform->center.x -= 120.0f * deltaTime;
+					transform->velocity.x = -120.0f * deltaTime;
 				else if (Input::is_key_pressed(CW_KEY_D))
-					transform->center.x += 120.0f * deltaTime;
-				// else transform->velocity.x = 0.0f;
+					transform->velocity.x = 120.0f * deltaTime;
+				else
+					transform->velocity.x = 0.0f;
 
 				if (Input::is_key_pressed(CW_KEY_W))
-					transform->center.y -= 120.0f * deltaTime;
+					transform->velocity.y = -120.0f * deltaTime;
 				else if (Input::is_key_pressed(CW_KEY_S))
-					transform->center.y += 120.0f * deltaTime;
-				// else transform->velocity.y = 0.0f;
+					transform->velocity.y = 120.0f * deltaTime;
+				else
+					transform->velocity.y = 0.0f;
 			}
 		}
 	};
@@ -132,7 +116,9 @@ namespace cotwin
 			
 			for (Entity* ent : world->each<SpriteComponent>())
 			{
-				ent->with<SpriteComponent>([&](ECS::ComponentHandle<SpriteComponent> sprite) {
+				ent->with<TransformComponent, SpriteComponent>([&](
+					ECS::ComponentHandle<TransformComponent> sprite_transform, ECS::ComponentHandle<SpriteComponent> sprite
+				) {
 					if (sprite->active)
 					{
 						if (camera_entity)
@@ -146,34 +132,37 @@ namespace cotwin
 								camera_transform->center.x + camera->bounds.x / 2,
 								camera_transform->center.y + camera->bounds.y / 2
 							);
+
+							//Logger::Debug("%d  %d  %d  %d", render_camera.left, render_camera.top, render_camera.right, render_camera.bottom);
 							
 							// convert sprite->rect to rect with left, top, right, bottom
 							glm::ivec4 sprite_rect = {
-								sprite->rect[0],
-								sprite->rect[1],
-								sprite->rect[0] + sprite->rect[2],
-								sprite->rect[1] + sprite->rect[3]
+								sprite_transform->center.x,
+								sprite_transform->center.y,
+								sprite_transform->center.x + sprite->size.x,
+								sprite_transform->center.y + sprite->size.y,
 							};
 							
 							if (render_camera.captures(sprite_rect))
 							{
-								int camera_offset_x = sprite->rect.x + sprite->rect[2] / 2 - camera_transform->center.x;
-								int camera_offset_y = sprite->rect.y + sprite->rect[3] / 2 - camera_transform->center.y;
+								glm::ivec2 sprite_relative_position = {
+									sprite_rect.x - render_camera.left,
+									sprite_rect.y - render_camera.top
+								};
 
-								glm::ivec4 relative_rect = {
-									sprite->rect.x + camera_offset_x,
-									sprite->rect.y + camera_offset_y,
-									sprite->rect[2],
-									sprite->rect[3]
+								// TODO : scale sprites based on the camera bounds
+								glm::ivec2 sprite_relative_size = {
+									sprite->size.x,
+									sprite->size.y
 								};
 								
-								Renderer2D::render_texture(sprite->texture, sprite->texture_rect, relative_rect);
+								Renderer2D::render_texture(sprite->texture, sprite->texture_rect, sprite_relative_position, sprite_relative_size);
 								sprites_drawn++;
 							}
 						}
 						else
 						{
-							Renderer2D::render_texture(sprite->texture, sprite->texture_rect, sprite->rect);
+							Renderer2D::render_texture(sprite->texture, sprite->texture_rect, sprite_transform->center, sprite->size);
 							sprites_drawn++;
 						}
 					}

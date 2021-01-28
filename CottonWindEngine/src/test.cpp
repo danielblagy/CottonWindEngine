@@ -32,14 +32,14 @@ public:
 		player_entity = scene.create_entity("player");
 		player_entity->assign<cotwin::TransformComponent>(glm::vec2{ 700.0f, 500.0f }, glm::vec2{ 0.0f, 0.0f });
 		player_entity->assign<cotwin::SpriteComponent>(
-			test_texture, glm::ivec4{ 0, 0, test_texture.get_width(), test_texture.get_height() }, glm::ivec4{ 700, 500, 100, 100 }
+			test_texture, glm::ivec4{ 0, 0, test_texture.get_width(), test_texture.get_height() }, glm::ivec2{ 100, 100 }
 		);
 
 		sensei_entity = scene.create_entity("sensei");
 		sensei_entity->assign<cotwin::TransformComponent>(glm::vec2{ 900.0f, 500.0f }, glm::vec2{ 0.0f, 0.0f });
 		sensei_entity->assign<cotwin::SpriteComponent>(
 			// here texture_rect is initialized with zeros, since it will be initialized later on by AnimationSystem
-			sensei_texture, glm::ivec4{ 0, 0, 0, 0 }, glm::ivec4{ 900, 500, 100, 100 }
+			sensei_texture, glm::ivec4{ 0, 0, 0, 0 }, glm::ivec2{ 100, 100 }
 		);
 		
 		cotwin::ComponentHandle<cotwin::AnimationComponent> animation = sensei_entity->assign<cotwin::AnimationComponent>(1.0f);

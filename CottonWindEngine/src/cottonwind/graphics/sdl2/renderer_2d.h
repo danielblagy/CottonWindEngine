@@ -118,10 +118,10 @@ namespace cotwin
 			SDL_RenderCopy(renderer, texture.texture_handle, NULL, &rect);
 		}
 
-		static void render_texture(const Texture& texture, const glm::ivec4& texture_rect, const glm::ivec4& rect)
+		static void render_texture(const Texture& texture, const glm::ivec4& texture_rect, const glm::ivec2& position, const glm::ivec2& size)
 		{
 			SDL_Rect texture_area_rect = { texture_rect[0], texture_rect[1], texture_rect[2], texture_rect[3] };
-			SDL_Rect sprite_rect = { rect[0], rect[1], rect[2], rect[3] };
+			SDL_Rect sprite_rect = { position.x, position.y, size.x, size.y };
 			SDL_RenderCopy(renderer, texture.texture_handle, &texture_area_rect, &sprite_rect);
 		}
 
@@ -154,7 +154,7 @@ namespace cotwin
 				render_texture(
 					text_texture,
 					{ 0, 0, texture_width, texture_height },
-					{ position.x, position.y, texture_width, texture_height }
+					{ position.x, position.y }, { texture_width, texture_height	}
 				);
 
 				SDL_DestroyTexture(text_texture.texture_handle);

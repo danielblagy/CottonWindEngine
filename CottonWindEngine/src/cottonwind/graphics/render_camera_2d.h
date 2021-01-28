@@ -22,7 +22,7 @@ namespace cotwin
 
 		bool captures(int rect_left, int rect_top, int rect_right, int rect_bottom)
 		{
-			return (rect_right > left || rect_left < right) && (rect_bottom > top || rect_top < bottom);
+			return (rect_right > left && rect_left < right) && (rect_bottom > top && rect_top < bottom);
 		}
 		
 		// rect is left, top, right, bottom, *NOT* left, top, width, height
