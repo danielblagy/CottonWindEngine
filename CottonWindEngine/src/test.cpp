@@ -15,6 +15,9 @@ private:
 
 	cotwin::Scene scene;
 
+	cotwin::Text test_text;
+	cotwin::Text fps_text;
+
 public:
 	TestMainLayer()
 		: cotwin::Layer("main")
@@ -56,6 +59,22 @@ public:
 
 		// load font
 		cotwin::ResourceManager::load_font("src/test/resources/fonts/Lato/Lato-Regular.ttf", 28);
+
+		// init once, not on each update
+		test_text = cotwin::Text(
+			"Hello World! This is Cotton Wind!",
+			cotwin::ResourceManager::get_font("src/test/resources/fonts/Lato/Lato-Regular.ttf"),
+			{ 255, 255, 255, 255 },
+			{ 200, 200 }
+		);
+
+		// init once, but a new text will be set in on_update
+		fps_text = cotwin::Text(
+			"FPS: ",
+			cotwin::ResourceManager::get_font("src/test/resources/fonts/Lato/Lato-Regular.ttf"),
+			{ 255, 255, 255, 255 },
+			{ 800, 300 }
+		);
 
 		camera_entity = scene.create_entity("primary camera");
 		camera_entity->assign<cotwin::TransformComponent>(glm::vec2{ 1280.0f / 2.0f, 720.0f / 2.0f }, glm::vec2{ 0.0f, 0.0f });
@@ -101,34 +120,23 @@ public:
 
 		scene.on_update(delta);
 
-		// for SDL2_ttf test
-		cotwin::Renderer2D::render_text(
-			"Hello World! This is CottonWind!",
-			cotwin::ResourceManager::get_font("src/test/resources/fonts/Lato/Lato-Regular.ttf"),
-			{255, 255, 255, 255},
-			{ 200, 200 }
-		);
+		cotwin::Renderer2D::render_text(test_text);
 
 		// update fps count every second
 
 		static float seconds_passed = 0.0f;
 		static int fps_count = 0;
-		static int fps_display = 0;
 		seconds_passed += delta;
 		fps_count++;
 		if (seconds_passed >= 1.0f)
 		{
-			fps_display = fps_count;
+			fps_text.set_text("FPS: " + std::to_string(fps_count));
+			
 			fps_count = 0;
 			seconds_passed -= 1.0f;
 		}
 
-		cotwin::Renderer2D::render_text(
-			("FPS: " + std::to_string(fps_display)).c_str(),
-			cotwin::ResourceManager::get_font("src/test/resources/fonts/Lato/Lato-Regular.ttf"),
-			{ 255, 255, 255, 255 },
-			{ 800, 300 }
-		);
+		cotwin::Renderer2D::render_text(fps_text);
 	}
 
 	virtual void on_event(cotwin::Event* event) override

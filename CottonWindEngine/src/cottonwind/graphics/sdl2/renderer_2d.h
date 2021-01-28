@@ -129,10 +129,42 @@ namespace cotwin
 #ifdef CW_SDL_TTF_AVAILABLE
 		static void render_text(Text& text)
 		{
+			if (text.text_texture.texture_handle == NULL)
+			{
+				//Render text surface
+				SDL_Color sdl_text_color = { text.color[0], text.color[1], text.color[2], text.color[3] };
+				SDL_Surface* textSurface = TTF_RenderText_Solid(text.font.font_handle, text.text.c_str(), sdl_text_color);
+				if (textSurface == NULL)
+				{
+					Logger::Error("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
+				}
+				else
+				{
+					//Create texture from surface pixels
+					SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, textSurface);
+					if (texture == NULL)
+					{
+						Logger::Error("Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError());
+					}
+
+					//Get rid of old surface
+					SDL_FreeSurface(textSurface);
+
+					int texture_width, texture_height;
+					SDL_QueryTexture(texture, NULL, NULL, &texture_width, &texture_height);
+
+					text.text_texture = Texture(texture, texture_width, texture_height);
+
+					// if size was not set by the user
+					if (text.size.x == 0 || text.size.y == 0)
+					{
+						text.size = { texture_width, texture_height };
+					}
+				}
+			}
+
 			render_texture(text.text_texture, { 0, 0, text.text_texture.width, text.text_texture.height }, text.position, text.size);
 		}
-
-		friend Text;
 #endif
 	};
 

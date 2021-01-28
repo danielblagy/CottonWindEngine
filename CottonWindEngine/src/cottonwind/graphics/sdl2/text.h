@@ -7,54 +7,82 @@
 #include <SDL.h>
 #include "font.h"
 #include "texture.h"
-#include "renderer_2d.h"
+
+#include <string>
 
 
 namespace cotwin
 {
+	class Renderer2D;
+	
 	class Text
 	{
 	private:
-		const char* text;
+		std::string text;
 		Font font;
-		SDL_Color color;
+		glm::ivec4 color;
 		glm::ivec2 position;
 		glm::ivec2 size;
 
 		Texture text_texture;
 
 	public:
-		Text(const char* s_text, const Font& s_font, SDL_Color s_color, const glm::ivec2& s_position, const glm::ivec2& s_size)
-			: text(s_text), font(s_font), color(s_color), position(s_position), size(s_size)
-		{
-			//Render text surface
-			SDL_Surface* textSurface = TTF_RenderText_Solid(font.font_handle, text, color);
-			if (textSurface == NULL)
-			{
-				Logger::Error("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
-			}
-			else
-			{
-				//Create texture from surface pixels
-				SDL_Texture* texture = SDL_CreateTextureFromSurface(Renderer2D::renderer, textSurface);
-				if (texture == NULL)
-				{
-					Logger::Error("Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError());
-				}
-
-				//Get rid of old surface
-				SDL_FreeSurface(textSurface);
-
-				int texture_width, texture_height;
-				SDL_QueryTexture(texture, NULL, NULL, &texture_width, &texture_height);
-
-				text_texture = Texture(texture, size.x, size.y);
-			}
-		}
+		Text()
+			: text("")
+		{}
+		
+		Text(std::string s_text, const Font& s_font, const glm::ivec4& s_color, const glm::ivec2& s_position)
+			: text(s_text), font(s_font), color(s_color), position(s_position), size(), text_texture()
+		{}
+		
+		Text(std::string s_text, const Font& s_font, const glm::ivec4& s_color, const glm::ivec2& s_position, const glm::ivec2& s_size)
+			: text(s_text), font(s_font), color(s_color), position(s_position), size(s_size), text_texture()
+		{}
 
 		~Text()
 		{
+			free_texture();
+		}
+
+		inline std::string get_text() { return text; }
+		inline Font get_font() { return font; }
+		inline glm::ivec4 get_color() { return color; }
+		inline glm::ivec2 get_position() { return position; }
+		inline glm::ivec2 get_size() { return size; }
+
+		void set_text(std::string s_text)
+		{
+			text = s_text;
+			free_texture();
+		}
+
+		void set_font(const Font& s_font)
+		{
+			font = s_font;
+			free_texture();
+		}
+
+		void set_color(const glm::ivec4& s_color)
+		{
+			color = s_color;
+			free_texture();
+		}
+
+		inline void set_position(const glm::ivec2& s_position)
+		{
+			position = s_position;
+		}
+
+		inline void set_size(const glm::ivec2& s_size)
+		{
+			size = s_size;
+		}
+
+	private:
+		void free_texture()
+		{
 			SDL_DestroyTexture(text_texture.texture_handle);
+			text_texture = Texture();
 		}
 
 		friend Renderer2D;
