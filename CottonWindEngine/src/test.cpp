@@ -295,7 +295,7 @@ public:
 		enable_vsync();
 		//set_fps_cap(120);
 		glm::u8vec4 clear_color = { 120, 70, 150, 255 };
-		set_render_clear_color(clear_color);
+		cotwin::Renderer2D::set_clear_color(clear_color);
 	}
 
 	virtual void on_destroy() override

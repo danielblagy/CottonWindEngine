@@ -27,21 +27,37 @@ namespace cotwin
 	{
 	private:
 		static SDL_Renderer* renderer;
+		static glm::vec4 clear_color;
 	
 	public:
 		static void set_render_instance(SDL_Renderer* s_renderer)
 		{
 			renderer = s_renderer;
 		}
+
+		static void set_clear_color(const glm::vec4& s_clear_color)
+		{
+			clear_color = s_clear_color;
+		}
+
+		static void set_clear_color(const glm::u8vec4 s_clear_color)
+		{
+			clear_color = { 
+				(float)s_clear_color.r / 255.0f,
+				(float)s_clear_color.g / 255.0f,
+				(float)s_clear_color.b / 255.0f,
+				(float)s_clear_color.a / 255.0f 
+			};
+		}
 		
-		static void clear(glm::vec4& color)
+		static void clear()
 		{
 			SDL_SetRenderDrawColor(
 				renderer,
-				unsigned int(color.r * 255.0f),
-				unsigned int(color.g * 255.0f),
-				unsigned int(color.b * 255.0f),
-				unsigned int(color.a * 255.0f)
+				unsigned int(clear_color.r * 255.0f),
+				unsigned int(clear_color.g * 255.0f),
+				unsigned int(clear_color.b * 255.0f),
+				unsigned int(clear_color.a * 255.0f)
 			);
 			SDL_RenderClear(renderer);
 		}
@@ -148,4 +164,6 @@ namespace cotwin
 	};
 
 	SDL_Renderer* Renderer2D::renderer = 0;
+	// TODO : make Renderer2D a singleton, put this init into constructor
+	glm::vec4 Renderer2D::clear_color = { 0.0f, 0.0f, 0.0f, 1.0f };	// black by default
 }
