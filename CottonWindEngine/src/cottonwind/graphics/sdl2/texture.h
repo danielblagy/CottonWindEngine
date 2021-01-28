@@ -9,6 +9,7 @@ namespace cotwin
 {
 	class TextureManager;
 	class Renderer2D;
+	class Text;
 
 	class Texture
 	{
@@ -42,5 +43,6 @@ namespace cotwin
 
 		friend TextureManager;
 		friend Renderer2D;
+		friend Text;
 	};
 }

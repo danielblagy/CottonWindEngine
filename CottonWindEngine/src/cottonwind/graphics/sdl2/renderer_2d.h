@@ -10,6 +10,7 @@
 
 #ifdef CW_SDL_TTF_AVAILABLE
 #include "font.h"
+#include "text.h"
 #endif
 
 
@@ -126,40 +127,12 @@ namespace cotwin
 		}
 
 #ifdef CW_SDL_TTF_AVAILABLE
-		static void render_text(const char* text, const Font& font, SDL_Color color, const glm::ivec2& position)
+		static void render_text(Text& text)
 		{
-			//Render text surface
-			SDL_Surface* textSurface = TTF_RenderText_Solid(font.font_handle, text, color);
-			if (textSurface == NULL)
-			{
-				printf("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
-			}
-			else
-			{
-				//Create texture from surface pixels
-				SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, textSurface);
-				if (texture == NULL)
-				{
-					printf("Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError());
-				}
-
-				//Get rid of old surface
-				SDL_FreeSurface(textSurface);
-
-				int texture_width, texture_height;
-				SDL_QueryTexture(texture, NULL, NULL, &texture_width, &texture_height);
-				
-				Texture text_texture = Texture(texture, texture_width, texture_height);
-				
-				render_texture(
-					text_texture,
-					{ 0, 0, texture_width, texture_height },
-					{ position.x, position.y }, { texture_width, texture_height	}
-				);
-
-				SDL_DestroyTexture(text_texture.texture_handle);
-			}
+			render_texture(text.text_texture, { 0, 0, text.text_texture.width, text.text_texture.height }, text.position, text.size);
 		}
+
+		friend Text;
 #endif
 	};
 

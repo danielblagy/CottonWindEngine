@@ -185,8 +185,10 @@
     <ClInclude Include="src\cottonwind\graphics\renderer.h" />
     <ClInclude Include="src\cottonwind\graphics\sdl2\font.h" />
     <ClInclude Include="src\cottonwind\graphics\sdl2\font_manager.h" />
+    <ClInclude Include="src\cottonwind\graphics\sdl2\text.h" />
     <ClInclude Include="src\cottonwind\graphics\sdl2\texture.h" />
     <ClInclude Include="src\cottonwind\graphics\sdl2\texture_manager.h" />
+    <ClInclude Include="src\cottonwind\graphics\text.h" />
     <ClInclude Include="src\cottonwind\graphics\texture.h" />
     <ClInclude Include="src\cottonwind\resource_manager\resource_manager.h" />
     <ClInclude Include="src\cottonwind\scene\components.h" />

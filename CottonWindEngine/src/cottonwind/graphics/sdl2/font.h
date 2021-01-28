@@ -7,6 +7,7 @@ namespace cotwin
 {
 	class FontManager;
 	class Renderer2D;
+	class Text;
 
 	class Font
 	{
@@ -25,5 +26,6 @@ namespace cotwin
 
 		friend FontManager;
 		friend Renderer2D;
+		friend Text;
 	};
 }
