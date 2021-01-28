@@ -45,6 +45,16 @@ namespace cotwin
 		{}
 	};
 
+	struct CameraComponent
+	{
+		// width & height of 2D camera
+		glm::ivec2 bounds;
+
+		CameraComponent(const glm::ivec2& s_bounds)
+			: bounds(s_bounds)
+		{}
+	};
+
 	struct SpriteComponent
 	{
 		// TODO : maybe make this a pointer

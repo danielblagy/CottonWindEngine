@@ -6,6 +6,8 @@
 
 #include "../util/logger.h"
 
+#include "../graphics/render_camera_2d.h"
+
 // TODO : (for SpriteComponent test), make this graphics api-independent
 #include "../graphics/sdl2/renderer_2d.h"
 
@@ -74,12 +76,48 @@ namespace cotwin
 			//	}
 			//});
 
+			Entity* camera_entity = 0;
+			auto camera_entity_iterator = world->each<TransformComponent, CameraComponent>().begin();
+			
+			// check if the registry has an entity with a CameraComponent
+			if (camera_entity_iterator.isEnd() != true)
+			{
+				camera_entity = world->getByIndex(camera_entity_iterator.getIndex());
+			}
+
 			for (Entity* ent : world->each<SpriteComponent>())
 			{
 				ent->with<SpriteComponent>([&](ECS::ComponentHandle<SpriteComponent> sprite) {
 					if (sprite->active)
 					{
-						Renderer2D::render_texture(sprite->texture, sprite->texture_rect, sprite->rect);
+						if (camera_entity)
+						{
+							ComponentHandle<TransformComponent> transform = camera_entity->get<TransformComponent>();
+							ComponentHandle<CameraComponent> camera = camera_entity->get<CameraComponent>();
+
+							RenderCamera render_camera(
+								transform->center.x - camera->bounds.x / 2,
+								transform->center.y - camera->bounds.y / 2,
+								transform->center.x + camera->bounds.x / 2,
+								transform->center.y + camera->bounds.y / 2
+							);
+							
+							if (
+								render_camera.captures(
+									sprite->rect[0],
+									sprite->rect[1],
+									sprite->rect[0] + sprite->rect[2],
+									sprite->rect[1] + sprite->rect[3]
+									)
+								)
+							{
+								Renderer2D::render_texture(sprite->texture, sprite->texture_rect, sprite->rect);
+							}
+						}
+						else
+						{
+							Renderer2D::render_texture(sprite->texture, sprite->texture_rect, sprite->rect);
+						}
 					}
 				});
 			}

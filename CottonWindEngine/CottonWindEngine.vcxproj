@@ -179,6 +179,7 @@
     <ClInclude Include="src\cottonwind\audio\audio.h" />
     <ClInclude Include="src\cottonwind\cottonwind.h" />
     <ClInclude Include="src\cottonwind\events\event.h" />
+    <ClInclude Include="src\cottonwind\graphics\render_camera_2d.h" />
     <ClInclude Include="src\cottonwind\graphics\sdl2\find_sdl_ttf.h" />
     <ClInclude Include="src\cottonwind\graphics\font.h" />
     <ClInclude Include="src\cottonwind\graphics\renderer.h" />
