@@ -124,8 +124,22 @@ public:
 			{ 200, 200 }
 		);
 
+		// updated fps count every second
+
+		static float seconds_passed = 0.0f;
+		static int fps_count = 0;
+		static int fps_display = 0;
+		seconds_passed += delta;
+		fps_count++;
+		if (seconds_passed >= 1.0f)
+		{
+			fps_display = fps_count;
+			fps_count = 0;
+			seconds_passed -= 1.0f;
+		}
+
 		cotwin::Renderer2D::render_text(
-			("FPS: " + std::to_string(1.0f / delta) + "  delta: " + std::to_string(delta)).c_str(),
+			("FPS: " + std::to_string(fps_display)).c_str(),
 			cotwin::ResourceManager::get_font("src/test/resources/fonts/Lato/Lato-Regular.ttf"),
 			{ 255, 255, 255, 255 },
 			{ 800, 300 }

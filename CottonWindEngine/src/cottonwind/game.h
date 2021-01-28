@@ -52,6 +52,8 @@ namespace cotwin
 			
 			Uint32 last_time = SDL_GetTicks();
 			float accumulated_delta = 0.0;
+			Uint32 time_passed = 0;
+			int fps_count = 0;
 
 			while (running)
 			{
@@ -64,10 +66,21 @@ namespace cotwin
 
 				accumulated_delta += current_frame_delta;
 
+				time_passed += ms_passed;
+
 				if (delta_cap > accumulated_delta)
 				{
 					continue;
 				}
+
+				if (time_passed >= 1000)
+				{
+					Logger::Debug("fps: %d", fps_count);
+					fps_count = 0;
+					time_passed -= 1000;
+				}
+
+				fps_count++;
 				
 				handle_sdl_events();
 
