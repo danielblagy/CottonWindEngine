@@ -28,7 +28,7 @@ namespace cotwin
 		// rect is left, top, right, bottom, *NOT* left, top, width, height
 		bool captures(const glm::ivec4& rect)
 		{
-			return (rect[2] > left || rect[0] < right) && (rect[3] > top || rect[1] < bottom);
+			return (rect[2] > left && rect[0] < right) && (rect[3] > top && rect[1] < bottom);
 		}
 	};
 }

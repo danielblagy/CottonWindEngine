@@ -11,6 +11,8 @@ private:
 	cotwin::Entity* sensei_entity;
 	cotwin::Entity* audio_snap_entity;
 
+	cotwin::Entity* camera_entity;
+
 	cotwin::Scene scene;
 
 public:
@@ -28,13 +30,13 @@ public:
 		cotwin::Texture& sensei_texture = cotwin::ResourceManager::load_texture("src/test/resources/textures/sensei_running.bmp");
 
 		player_entity = scene.create_entity("player");
-		player_entity->assign<cotwin::TransformComponent>(glm::vec4{ 700.0f, 500.0f, 100.0f, 100.0f }, glm::vec2{ 0.0f, 0.0f });
+		player_entity->assign<cotwin::TransformComponent>(glm::vec2{ 700.0f, 500.0f }, glm::vec2{ 0.0f, 0.0f });
 		player_entity->assign<cotwin::SpriteComponent>(
 			test_texture, glm::ivec4{ 0, 0, test_texture.get_width(), test_texture.get_height() }, glm::ivec4{ 700, 500, 100, 100 }
 		);
 
 		sensei_entity = scene.create_entity("sensei");
-		sensei_entity->assign<cotwin::TransformComponent>(glm::vec4{ 900.0f, 500.0f, 100.0f, 100.0f }, glm::vec2{ 0.0f, 0.0f });
+		sensei_entity->assign<cotwin::TransformComponent>(glm::vec2{ 900.0f, 500.0f }, glm::vec2{ 0.0f, 0.0f });
 		sensei_entity->assign<cotwin::SpriteComponent>(
 			// here texture_rect is initialized with zeros, since it will be initialized later on by AnimationSystem
 			sensei_texture, glm::ivec4{ 0, 0, 0, 0 }, glm::ivec4{ 900, 500, 100, 100 }
@@ -54,6 +56,10 @@ public:
 
 		// load font
 		cotwin::ResourceManager::load_font("src/test/resources/fonts/Lato/Lato-Regular.ttf", 28);
+
+		camera_entity = scene.create_entity("primary camera");
+		camera_entity->assign<cotwin::TransformComponent>(glm::vec2{ 1280.0f / 2.0f, 720.0f / 2.0f }, glm::vec2{ 0.0f, 0.0f });
+		camera_entity->assign<cotwin::CameraComponent>(glm::vec2{ 1280, 720 });
 	}
 
 	virtual void on_detach() override

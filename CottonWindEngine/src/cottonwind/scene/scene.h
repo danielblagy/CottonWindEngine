@@ -20,6 +20,7 @@ namespace cotwin
 		{
 			world = ECS::World::createWorld();
 			world->registerSystem(new TransformSpriteSystem());
+			world->registerSystem(new CameraControllerSystem());
 			world->registerSystem(new AnimationSystem());
 			world->registerSystem(new SpriteRenderSystem());
 			world->registerSystem(new AudioSystem());
