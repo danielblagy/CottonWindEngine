@@ -7,13 +7,6 @@
 class TestMainLayer : public cotwin::Layer
 {
 private:
-	glm::u8vec4 orange_color = { 255, 165, 0, 255 };
-	glm::u8vec4 yellow_color = { 255, 255, 0, 255 };
-	glm::u8vec4 gray_color = { 50, 50, 50, 255 };
-
-	glm::ivec2 A_point = { 200, 600 };
-	glm::ivec2 B_point = { 800, 300 };
-
 	cotwin::Entity* player_entity;
 	cotwin::Entity* sensei_entity;
 	cotwin::Entity* audio_snap_entity;
@@ -70,18 +63,9 @@ public:
 
 	virtual void on_update(float delta) override
 	{
-		// for SDL Renderer2D test
-		cotwin::Renderer2D::draw_rect({ 50, 50, 50, 50 }, orange_color);
-		cotwin::Renderer2D::fill_rect({ 500, 450, 120, 60 }, yellow_color);
-		cotwin::Renderer2D::draw_line(A_point, B_point, gray_color);
-		cotwin::Renderer2D::draw_point(20, 650, {255,0,0,255});
-		
 		// for OpenGL Renderer2D test
 		//cotwin::Renderer2D::draw_triangle();
 		
-		if (cotwin::Input::is_key_pressed(CW_KEY_F))
-			cotwin::Logger::Debug("TestGame: JUMP is pressed!");
-
 		if (cotwin::Input::is_key_pressed(CW_KEY_LEFT))
 		{
 			cotwin::ComponentHandle<cotwin::TransformComponent> transform = player_entity->get<cotwin::TransformComponent>();
@@ -110,12 +94,6 @@ public:
 
 		scene.on_update(delta);
 
-		//if (cotwin::Input::is_mouse_button_pressed(CW_MOUSEBUTTON_LEFT))
-			//cotwin::Logger::Debug("TestGame: SHOOT is pressed!");
-
-		//cotwin::Vector2i mouse_position = cotwin::Input::get_mouse_position();
-		//cotwin::Logger::Debug("TestGame: Mouse Position (%d, %d)", mouse_position.x, mouse_position.y);;
-
 		// for SDL2_ttf test
 		cotwin::Renderer2D::render_text(
 			"Hello World! This is CottonWind!",
@@ -124,7 +102,7 @@ public:
 			{ 200, 200 }
 		);
 
-		// updated fps count every second
+		// update fps count every second
 
 		static float seconds_passed = 0.0f;
 		static int fps_count = 0;
@@ -211,71 +189,6 @@ public:
 
 };
 
-/*class DubugInfoLayer : public cotwin::ImGuiLayer
-{
-private:
-	// gui state
-	ImVec4 color;
-	bool show_demo_window;
-	bool show_another_window;
-
-public:
-	DubugInfoLayer(cotwin::OpenGLGraphics* graphics)
-		: ImGuiLayer(graphics)
-	{}
-
-	virtual void on_attach() override
-	{
-		color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-		show_demo_window = true;
-		show_another_window = false;
-	}
-
-	virtual void on_update(float delta) override
-	{
-		new_imgui_frame();
-
-		// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-		if (show_demo_window)
-			ImGui::ShowDemoWindow(&show_demo_window);
-
-		// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
-		{
-			static float f = 0.0f;
-			static int counter = 0;
-
-			ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-			ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-			ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-			ImGui::Checkbox("Another Window", &show_another_window);
-
-			ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-			ImGui::ColorEdit3("clear color", (float*)&color);		// Edit 3 floats representing a color
-
-			if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-				counter++;
-			ImGui::SameLine();
-			ImGui::Text("counter = %d", counter);
-
-			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-			ImGui::End();
-		}
-
-		// 3. Show another simple window.
-		if (show_another_window)
-		{
-			ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-			ImGui::Text("Hello from another window!");
-			if (ImGui::Button("Close Me"))
-				show_another_window = false;
-			ImGui::End();
-		}
-
-		render_imgui_frame();
-	}
-};*/
-
 class TestGame : public cotwin::Game
 {
 public:
@@ -289,9 +202,6 @@ public:
 	{
 		attach_layer(new TestMainLayer());
 		
-		//cotwin::OpenGLGraphics* graphics = dynamic_cast<cotwin::OpenGLGraphics*>(get_graphics());
-		//attach_layer(new DubugInfoLayer(graphics));
-
 		enable_vsync();
 		//set_fps_cap(120);
 		glm::u8vec4 clear_color = { 120, 70, 150, 255 };
@@ -309,8 +219,6 @@ int main(int argc, char* args[])
 	cotwin::Logger::set_log_priority(cotwin::TracePriority);
 	
 	TestGame game(cotwin::WindowProperties("Test Game", 0, 0, 1280, 720, cotwin::Centered | cotwin::Resizable));
-	//TestGame game(cotwin::WindowProperties("Test Game", 50, 250, 1280, 720, cotwin::Borderless));
-	//TestGame game(cotwin::WindowProperties("Test Game", 0, 0, 1280, 720, cotwin::Fullscreen));
 	
 	game.start();
 
