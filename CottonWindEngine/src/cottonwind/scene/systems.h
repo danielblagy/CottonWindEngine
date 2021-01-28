@@ -43,6 +43,51 @@ namespace cotwin
 		}
 	};
 
+	class CameraSystem : public ECS::EntitySystem
+	{
+	private:
+		bool window_size_updated = false;
+		glm::ivec2 window_size;
+	
+	public:
+		CameraSystem()
+		{}
+
+		virtual ~CameraSystem()
+		{}
+
+		virtual void tick(ECS::World* world, float deltaTime) override
+		{
+			if (window_size_updated)
+			{
+				Entity* camera_entity = 0;
+				auto camera_entity_iterator = world->each<TransformComponent, CameraComponent>().begin();
+
+				// check if the registry has an entity with a CameraComponent
+				if (camera_entity_iterator.isEnd() != true)
+				{
+					camera_entity = world->getByIndex(camera_entity_iterator.getIndex());
+				}
+
+				if (camera_entity)
+				{
+					ComponentHandle<CameraComponent> camera = camera_entity->get<CameraComponent>();
+					// update camera scale
+					camera->scale.x = (float) window_size.x / (float) camera->bounds.x;
+					camera->scale.y = (float) window_size.y / (float) camera->bounds.y;
+				}
+
+				window_size_updated = false;
+			}
+		}
+
+		void on_window_resize(const glm::ivec2& new_window_size)
+		{
+			window_size_updated = true;
+			window_size = new_window_size;
+		}
+	};
+
 	class CameraControllerSystem : public ECS::EntitySystem
 	{
 	public:
@@ -143,14 +188,13 @@ namespace cotwin
 							if (render_camera.captures(sprite_rect))
 							{
 								glm::ivec2 sprite_relative_position = {
-									sprite_rect.x - render_camera.left,
-									sprite_rect.y - render_camera.top
+									camera->scale.x * (sprite_rect.x - render_camera.left),
+									camera->scale.y * (sprite_rect.y - render_camera.top)
 								};
 
-								// TODO : scale sprites based on the camera bounds
 								glm::ivec2 sprite_relative_size = {
-									sprite->size.x,
-									sprite->size.y
+									sprite->size.x * camera->scale.x,
+									sprite->size.y * camera->scale.y
 								};
 								
 								Renderer2D::render_texture(sprite->texture, sprite->texture_rect, sprite_relative_position, sprite_relative_size);

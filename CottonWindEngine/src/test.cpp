@@ -59,7 +59,8 @@ public:
 
 		camera_entity = scene.create_entity("primary camera");
 		camera_entity->assign<cotwin::TransformComponent>(glm::vec2{ 1280.0f / 2.0f, 720.0f / 2.0f }, glm::vec2{ 0.0f, 0.0f });
-		camera_entity->assign<cotwin::CameraComponent>(glm::vec2{ 1280, 720 });
+		// TODO : set up a way to get window size
+		camera_entity->assign<cotwin::CameraComponent>(glm::vec2{ 1280, 720 }, glm::vec2{ 1280, 720 });
 	}
 
 	virtual void on_detach() override
@@ -166,6 +167,8 @@ public:
 	{
 		glm::ivec2 new_size = event->data.new_size;
 		cotwin::Logger::Debug("TestGame: window resize (%d, %d)", new_size.x, new_size.y);
+
+		scene.on_window_resize_event(new_size);
 	}
 
 	void on_key_press(cotwin::KeyboardEvent* event)

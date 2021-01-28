@@ -14,12 +14,15 @@ namespace cotwin
 	{
 	private:
 		ECS::World* world;
+		CameraSystem* camera_system;
 	
 	public:
 		Scene()
 		{
 			world = ECS::World::createWorld();
 			world->registerSystem(new TransformSystem());
+			camera_system = new CameraSystem();
+			world->registerSystem(camera_system);
 			world->registerSystem(new CameraControllerSystem());
 			world->registerSystem(new AnimationSystem());
 			world->registerSystem(new SpriteRenderSystem());
@@ -43,6 +46,11 @@ namespace cotwin
 		void on_update(float delta)
 		{
 			world->tick(delta);
+		}
+
+		void on_window_resize_event(const glm::ivec2& new_size)
+		{
+			camera_system->on_window_resize(new_size);
 		}
 	};
 }
