@@ -29,57 +29,85 @@ public:
 		// for OpenGL Renderer2D test
 		//cotwin::Renderer2D::init_render_data();
 
+
+		// LOAD RESOURCES /////////////////////////////////
+
 		cotwin::Texture& test_texture = cotwin::ResourceManager::load_texture("src/test/resources/textures/test_texture.bmp");
 		cotwin::Texture& sensei_texture = cotwin::ResourceManager::load_texture("src/test/resources/textures/sensei_running.bmp");
+		cotwin::Audio& snap_audio = cotwin::ResourceManager::load_audio("src/test/resources/audio/snap.wav");
+		cotwin::Font& main_font = cotwin::ResourceManager::load_font("src/test/resources/fonts/Lato/Lato-Regular.ttf", 28);
 
+
+		// CREATE ENTITIES /////////////////////////////////
+		
+		// Player entity
 		player_entity = scene.create_entity("player");
 		player_entity->assign<cotwin::TransformComponent>(glm::vec2{ 700.0f, 500.0f }, glm::vec2{ 0.0f, 0.0f });
 		player_entity->assign<cotwin::SpriteComponent>(
 			test_texture, glm::ivec4{ 0, 0, test_texture.get_width(), test_texture.get_height() }, glm::ivec2{ 100, 100 }
 		);
+		// move player with keyboard input
+		player_entity->assign<cotwin::MovementControlComponent>(
+			[](glm::vec2& transform_velocity, float delta) {
+				// TODO : or maybe handle delta in TransformSystem ??
+				
+				if (cotwin::Input::is_key_pressed(CW_KEY_LEFT))
+					transform_velocity.x = -150.0f * delta;
+				else if (cotwin::Input::is_key_pressed(CW_KEY_RIGHT))
+					transform_velocity.x = 150.0f * delta;
+				else
+					transform_velocity.x = 0.0f;
 
+				if (cotwin::Input::is_key_pressed(CW_KEY_UP))
+					transform_velocity.y = -150.0f * delta;
+				else if (cotwin::Input::is_key_pressed(CW_KEY_DOWN))
+					transform_velocity.y = 150.0f * delta;
+				else
+					transform_velocity.y = 0.0f;
+			}
+		);
+
+		// Sensei entity
 		sensei_entity = scene.create_entity("sensei");
 		sensei_entity->assign<cotwin::TransformComponent>(glm::vec2{ 900.0f, 500.0f }, glm::vec2{ 0.0f, 0.0f });
 		sensei_entity->assign<cotwin::SpriteComponent>(
 			// here texture_rect is initialized with zeros, since it will be initialized later on by AnimationSystem
 			sensei_texture, glm::ivec4{ 0, 0, 0, 0 }, glm::ivec2{ 100, 100 }
 		);
-		
+		// set up animation for sensei entity
 		cotwin::ComponentHandle<cotwin::AnimationComponent> animation = sensei_entity->assign<cotwin::AnimationComponent>(1.0f);
 		for (int i = 0; i < 12; i++)
 		{
 			animation->frames.push_back(glm::ivec4{ i * 24, 0, 24, 24 });
 		}
 
-		// Audio test
-		cotwin::Audio& snap_audio = cotwin::ResourceManager::load_audio("src/test/resources/audio/snap.wav");
-		
+		// Audio entity
 		audio_snap_entity = scene.create_entity("snapper");
 		audio_snap_entity->assign<cotwin::AudioEffectComponent>(snap_audio);
 
-		// load font
-		cotwin::ResourceManager::load_font("src/test/resources/fonts/Lato/Lato-Regular.ttf", 28);
-
-		// init once, not on each update
-		test_text = cotwin::Text(
-			"Hello World! This is Cotton Wind!",
-			cotwin::ResourceManager::get_font("src/test/resources/fonts/Lato/Lato-Regular.ttf"),
-			{ 255, 255, 255, 255 },
-			{ 200, 200 }
-		);
-
-		// init once, but a new text will be set in on_update
-		fps_text = cotwin::Text(
-			"FPS: ",
-			cotwin::ResourceManager::get_font("src/test/resources/fonts/Lato/Lato-Regular.ttf"),
-			{ 255, 255, 255, 255 },
-			{ 800, 300 }
-		);
-
+		// Camera entity
 		camera_entity = scene.create_entity("primary camera");
 		camera_entity->assign<cotwin::TransformComponent>(glm::vec2{ 1280.0f / 2.0f, 720.0f / 2.0f }, glm::vec2{ 0.0f, 0.0f });
 		// TODO : set up a way to get window size
 		camera_entity->assign<cotwin::CameraComponent>(glm::vec2{ 1280, 720 }, glm::vec2{ 1280, 720 });
+
+
+		// CREATE TEXTS /////////////////////////////////
+		
+		// init once, not on each update
+		test_text = cotwin::Text(
+			"Hello World! This is Cotton Wind!",
+			main_font,
+			{ 255, 255, 255, 255 },
+			{ 200, 200 }
+		);
+		// init once, but a new text will be set in on_update
+		fps_text = cotwin::Text(
+			"FPS: ",
+			main_font,
+			{ 255, 255, 255, 255 },
+			{ 800, 300 }
+		);
 	}
 
 	virtual void on_detach() override
@@ -91,32 +119,6 @@ public:
 	{
 		// for OpenGL Renderer2D test
 		//cotwin::Renderer2D::draw_triangle();
-		
-		if (cotwin::Input::is_key_pressed(CW_KEY_LEFT))
-		{
-			cotwin::ComponentHandle<cotwin::TransformComponent> transform = player_entity->get<cotwin::TransformComponent>();
-			transform.isValid();	// should return true if entity has that component
-			transform->center.x -= 1.0f;
-		}
-		else if (cotwin::Input::is_key_pressed(CW_KEY_RIGHT))
-		{
-			cotwin::ComponentHandle<cotwin::TransformComponent> transform = player_entity->get<cotwin::TransformComponent>();
-			transform.isValid();	// should return true if entity has that component
-			transform->center.x += 1.0f;
-		}
-		
-		if (cotwin::Input::is_key_pressed(CW_KEY_UP))
-		{
-			cotwin::ComponentHandle<cotwin::TransformComponent> transform = player_entity->get<cotwin::TransformComponent>();
-			transform.isValid();	// should return true if entity has that component
-			transform->center.y -= 1.0f;
-		}
-		else if (cotwin::Input::is_key_pressed(CW_KEY_DOWN))
-		{
-			cotwin::ComponentHandle<cotwin::TransformComponent> transform = player_entity->get<cotwin::TransformComponent>();
-			transform.isValid();	// should return true if entity has that component
-			transform->center.y += 1.0f;
-		}
 
 		scene.on_update(delta);
 

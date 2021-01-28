@@ -20,6 +20,7 @@ namespace cotwin
 		Scene()
 		{
 			world = ECS::World::createWorld();
+			world->registerSystem(new MovementControlSystem());
 			world->registerSystem(new TransformSystem());
 			camera_system = new CameraSystem();
 			world->registerSystem(camera_system);

@@ -151,7 +151,7 @@ namespace cotwin
 
 			int sprites_drawn = 0;
 			
-			for (Entity* ent : world->each<SpriteComponent>())
+			for (Entity* ent : world->each<TransformComponent, SpriteComponent>())
 			{
 				ent->with<TransformComponent, SpriteComponent>([&](
 					ECS::ComponentHandle<TransformComponent> sprite_transform, ECS::ComponentHandle<SpriteComponent> sprite
@@ -275,6 +275,27 @@ namespace cotwin
 						audio_effect->audio.play();
 						audio_effect->play = false;
 					}
+				});
+			}
+		}
+	};
+
+	class MovementControlSystem : public ECS::EntitySystem
+	{
+	public:
+		MovementControlSystem()
+		{}
+
+		virtual ~MovementControlSystem()
+		{}
+
+		virtual void tick(ECS::World* world, float deltaTime) override
+		{
+			for (Entity* ent : world->each<TransformComponent, MovementControlComponent>())
+			{
+				ent->with<TransformComponent, MovementControlComponent>([&](
+					ECS::ComponentHandle<TransformComponent> transform, ECS::ComponentHandle<MovementControlComponent> movement_control) {
+					movement_control->controller(transform->velocity, deltaTime);
 				});
 			}
 		}

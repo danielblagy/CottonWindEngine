@@ -7,6 +7,7 @@
 
 #include <string>
 #include <vector>
+#include <functional>
 
 
 namespace cotwin
@@ -92,6 +93,15 @@ namespace cotwin
 
 		AnimationComponent(float s_frequency, const std::vector<glm::ivec4>& s_frames)
 			: frequency(s_frequency), count(s_frequency), frames(s_frames)
+		{}
+	};
+
+	struct MovementControlComponent
+	{
+		std::function<void(glm::vec2&, float)> controller;
+
+		MovementControlComponent(std::function<void(glm::vec2&, float)> s_controller)
+			: controller(s_controller)
 		{}
 	};
 }
