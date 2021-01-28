@@ -11,8 +11,7 @@
 #include "../input/input.h"
 #include "../input/keycodes.h"
 
-// TODO : (for SpriteComponent test), make this graphics api-independent
-#include "../graphics/sdl2/renderer_2d.h"
+#include "../graphics/renderer.h"
 
 
 namespace cotwin
@@ -23,14 +22,13 @@ namespace cotwin
 	template<typename T>
 	using ComponentHandle = ECS::ComponentHandle<T>; // typedef for ECS::ComponentHandle
 
-	// update sprite's position with transform position
-	class TransformSpriteSystem : public ECS::EntitySystem
+	class TransformSystem : public ECS::EntitySystem
 	{
 	public:
-		TransformSpriteSystem()
+		TransformSystem()
 		{}
 
-		virtual ~TransformSpriteSystem()
+		virtual ~TransformSystem()
 		{}
 
 		virtual void tick(ECS::World* world, float deltaTime) override
@@ -38,6 +36,7 @@ namespace cotwin
 			for (Entity* ent : world->each<TransformComponent>())
 			{
 				ent->with<TransformComponent>([&](ECS::ComponentHandle<TransformComponent> transform) {
+					// update transform's position with velocity
 					transform->center += transform->velocity;
 				});
 			}
@@ -96,13 +95,6 @@ namespace cotwin
 
 		virtual void tick(ECS::World* world, float deltaTime) override
 		{
-			//world->each<SpriteComponent>([&](Entity* ent, ECS::ComponentHandle<SpriteComponent> sprite) {
-			//	if (sprite->active)
-			//	{
-			//		Renderer2D::render_sprite(sprite->sprite);
-			//	}
-			//});
-
 			Entity* camera_entity = 0;
 			auto camera_entity_iterator = world->each<TransformComponent, CameraComponent>().begin();
 			
@@ -126,21 +118,26 @@ namespace cotwin
 							ComponentHandle<TransformComponent> camera_transform = camera_entity->get<TransformComponent>();
 							ComponentHandle<CameraComponent> camera = camera_entity->get<CameraComponent>();
 
+							glm::ivec2 camera_half_size = camera->bounds / 2;
 							RenderCamera render_camera(
-								camera_transform->center.x - camera->bounds.x / 2,
-								camera_transform->center.y - camera->bounds.y / 2,
-								camera_transform->center.x + camera->bounds.x / 2,
-								camera_transform->center.y + camera->bounds.y / 2
+								camera_transform->center.x - camera_half_size.x,
+								camera_transform->center.y - camera_half_size.y,
+								camera_transform->center.x + camera_half_size.x,
+								camera_transform->center.y + camera_half_size.y
 							);
 
 							//Logger::Debug("%d  %d  %d  %d", render_camera.left, render_camera.top, render_camera.right, render_camera.bottom);
 							
-							// convert sprite->rect to rect with left, top, right, bottom
+							// convert rect with left, top, right, bottom
+							glm::ivec2 sprite_center = {
+								sprite_transform->center.x + sprite->center_offset.x,
+								sprite_transform->center.y + sprite->center_offset.y
+							};
 							glm::ivec4 sprite_rect = {
-								sprite_transform->center.x,
-								sprite_transform->center.y,
-								sprite_transform->center.x + sprite->size.x,
-								sprite_transform->center.y + sprite->size.y,
+								sprite_center.x,
+								sprite_center.y,
+								sprite_center.x + sprite->size.x,
+								sprite_center.y + sprite->size.y
 							};
 							
 							if (render_camera.captures(sprite_rect))

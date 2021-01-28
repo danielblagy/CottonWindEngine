@@ -19,7 +19,7 @@ namespace cotwin
 		Scene()
 		{
 			world = ECS::World::createWorld();
-			world->registerSystem(new TransformSpriteSystem());
+			world->registerSystem(new TransformSystem());
 			world->registerSystem(new CameraControllerSystem());
 			world->registerSystem(new AnimationSystem());
 			world->registerSystem(new SpriteRenderSystem());

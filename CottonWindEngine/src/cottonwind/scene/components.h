@@ -61,14 +61,16 @@ namespace cotwin
 		Texture texture;
 		glm::ivec4 texture_rect; // x, y, area_width, area_height
 		glm::ivec2 size; // width, height
+		glm::ivec2 center_offset;	// an offset of position from transform->center
 
 		bool active;
 
-		// TODO : add center offset for transform, and istead of rect simply have width & height
-		//			and delete the tracking from transform system
-
 		SpriteComponent(Texture s_texture, const glm::ivec4& s_texture_rect, const glm::ivec2& s_size)
-			: texture(s_texture), texture_rect(s_texture_rect), size(s_size), active(true)
+			: texture(s_texture), texture_rect(s_texture_rect), size(s_size), center_offset(0, 0), active(true)
+		{}
+		
+		SpriteComponent(Texture s_texture, const glm::ivec4& s_texture_rect, const glm::ivec2& s_size, const glm::ivec2& s_center_offset)
+			: texture(s_texture), texture_rect(s_texture_rect), size(s_size), center_offset(s_center_offset), active(true)
 		{}
 	};
 
