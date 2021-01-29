@@ -13,6 +13,9 @@
 
 #include "../graphics/renderer.h"
 
+// TODO : for sprites drawn text, remove later
+#include "../resource_manager/resource_manager.h"
+
 
 namespace cotwin
 {
@@ -210,7 +213,9 @@ namespace cotwin
 				});
 			}
 
-			Logger::Debug("SpriteRenderSystem: %d sprites drawn", sprites_drawn);
+			static Font& main_font = cotwin::ResourceManager::load_font("src/test/resources/fonts/Lato/Lato-Regular.ttf", 28);
+			Text sprites_drawn_text(std::to_string(sprites_drawn), main_font, { 200, 200, 200, 255 }, { 200, 0 });
+			Renderer2D::render_text(sprites_drawn_text);
 		}
 	};
 

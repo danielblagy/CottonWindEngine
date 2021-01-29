@@ -7,21 +7,33 @@
 class TestMainLayer : public cotwin::Layer
 {
 private:
-	cotwin::Entity* player_entity;
-	cotwin::Entity* sensei_entity;
 	cotwin::Entity* audio_snap_entity;
-
 	cotwin::Entity* camera_entity;
 
 	cotwin::Scene scene;
 
-	cotwin::Text test_text;
-	cotwin::Text fps_text;
+	cotwin::Text sprites_drawn_label;
+
+	std::vector<glm::ivec4> sensei_animation_frames;
 
 public:
 	TestMainLayer()
 		: cotwin::Layer("main")
 	{}
+
+	void create_sensei_entity(const glm::ivec2& position)
+	{
+		static cotwin::Texture& sensei_texture = cotwin::ResourceManager::load_texture("src/test/resources/textures/sensei_running.bmp");
+
+		cotwin::Entity* sensei_entity = scene.create_entity("sensei");
+		sensei_entity->assign<cotwin::TransformComponent>(glm::vec2{ (float) position.x, (float)position.y }, glm::vec2{ 0.0f, 0.0f });
+		sensei_entity->assign<cotwin::SpriteComponent>(
+			// here texture_rect is initialized with zeros, since it will be initialized later on by AnimationSystem
+			sensei_texture, glm::ivec4{ 0, 0, 0, 0 }, glm::ivec2{ 100, 100 }
+		);
+		// set up animation for sensei entity
+		cotwin::ComponentHandle<cotwin::AnimationComponent> animation = sensei_entity->assign<cotwin::AnimationComponent>(0.2f, sensei_animation_frames);
+	}
 
 	virtual void on_attach() override
 	{
@@ -33,7 +45,6 @@ public:
 		// LOAD RESOURCES /////////////////////////////////
 
 		cotwin::Texture& test_texture = cotwin::ResourceManager::load_texture("src/test/resources/textures/test_texture.bmp");
-		cotwin::Texture& sensei_texture = cotwin::ResourceManager::load_texture("src/test/resources/textures/sensei_running.bmp");
 		cotwin::Audio& snap_audio = cotwin::ResourceManager::load_audio("src/test/resources/audio/snap.wav");
 		cotwin::Font& main_font = cotwin::ResourceManager::load_font("src/test/resources/fonts/Lato/Lato-Regular.ttf", 28);
 
@@ -41,7 +52,7 @@ public:
 		// CREATE ENTITIES /////////////////////////////////
 		
 		// Player entity
-		player_entity = scene.create_entity("player");
+		cotwin::Entity* player_entity = scene.create_entity("player");
 		player_entity->assign<cotwin::TransformComponent>(glm::vec2{ 700.0f, 500.0f }, glm::vec2{ 0.0f, 0.0f });
 		player_entity->assign<cotwin::SpriteComponent>(
 			test_texture, glm::ivec4{ 0, 0, test_texture.get_width(), test_texture.get_height() }, glm::ivec2{ 100, 100 }
@@ -67,18 +78,9 @@ public:
 			}
 		);
 
-		// Sensei entity
-		sensei_entity = scene.create_entity("sensei");
-		sensei_entity->assign<cotwin::TransformComponent>(glm::vec2{ 900.0f, 500.0f }, glm::vec2{ 0.0f, 0.0f });
-		sensei_entity->assign<cotwin::SpriteComponent>(
-			// here texture_rect is initialized with zeros, since it will be initialized later on by AnimationSystem
-			sensei_texture, glm::ivec4{ 0, 0, 0, 0 }, glm::ivec2{ 100, 100 }
-		);
-		// set up animation for sensei entity
-		cotwin::ComponentHandle<cotwin::AnimationComponent> animation = sensei_entity->assign<cotwin::AnimationComponent>(1.0f);
 		for (int i = 0; i < 12; i++)
 		{
-			animation->frames.push_back(glm::ivec4{ i * 24, 0, 24, 24 });
+			sensei_animation_frames.push_back(glm::ivec4{ i * 24, 0, 24, 24 });
 		}
 
 		// Audio entity
@@ -92,21 +94,14 @@ public:
 		camera_entity->assign<cotwin::CameraComponent>(glm::vec2{ 1280, 720 }, glm::vec2{ 1280, 720 });
 
 
-		// CREATE TEXTS /////////////////////////////////
+		// CREATE TEXT /////////////////////////////////
 		
 		// init once, not on each update
-		test_text = cotwin::Text(
-			"Hello World! This is Cotton Wind!",
+		sprites_drawn_label = cotwin::Text(
+			"Sprites drawn: ",
 			main_font,
-			{ 255, 255, 255, 255 },
-			{ 200, 200 }
-		);
-		// init once, but a new text will be set in on_update
-		fps_text = cotwin::Text(
-			"FPS: ",
-			main_font,
-			{ 255, 255, 255, 255 },
-			{ 800, 300 }
+			{ 200, 200, 200, 255 },
+			{ 0, 0 }
 		);
 	}
 
@@ -122,23 +117,7 @@ public:
 
 		scene.on_update(delta);
 
-		cotwin::Renderer2D::render_text(test_text);
-
-		// update fps count every second
-
-		static float seconds_passed = 0.0f;
-		static int fps_count = 0;
-		seconds_passed += delta;
-		fps_count++;
-		if (seconds_passed >= 1.0f)
-		{
-			fps_text.set_text("FPS: " + std::to_string(fps_count));
-			
-			fps_count = 0;
-			seconds_passed -= 1.0f;
-		}
-
-		cotwin::Renderer2D::render_text(fps_text);
+		cotwin::Renderer2D::render_text(sprites_drawn_label);
 	}
 
 	virtual void on_event(cotwin::Event* event) override
@@ -194,6 +173,11 @@ public:
 	void on_mouse_button_press(cotwin::MouseEvent* event)
 	{
 		cotwin::Logger::Debug("TestGame: %d mouse button was pressed!", event->data.button.button_code);
+		if (event->data.button.button_code == CW_MOUSEBUTTON_LEFT)
+		{
+			audio_snap_entity->get<cotwin::AudioEffectComponent>()->play = true;
+			create_sensei_entity(event->data.button.cursor_position);
+		}
 	}
 
 	void on_window_focus(cotwin::WindowEvent* event)

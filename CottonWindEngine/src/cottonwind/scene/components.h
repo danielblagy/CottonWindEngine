@@ -60,7 +60,6 @@ namespace cotwin
 
 	struct SpriteComponent
 	{
-		// TODO : maybe make this a pointer
 		Texture texture;
 		glm::ivec4 texture_rect; // x, y, area_width, area_height
 		glm::ivec2 size; // width, height
@@ -87,9 +86,11 @@ namespace cotwin
 		// NOTE: count in initialized to frequency to force resfresh() in AnimationSystem on init, so that
 		//	sprite component is initialized to a proper texture_rect
 		
-		AnimationComponent(float s_frequency)
+		AnimationComponent(float s_frequency, unsigned int frames_amount)
 			: frequency(s_frequency), count(s_frequency)
-		{}
+		{
+			frames.reserve(frames_amount);
+		}
 
 		AnimationComponent(float s_frequency, const std::vector<glm::ivec4>& s_frames)
 			: frequency(s_frequency), count(s_frequency), frames(s_frames)
