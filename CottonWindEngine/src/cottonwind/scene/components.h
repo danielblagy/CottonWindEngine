@@ -9,6 +9,8 @@
 #include <vector>
 #include <functional>
 
+#include "../vendor/ecs/ECS.h"
+
 
 namespace cotwin
 {
@@ -80,19 +82,17 @@ namespace cotwin
 	{
 		float frequency;
 		float count;
-		std::vector<glm::ivec4> frames;
+		std::vector<glm::ivec4>* frames;
 		std::size_t i = 0;
 
 		// NOTE: count in initialized to frequency to force resfresh() in AnimationSystem on init, so that
 		//	sprite component is initialized to a proper texture_rect
 		
-		AnimationComponent(float s_frequency, unsigned int frames_amount)
-			: frequency(s_frequency), count(s_frequency)
-		{
-			frames.reserve(frames_amount);
-		}
+		AnimationComponent(float s_frequency)
+			: frequency(s_frequency), count(s_frequency), frames(0)
+		{}
 
-		AnimationComponent(float s_frequency, const std::vector<glm::ivec4>& s_frames)
+		AnimationComponent(float s_frequency, std::vector<glm::ivec4>* s_frames)
 			: frequency(s_frequency), count(s_frequency), frames(s_frames)
 		{}
 	};
@@ -103,6 +103,15 @@ namespace cotwin
 
 		MovementControlComponent(std::function<void(glm::vec2&, float)> s_controller)
 			: controller(s_controller)
+		{}
+	};
+
+	struct ScriptComponent
+	{
+		std::function<void(ECS::Entity*, float)> script;
+
+		ScriptComponent(std::function<void(ECS::Entity*, float)> s_script)
+			: script(s_script)
 		{}
 	};
 }

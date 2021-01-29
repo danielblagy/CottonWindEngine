@@ -243,21 +243,17 @@ namespace cotwin
 
 						if (animation->count >= animation->frequency)
 						{
-							sprite->texture_rect = animation->frames.at(animation->i);
+							if (animation->i >= animation->frames->size())
+								animation->i = 0;
+							
+							sprite->texture_rect = animation->frames->at(animation->i);
 							animation->i++;
-							if (animation->i >= animation->frames.size())
-								refresh(animation, sprite);
+							
 							animation->count -= animation->frequency;
 						}
 					}
 				});
 			}
-		}
-
-		void refresh(ECS::ComponentHandle<AnimationComponent> animation, ECS::ComponentHandle<SpriteComponent> sprite)
-		{
-			sprite->texture_rect = animation->frames.at(0);
-			animation->i = 1;
 		}
 	};
 
@@ -301,6 +297,26 @@ namespace cotwin
 				ent->with<TransformComponent, MovementControlComponent>([&](
 					ECS::ComponentHandle<TransformComponent> transform, ECS::ComponentHandle<MovementControlComponent> movement_control) {
 					movement_control->controller(transform->velocity, deltaTime);
+				});
+			}
+		}
+	};
+
+	class ScriptSystem : public ECS::EntitySystem
+	{
+	public:
+		ScriptSystem()
+		{}
+
+		virtual ~ScriptSystem()
+		{}
+
+		virtual void tick(ECS::World* world, float deltaTime) override
+		{
+			for (Entity* ent : world->each<ScriptComponent>())
+			{
+				ent->with<ScriptComponent>([&](ECS::ComponentHandle<ScriptComponent> script) {
+					script->script(ent, deltaTime);
 				});
 			}
 		}

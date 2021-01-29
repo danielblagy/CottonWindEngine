@@ -16,6 +16,12 @@ private:
 
 	std::vector<glm::ivec4> sensei_animation_frames;
 
+	std::vector<glm::ivec4> player_idle_frames;
+	std::vector<glm::ivec4> player_running_right_frames;
+	std::vector<glm::ivec4> player_running_left_frames;
+	std::vector<glm::ivec4> player_running_down_frames;
+	std::vector<glm::ivec4> player_running_up_frames;
+
 public:
 	TestMainLayer()
 		: cotwin::Layer("main")
@@ -32,7 +38,7 @@ public:
 			sensei_texture, glm::ivec4{ 0, 0, 0, 0 }, glm::ivec2{ 100, 100 }
 		);
 		// set up animation for sensei entity
-		cotwin::ComponentHandle<cotwin::AnimationComponent> animation = sensei_entity->assign<cotwin::AnimationComponent>(0.2f, sensei_animation_frames);
+		cotwin::ComponentHandle<cotwin::AnimationComponent> animation = sensei_entity->assign<cotwin::AnimationComponent>(0.2f, &sensei_animation_frames);
 	}
 
 	virtual void on_attach() override
@@ -45,6 +51,7 @@ public:
 		// LOAD RESOURCES /////////////////////////////////
 
 		cotwin::Texture& test_texture = cotwin::ResourceManager::load_texture("src/test/resources/textures/test_texture.bmp");
+		cotwin::Texture& hero_texture = cotwin::ResourceManager::load_texture("src/test/resources/textures/Hero.bmp");
 		cotwin::Audio& snap_audio = cotwin::ResourceManager::load_audio("src/test/resources/audio/snap.wav");
 		cotwin::Font& main_font = cotwin::ResourceManager::load_font("src/test/resources/fonts/Lato/Lato-Regular.ttf", 28);
 
@@ -55,8 +62,11 @@ public:
 		cotwin::Entity* player_entity = scene.create_entity("player");
 		player_entity->assign<cotwin::TransformComponent>(glm::vec2{ 700.0f, 500.0f }, glm::vec2{ 0.0f, 0.0f });
 		player_entity->assign<cotwin::SpriteComponent>(
-			test_texture, glm::ivec4{ 0, 0, test_texture.get_width(), test_texture.get_height() }, glm::ivec2{ 100, 100 }
+			hero_texture, glm::ivec4{ 0, 0, 0, 0 }, glm::ivec2{ 100, 100 }
 		);
+
+		player_entity->assign<cotwin::AnimationComponent>(0.5f, &player_idle_frames);
+
 		// move player with keyboard input
 		player_entity->assign<cotwin::MovementControlComponent>(
 			[](glm::vec2& transform_velocity, float delta) {
@@ -77,11 +87,47 @@ public:
 					transform_velocity.y = 0.0f;
 			}
 		);
+		// set update logic for the player entity
+		player_entity->assign<cotwin::ScriptComponent>(
+			[&](cotwin::Entity* entity, float delta) {
+				glm::vec2 velocity = entity->get<cotwin::TransformComponent>()->velocity;
+				cotwin::ComponentHandle<cotwin::AnimationComponent> animation = entity->get<cotwin::AnimationComponent>();
 
-		for (int i = 0; i < 12; i++)
+				if (velocity.x > 0)
+					animation->frames = &player_running_right_frames;
+				else if (velocity.x < 0)
+					animation->frames = &player_running_left_frames;
+				else if (velocity.y > 0)
+					animation->frames = &player_running_down_frames;
+				else if (velocity.y < 0)
+					animation->frames = &player_running_up_frames;
+				else
+					animation->frames = &player_idle_frames;
+			}
+		);
+
+		// set sensei animation frames
+		for (int i = 0; i < 11; i++)
 		{
 			sensei_animation_frames.push_back(glm::ivec4{ i * 24, 0, 24, 24 });
 		}
+
+		player_running_down_frames.reserve(4);
+		player_running_up_frames.reserve(4);
+		player_running_left_frames.reserve(4);
+		player_running_right_frames.reserve(4);
+		player_idle_frames.reserve(1);
+		
+		// set player animation frames
+		for (int i = 0; i < 4; i++)
+		{
+			player_running_down_frames.push_back(glm::ivec4{ i * 256, 0, 256, 256 });
+			player_running_up_frames.push_back(glm::ivec4{ i * 256, 256, 256, 256 });
+			player_running_left_frames.push_back(glm::ivec4{ i * 256, 2 * 256, 256, 256 });
+			player_running_right_frames.push_back(glm::ivec4{ i * 256, 3 * 256, 256, 256 });
+		}
+
+		player_idle_frames.push_back(glm::ivec4{ 2 * 256, 0, 256, 256 });
 
 		// Audio entity
 		audio_snap_entity = scene.create_entity("snapper");
