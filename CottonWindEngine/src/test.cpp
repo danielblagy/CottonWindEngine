@@ -22,6 +22,8 @@ private:
 	std::vector<glm::ivec4> player_running_down_frames;
 	std::vector<glm::ivec4> player_running_up_frames;
 
+	cotwin::Text collision_detected_message;
+
 public:
 	TestMainLayer()
 		: cotwin::Layer("main")
@@ -39,6 +41,8 @@ public:
 		);
 		// set up animation for sensei entity
 		cotwin::ComponentHandle<cotwin::AnimationComponent> animation = sensei_entity->assign<cotwin::AnimationComponent>(0.2f, &sensei_animation_frames);
+
+		sensei_entity->assign<cotwin::ColliderComponent>(glm::vec2{ 100.0f, 100.0f });
 	}
 
 	virtual void on_attach() override
@@ -103,8 +107,17 @@ public:
 					animation->set_animation(&player_running_up_frames);
 				else
 					animation->set_animation(&player_idle_frames);
+
+				// since there is only one player, scene.get_collisions is expected to return just one collision
+				// if the player entity & a sensei entity collide, in this case simply display a text on the screen
+				for (auto& collision : scene.get_collisions("player", "sensei"))
+				{
+					cotwin::Renderer2D::render_text(collision_detected_message);
+				}
 			}
 		);
+
+		player_entity->assign<cotwin::ColliderComponent>(glm::vec2{ 100.0f, 100.0f });
 
 		// set sensei animation frames
 		for (int i = 0; i < 11; i++)
@@ -140,7 +153,7 @@ public:
 		camera_entity->assign<cotwin::CameraComponent>(glm::vec2{ 1280, 720 }, glm::vec2{ 1280, 720 });
 
 
-		// CREATE TEXT /////////////////////////////////
+		// CREATE TEXTS /////////////////////////////////
 		
 		// init once, not on each update
 		sprites_drawn_label = cotwin::Text(
@@ -148,6 +161,13 @@ public:
 			main_font,
 			{ 200, 200, 200, 255 },
 			{ 0, 0 }
+		);
+
+		collision_detected_message = cotwin::Text(
+			"Player & sensei collision detected!",
+			main_font,
+			{ 200, 200, 200, 255 },
+			{ 300, 300 }
 		);
 	}
 

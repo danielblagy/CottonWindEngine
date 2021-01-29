@@ -15,6 +15,7 @@ namespace cotwin
 	private:
 		ECS::World* world;
 		CameraSystem* camera_system;
+		ColliderSystem* collider_system;
 	
 	public:
 		Scene()
@@ -29,6 +30,8 @@ namespace cotwin
 			world->registerSystem(new AnimationSystem());
 			world->registerSystem(new SpriteRenderSystem());
 			world->registerSystem(new AudioSystem());
+			collider_system = new ColliderSystem();
+			world->registerSystem(collider_system);
 		}
 
 		~Scene()
@@ -53,6 +56,23 @@ namespace cotwin
 		void on_window_resize_event(const glm::ivec2& new_size)
 		{
 			camera_system->on_window_resize(new_size);
+		}
+
+		// a conveniance function that returns a sub-vector of collisions of entities with two specified tags
+		std::vector<std::pair<Entity*, Entity*>> get_collisions(std::string t1, std::string t2)
+		{
+			// TODO : make  it faster (maybe have this as a scene member, and clear it in the beginning of this function),
+			//			and then also perhaps return it as a reference
+			std::vector<std::pair<Entity*, Entity*>> collisions;
+			
+			for (std::pair<Entity*, Entity*>& collision : collider_system->collisions)
+			{
+				// TODO : now order of tags matters, is that a right choice ??
+				if (collision.first->get<TagComponent>()->tag == t1 && collision.second->get<TagComponent>()->tag == t2)
+					collisions.push_back(collision);
+			}
+
+			return collisions;
 		}
 	};
 }

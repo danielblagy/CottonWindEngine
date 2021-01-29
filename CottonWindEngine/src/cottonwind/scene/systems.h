@@ -13,6 +13,8 @@
 
 #include "../graphics/renderer.h"
 
+#include "../physics/2d/collision.h"
+
 // TODO : for sprites drawn text, remove later
 #include "../resource_manager/resource_manager.h"
 
@@ -317,6 +319,60 @@ namespace cotwin
 			{
 				ent->with<ScriptComponent>([&](ECS::ComponentHandle<ScriptComponent> script) {
 					script->script(ent, deltaTime);
+				});
+			}
+		}
+	};
+
+	class ColliderSystem : public ECS::EntitySystem
+	{
+	public:
+		std::vector<std::pair<Entity*, Entity*>> collisions;
+		
+		ColliderSystem()
+		{}
+
+		virtual ~ColliderSystem()
+		{}
+
+		virtual void tick(ECS::World* world, float deltaTime) override
+		{
+			collisions.clear();
+			
+			for (Entity* ent : world->each<TagComponent, TransformComponent, ColliderComponent>())
+			{
+				ent->with<TagComponent, TransformComponent, ColliderComponent>([&](
+					ECS::ComponentHandle<TagComponent> tag,
+					ECS::ComponentHandle<TransformComponent> transform,
+					ECS::ComponentHandle<ColliderComponent> collider
+					) {
+					glm::vec4 collider_rect(
+						transform->center.x + collider->offset.x,
+						transform->center.y + collider->offset.y,
+						collider->size.x,
+						collider->size.y
+					);
+					
+					for (Entity* other : world->each<TagComponent, TransformComponent, ColliderComponent>())
+					{
+						other->with<TagComponent, TransformComponent, ColliderComponent>([&](
+							ECS::ComponentHandle<TagComponent> other_tag,
+							ECS::ComponentHandle<TransformComponent> other_transform,
+							ECS::ComponentHandle<ColliderComponent> other_collider
+							) {
+							glm::vec4 other_collider_rect(
+								other_transform->center.x + other_collider->offset.x,
+								other_transform->center.y + other_collider->offset.y,
+								other_collider->size.x,
+								other_collider->size.y
+							);
+
+							if (physics::collide_aabb(collider_rect, other_collider_rect))
+							{
+								collisions.push_back(std::make_pair(ent, other));
+							}
+						});
+					}
 				});
 			}
 		}

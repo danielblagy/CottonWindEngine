@@ -124,4 +124,18 @@ namespace cotwin
 			: script(s_script)
 		{}
 	};
+
+	struct ColliderComponent
+	{
+		glm::vec2 size;
+		glm::vec2 offset;	// an offset from transform->position
+
+		ColliderComponent(const glm::vec2& s_size)
+			: size(s_size), offset(0.0f, 0.0f)
+		{}
+
+		ColliderComponent(const glm::vec2& s_size, const glm::vec2& s_offset)
+			: size(s_size), offset(s_offset)
+		{}
+	};
 }
