@@ -93,16 +93,16 @@ public:
 				glm::vec2 velocity = entity->get<cotwin::TransformComponent>()->velocity;
 				cotwin::ComponentHandle<cotwin::AnimationComponent> animation = entity->get<cotwin::AnimationComponent>();
 
-				if (velocity.x > 0)
-					animation->frames = &player_running_right_frames;
-				else if (velocity.x < 0)
-					animation->frames = &player_running_left_frames;
-				else if (velocity.y > 0)
-					animation->frames = &player_running_down_frames;
-				else if (velocity.y < 0)
-					animation->frames = &player_running_up_frames;
+				if (velocity.x > 0.0f)
+					animation->set_animation(&player_running_right_frames);
+				else if (velocity.x < 0.0f)
+					animation->set_animation(&player_running_left_frames);
+				else if (velocity.y > 0.0f)
+					animation->set_animation(&player_running_down_frames);
+				else if (velocity.y < 0.0f)
+					animation->set_animation(&player_running_up_frames);
 				else
-					animation->frames = &player_idle_frames;
+					animation->set_animation(&player_idle_frames);
 			}
 		);
 

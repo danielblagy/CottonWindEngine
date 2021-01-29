@@ -95,6 +95,16 @@ namespace cotwin
 		AnimationComponent(float s_frequency, std::vector<glm::ivec4>* s_frames)
 			: frequency(s_frequency), count(s_frequency), frames(s_frames)
 		{}
+
+		void set_animation(std::vector<glm::ivec4>* s_frames)
+		{
+			if (frames != s_frames)
+			{
+				frames = s_frames;
+				i = 0;
+				count = frequency;
+			}
+		}
 	};
 
 	struct MovementControlComponent
