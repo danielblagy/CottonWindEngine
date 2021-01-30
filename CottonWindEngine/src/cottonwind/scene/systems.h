@@ -24,12 +24,15 @@ namespace cotwin
 	// just do that for now to conceal implementation details
 	typedef flecs::entity Entity;
 
-	void TransformSystem(flecs::entity entity, TransformComponent* transform)
+	void TransformSystem(flecs::iter& it, TransformComponent* transform)
 	{
-		transform->center += transform->velocity;
+		for (auto i : it)
+		{
+			transform[i].center += transform[i].velocity;
+		}
 	}
 
-	void CameraSystem(Entity entity, TransformComponent& transform, CameraComponent& camera)
+	void CameraSystem(flecs::iter& it, TransformComponent* transform, CameraComponent* camera)
 	{
 		
 	}
@@ -85,7 +88,7 @@ namespace cotwin
 		}
 	};*/
 
-	void CameraControllerSystem(Entity entity, TransformComponent& transform, CameraComponent& camera)
+	void CameraControllerSystem(flecs::iter& it, TransformComponent* transform, CameraComponent* camera)
 	{
 		
 	}
@@ -140,11 +143,14 @@ namespace cotwin
 	};*/
 
 	//flecs::iter& it,
-	void SpriteRenderSystem(Entity entity, TransformComponent& transform, SpriteComponent& sprite)
+	void SpriteRenderSystem(flecs::iter& it, TransformComponent* transform, SpriteComponent* sprite)
 	{
-		int sprites_drawn = 0;
-		Renderer2D::render_texture(sprite.texture, sprite.texture_rect, transform.center, sprite.size);
-		sprites_drawn++;
+		for (auto i : it)
+		{
+			int sprites_drawn = 0;
+			Renderer2D::render_texture(sprite[i].texture, sprite[i].texture_rect, transform[i].center, sprite[i].size);
+			sprites_drawn++;
+		}
 	}
 	
 	/*class SpriteRenderSystem : public ECS::EntitySystem
@@ -241,42 +247,54 @@ namespace cotwin
 		}
 	};*/
 
-	void AnimationSystem(Entity entity, SpriteComponent& sprite, AnimationComponent& animation)
+	void AnimationSystem(flecs::iter& it, SpriteComponent* sprite, AnimationComponent* animation)
 	{
-		if (sprite.active)
+		for (auto i : it)
 		{
-			animation.count += entity.delta_time();
-
-			if (animation.count >= animation.frequency)
+			if (sprite->active)
 			{
-				if (animation.i >= animation.frames->size())
-					animation.i = 0;
+				animation->count += it.entity(i).delta_time();
 
-				sprite.texture_rect = animation.frames->at(animation.i);
-				animation.i++;
+				if (animation->count >= animation->frequency)
+				{
+					if (animation->i >= animation->frames->size())
+						animation->i = 0;
 
-				animation.count -= animation.frequency;
+					sprite->texture_rect = animation->frames->at(animation->i);
+					animation->i++;
+
+					animation->count -= animation->frequency;
+				}
 			}
 		}
 	}
 
-	void AudioSystem(Entity entity, AudioEffectComponent& audio_effect)
+	void AudioSystem(flecs::iter& it, AudioEffectComponent* audio_effect)
 	{
-		if (audio_effect.play)
+		for (auto i : it)
 		{
-			audio_effect.audio.play();
-			audio_effect.play = false;
+			if (audio_effect[i].play)
+			{
+				audio_effect[i].audio.play();
+				audio_effect[i].play = false;
+			}
 		}
 	}
 
-	void MovementControlSystem(Entity entity, TransformComponent& transform, MovementControlComponent& movement_control)
+	void MovementControlSystem(flecs::iter& it, TransformComponent* transform, MovementControlComponent* movement_control)
 	{
-		movement_control.controller(transform.velocity, entity.delta_time());
+		for (auto i : it)
+		{
+			movement_control->controller(transform[i].velocity, it.entity(i).delta_time());
+		}
 	}
 
-	void ScriptSystem(Entity entity, ScriptComponent& script)
+	void ScriptSystem(flecs::iter& it, ScriptComponent* script)
 	{
-		script.script(entity, entity.delta_time());
+		for (auto i : it)
+		{
+			script[i].script(it.entity(i), it.entity(i).delta_time());
+		}
 	}
 
 	void CollisionSystem(flecs::iter& it, TransformComponent* transform, ColliderComponent* collider)

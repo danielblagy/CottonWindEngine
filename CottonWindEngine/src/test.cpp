@@ -31,7 +31,7 @@ public:
 
 	void create_sensei_entity(const glm::ivec2& position)
 	{
-		/*static cotwin::Texture& sensei_texture = cotwin::ResourceManager::load_texture("src/test/resources/textures/sensei_running.bmp");
+		static cotwin::Texture& sensei_texture = cotwin::ResourceManager::load_texture("src/test/resources/textures/sensei_running.bmp");
 
 		cotwin::Entity sensei_entity = scene.create_entity("sensei");
 		sensei_entity.set<cotwin::TransformComponent>({ glm::vec2{ (float)position.x, (float)position.y }, glm::vec2{ 0.0f, 0.0f } });
@@ -42,7 +42,7 @@ public:
 		// set up animation for sensei entity
 		sensei_entity.set<cotwin::AnimationComponent>({ 0.2f, &sensei_animation_frames });
 
-		sensei_entity.set<cotwin::ColliderComponent>({ glm::vec2{ 100.0f, 100.0f } });*/
+		sensei_entity.set<cotwin::ColliderComponent>({ glm::vec2{ 100.0f, 100.0f } });
 	}
 
 	virtual void on_attach() override
@@ -63,95 +63,95 @@ public:
 		// CREATE ENTITIES /////////////////////////////////
 		
 		// Player entity
-		//cotwin::Entity player_entity = scene.create_entity("player");
-		//player_entity.set<cotwin::TransformComponent>({ glm::vec2{ 700.0f, 500.0f }, glm::vec2{ 0.0f, 0.0f } });
-		//player_entity.set<cotwin::SpriteComponent>({
-		//	hero_texture, glm::ivec4{ 0, 0, 0, 0 }, glm::ivec2{ 100, 100 }
-		//});
-		//
-		//player_entity.set<cotwin::AnimationComponent>({ 0.5f, &player_idle_frames });
-		//
-		//// move player with keyboard input
-		//player_entity.set<cotwin::MovementControlComponent>({
-		//	[](glm::vec2& transform_velocity, float delta) {
-		//		// TODO : or maybe handle delta in TransformSystem ??
-		//		
-		//		if (cotwin::Input::is_key_pressed(CW_KEY_LEFT))
-		//			transform_velocity.x = -150.0f * delta;
-		//		else if (cotwin::Input::is_key_pressed(CW_KEY_RIGHT))
-		//			transform_velocity.x = 150.0f * delta;
-		//		else
-		//			transform_velocity.x = 0.0f;
-		//
-		//		if (cotwin::Input::is_key_pressed(CW_KEY_UP))
-		//			transform_velocity.y = -150.0f * delta;
-		//		else if (cotwin::Input::is_key_pressed(CW_KEY_DOWN))
-		//			transform_velocity.y = 150.0f * delta;
-		//		else
-		//			transform_velocity.y = 0.0f;
-		//	}
-		//});
-		//// set update logic for the player entity
-		//player_entity.set<cotwin::ScriptComponent>({
-		//	[&](cotwin::Entity entity, float delta) {
-		//		glm::vec2 velocity = entity.get<cotwin::TransformComponent>()->velocity;
-		//		// get_mut return mutable pointer, if get is used, the pointer will be const, const cotwin::AnimationComponent* in this case
-		//		cotwin::AnimationComponent* animation = entity.get_mut<cotwin::AnimationComponent>();
-		//
-		//		if (velocity.x > 0.0f)
-		//			animation->set_animation(&player_running_right_frames);
-		//		else if (velocity.x < 0.0f)
-		//			animation->set_animation(&player_running_left_frames);
-		//		else if (velocity.y > 0.0f)
-		//			animation->set_animation(&player_running_down_frames);
-		//		else if (velocity.y < 0.0f)
-		//			animation->set_animation(&player_running_up_frames);
-		//		else
-		//			animation->set_animation(&player_idle_frames);
-		//
-		//		// since there is only one player, scene.get_collisions is expected to return just one collision
-		//		// if the player entity & a sensei entity collide, in this case simply display a text on the screen
-		//		/*for (auto& collision : scene.get_collisions("player", "sensei"))
-		//		{
-		//			cotwin::Renderer2D::render_text(collision_detected_message);
-		//		}*/
-		//	}
-		//});
-		//
-		//player_entity.set<cotwin::ColliderComponent>({ glm::vec2{ 100.0f, 100.0f } });
-		//
-		//// set sensei animation frames
-		//for (int i = 0; i < 11; i++)
-		//{
-		//	sensei_animation_frames.push_back(glm::ivec4{ i * 24, 0, 24, 24 });
-		//}
-		//
-		//player_running_down_frames.reserve(4);
-		//player_running_up_frames.reserve(4);
-		//player_running_left_frames.reserve(4);
-		//player_running_right_frames.reserve(4);
-		//player_idle_frames.reserve(1);
-		//
-		//// set player animation frames
-		//for (int i = 0; i < 4; i++)
-		//{
-		//	player_running_down_frames.push_back(glm::ivec4{ i * 256, 0, 256, 256 });
-		//	player_running_up_frames.push_back(glm::ivec4{ i * 256, 256, 256, 256 });
-		//	player_running_left_frames.push_back(glm::ivec4{ i * 256, 2 * 256, 256, 256 });
-		//	player_running_right_frames.push_back(glm::ivec4{ i * 256, 3 * 256, 256, 256 });
-		//}
-		//
-		//player_idle_frames.push_back(glm::ivec4{ 2 * 256, 0, 256, 256 });
-		//
-		//// Audio entity
-		//audio_snap_entity = scene.create_entity("snapper");
-		//audio_snap_entity.set<cotwin::AudioEffectComponent>({ snap_audio });
-		//
-		//// Camera entity
-		//camera_entity = scene.create_entity("primary camera");
-		//camera_entity.set<cotwin::TransformComponent>({ glm::vec2{ 1280.0f / 2.0f, 720.0f / 2.0f }, glm::vec2{ 0.0f, 0.0f } });
-		//// TODO : set up a way to get window size
-		//camera_entity.set<cotwin::CameraComponent>({ glm::vec2{ 1280, 720 }, glm::vec2{ 1280, 720 } });
+		cotwin::Entity player_entity = scene.create_entity("player");
+		player_entity.set<cotwin::TransformComponent>({ glm::vec2{ 700.0f, 500.0f }, glm::vec2{ 0.0f, 0.0f } });
+		player_entity.set<cotwin::SpriteComponent>({
+			hero_texture, glm::ivec4{ 0, 0, 0, 0 }, glm::ivec2{ 100, 100 }
+		});
+
+		player_entity.set<cotwin::AnimationComponent>({ 0.5f, &player_idle_frames });
+
+		// move player with keyboard input
+		player_entity.set<cotwin::MovementControlComponent>({
+			[](glm::vec2& transform_velocity, float delta) {
+				// TODO : or maybe handle delta in TransformSystem ??
+				
+				if (cotwin::Input::is_key_pressed(CW_KEY_LEFT))
+					transform_velocity.x = -150.0f * delta;
+				else if (cotwin::Input::is_key_pressed(CW_KEY_RIGHT))
+					transform_velocity.x = 150.0f * delta;
+				else
+					transform_velocity.x = 0.0f;
+
+				if (cotwin::Input::is_key_pressed(CW_KEY_UP))
+					transform_velocity.y = -150.0f * delta;
+				else if (cotwin::Input::is_key_pressed(CW_KEY_DOWN))
+					transform_velocity.y = 150.0f * delta;
+				else
+					transform_velocity.y = 0.0f;
+			}
+		});
+		// set update logic for the player entity
+		player_entity.set<cotwin::ScriptComponent>({
+			[&](cotwin::Entity entity, float delta) {
+				glm::vec2 velocity = entity.get<cotwin::TransformComponent>()->velocity;
+				// get_mut return mutable pointer, if get is used, the pointer will be const, const cotwin::AnimationComponent* in this case
+				cotwin::AnimationComponent* animation = entity.get_mut<cotwin::AnimationComponent>();
+
+				if (velocity.x > 0.0f)
+					animation->set_animation(&player_running_right_frames);
+				else if (velocity.x < 0.0f)
+					animation->set_animation(&player_running_left_frames);
+				else if (velocity.y > 0.0f)
+					animation->set_animation(&player_running_down_frames);
+				else if (velocity.y < 0.0f)
+					animation->set_animation(&player_running_up_frames);
+				else
+					animation->set_animation(&player_idle_frames);
+
+				// since there is only one player, scene.get_collisions is expected to return just one collision
+				// if the player entity & a sensei entity collide, in this case simply display a text on the screen
+				/*for (auto& collision : scene.get_collisions("player", "sensei"))
+				{
+					cotwin::Renderer2D::render_text(collision_detected_message);
+				}*/
+			}
+		});
+
+		player_entity.set<cotwin::ColliderComponent>({ glm::vec2{ 100.0f, 100.0f } });
+
+		// set sensei animation frames
+		for (int i = 0; i < 11; i++)
+		{
+			sensei_animation_frames.push_back(glm::ivec4{ i * 24, 0, 24, 24 });
+		}
+
+		player_running_down_frames.reserve(4);
+		player_running_up_frames.reserve(4);
+		player_running_left_frames.reserve(4);
+		player_running_right_frames.reserve(4);
+		player_idle_frames.reserve(1);
+		
+		// set player animation frames
+		for (int i = 0; i < 4; i++)
+		{
+			player_running_down_frames.push_back(glm::ivec4{ i * 256, 0, 256, 256 });
+			player_running_up_frames.push_back(glm::ivec4{ i * 256, 256, 256, 256 });
+			player_running_left_frames.push_back(glm::ivec4{ i * 256, 2 * 256, 256, 256 });
+			player_running_right_frames.push_back(glm::ivec4{ i * 256, 3 * 256, 256, 256 });
+		}
+
+		player_idle_frames.push_back(glm::ivec4{ 2 * 256, 0, 256, 256 });
+
+		// Audio entity
+		audio_snap_entity = scene.create_entity("snapper");
+		audio_snap_entity.set<cotwin::AudioEffectComponent>({ snap_audio });
+
+		// Camera entity
+		camera_entity = scene.create_entity("primary camera");
+		camera_entity.set<cotwin::TransformComponent>({ glm::vec2{ 1280.0f / 2.0f, 720.0f / 2.0f }, glm::vec2{ 0.0f, 0.0f } });
+		// TODO : set up a way to get window size
+		camera_entity.set<cotwin::CameraComponent>({ glm::vec2{ 1280, 720 }, glm::vec2{ 1280, 720 } });
 
 
 		// CREATE TEXTS /////////////////////////////////

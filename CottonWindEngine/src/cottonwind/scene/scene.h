@@ -10,11 +10,6 @@
 
 namespace cotwin
 {
-	void test_system(flecs::iter& it, TransformComponent* transform)
-	{
-
-	}
-	
 	class Scene
 	{
 	private:
@@ -39,20 +34,19 @@ namespace cotwin
 			//world.component<ScriptComponent>();
 			//world.component<ColliderComponent>();
 			
-			//world.system<ScriptComponent>().each(ScriptSystem);
-			//world.system<TransformComponent, MovementControlComponent>().each(MovementControlSystem);
-			//world.system<TransformComponent>("TransformSystem").each(TransformSystem);
-
-			world.system<TransformComponent>().iter(test_system);
+			// TODO : why doesn't system.each compile? (only .iter compiles)
+			world.system<ScriptComponent>().iter(ScriptSystem);
+			world.system<TransformComponent, MovementControlComponent>().iter(MovementControlSystem);
+			world.system<TransformComponent>("TransformSystem").iter(TransformSystem);
 			
-			//world.system<TransformComponent, CameraComponent>("CameraSystem").each(CameraSystem);
+			world.system<TransformComponent, CameraComponent>("CameraSystem").iter(CameraSystem);
 			
-			//world.system<TransformComponent, CameraComponent>().each(CameraControllerSystem);
-			//world.system<SpriteComponent, AnimationComponent>().each(AnimationSystem);
-			//world.system<TransformComponent, SpriteComponent>().each(SpriteRenderSystem);
-			//world.system<AudioEffectComponent>().each(AudioSystem);
+			world.system<TransformComponent, CameraComponent>().iter(CameraControllerSystem);
+			world.system<SpriteComponent, AnimationComponent>().iter(AnimationSystem);
+			world.system<TransformComponent, SpriteComponent>().iter(SpriteRenderSystem);
+			world.system<AudioEffectComponent>().iter(AudioSystem);
 			
-			//world.system<TransformComponent, ColliderComponent>().iter(CollisionSystem);
+			world.system<TransformComponent, ColliderComponent>().iter(CollisionSystem);
 		}
 
 		~Scene()
