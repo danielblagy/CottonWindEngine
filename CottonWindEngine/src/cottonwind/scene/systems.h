@@ -53,6 +53,9 @@ namespace cotwin
 	private:
 		bool window_size_updated = false;
 		glm::ivec2 window_size;
+
+		Entity * camera_entity = 0;
+		ComponentHandle<CameraComponent> camera;
 	
 	public:
 		CameraSystem()
@@ -65,18 +68,21 @@ namespace cotwin
 		{
 			if (window_size_updated)
 			{
-				Entity* camera_entity = 0;
-				auto camera_entity_iterator = world->each<TransformComponent, CameraComponent>().begin();
-
-				// check if the registry has an entity with a CameraComponent
-				if (camera_entity_iterator.isEnd() != true)
+				if (camera_entity == NULL)
 				{
-					camera_entity = world->getByIndex(camera_entity_iterator.getIndex());
+					auto camera_entity_iterator = world->each<CameraComponent>().begin();
+
+					// check if the registry has an entity with a CameraComponent
+					if (camera_entity_iterator.isEnd() != true)
+					{
+						camera_entity = world->getByIndex(camera_entity_iterator.getIndex());
+
+						camera = camera_entity->get<CameraComponent>();
+					}
 				}
 
-				if (camera_entity)
+				else
 				{
-					ComponentHandle<CameraComponent> camera = camera_entity->get<CameraComponent>();
 					// update camera scale
 					camera->scale.x = (float) window_size.x / (float) camera->bounds.x;
 					camera->scale.y = (float) window_size.y / (float) camera->bounds.y;
@@ -95,6 +101,11 @@ namespace cotwin
 
 	class CameraControllerSystem : public ECS::EntitySystem
 	{
+	private:
+		Entity * camera_entity = 0;
+		ComponentHandle<TransformComponent> transform;
+		ComponentHandle<CameraComponent> camera;
+	
 	public:
 		CameraControllerSystem()
 		{}
@@ -104,19 +115,22 @@ namespace cotwin
 
 		virtual void tick(ECS::World* world, float deltaTime) override
 		{
-			Entity* camera_entity = 0;
-			auto camera_entity_iterator = world->each<TransformComponent, CameraComponent>().begin();
-
-			// check if the registry has an entity with a CameraComponent
-			if (camera_entity_iterator.isEnd() != true)
+			if (camera_entity == NULL)
 			{
-				camera_entity = world->getByIndex(camera_entity_iterator.getIndex());
+				auto camera_entity_iterator = world->each<TransformComponent, CameraComponent>().begin();
+
+				// check if the registry has an entity with a CameraComponent
+				if (camera_entity_iterator.isEnd() != true)
+				{
+					camera_entity = world->getByIndex(camera_entity_iterator.getIndex());
+
+					transform = camera_entity->get<TransformComponent>();
+					camera = camera_entity->get<CameraComponent>();
+				}
 			}
 
-			if (camera_entity)
+			else
 			{
-				ComponentHandle<TransformComponent> transform = camera_entity->get<TransformComponent>();
-
 				if (Input::is_key_pressed(CW_KEY_A))
 					transform->velocity.x = -120.0f * deltaTime;
 				else if (Input::is_key_pressed(CW_KEY_D))
@@ -136,6 +150,11 @@ namespace cotwin
 
 	class SpriteRenderSystem : public ECS::EntitySystem
 	{
+	private:
+		Entity* camera_entity = 0;
+		ComponentHandle<TransformComponent> camera_transform;
+		ComponentHandle<CameraComponent> camera;
+	
 	public:
 		SpriteRenderSystem()
 		{}
@@ -145,13 +164,18 @@ namespace cotwin
 
 		virtual void tick(ECS::World* world, float deltaTime) override
 		{
-			Entity* camera_entity = 0;
-			auto camera_entity_iterator = world->each<TransformComponent, CameraComponent>().begin();
-			
-			// check if the registry has an entity with a CameraComponent
-			if (camera_entity_iterator.isEnd() != true)
+			if (camera_entity == NULL)
 			{
-				camera_entity = world->getByIndex(camera_entity_iterator.getIndex());
+				auto camera_entity_iterator = world->each<TransformComponent, CameraComponent>().begin();
+
+				// check if the registry has an entity with a CameraComponent
+				if (camera_entity_iterator.isEnd() != true)
+				{
+					camera_entity = world->getByIndex(camera_entity_iterator.getIndex());
+
+					camera_transform = camera_entity->get<TransformComponent>();
+					camera = camera_entity->get<CameraComponent>();
+				}
 			}
 
 			int sprites_drawn = 0;
@@ -165,9 +189,6 @@ namespace cotwin
 					{
 						if (camera_entity)
 						{
-							ComponentHandle<TransformComponent> camera_transform = camera_entity->get<TransformComponent>();
-							ComponentHandle<CameraComponent> camera = camera_entity->get<CameraComponent>();
-
 							glm::ivec2 camera_half_size = camera->bounds / 2;
 							RenderCamera render_camera(
 								camera_transform->center.x - camera_half_size.x,
@@ -232,7 +253,7 @@ namespace cotwin
 
 		virtual void tick(ECS::World* world, float deltaTime) override
 		{
-			for (Entity* ent : world->each<SpriteComponent, AnimationComponent>())
+			for (Entity* ent : world->each<AnimationComponent>())
 			{
 				// TODO : maybe get entities with AnimationComponent, and then check if it has SpriteComponent,
 				//			and if not, log error message
@@ -294,7 +315,7 @@ namespace cotwin
 
 		virtual void tick(ECS::World* world, float deltaTime) override
 		{
-			for (Entity* ent : world->each<TransformComponent, MovementControlComponent>())
+			for (Entity* ent : world->each<MovementControlComponent>())
 			{
 				ent->with<TransformComponent, MovementControlComponent>([&](
 					ECS::ComponentHandle<TransformComponent> transform, ECS::ComponentHandle<MovementControlComponent> movement_control) {
@@ -342,11 +363,9 @@ namespace cotwin
 			
 			for (Entity* ent : world->each<ColliderComponent>())
 			{
-				if (ent->has<TagComponent>() && ent->has<TransformComponent>())
+				ent->with<TransformComponent, ColliderComponent>
+				([&](ECS::ComponentHandle<TransformComponent> transform, ECS::ComponentHandle<ColliderComponent> collider)
 				{
-					ComponentHandle<TransformComponent> transform = ent->get<TransformComponent>();
-					ComponentHandle<ColliderComponent> collider = ent->get<ColliderComponent>();
-
 					glm::vec2 collider_origin = transform->center + collider->offset;
 					glm::vec4 collider_rect(
 						collider_origin.x,
@@ -357,11 +376,12 @@ namespace cotwin
 
 					for (Entity* other : world->each<ColliderComponent>())
 					{
-						if (ent != other && other->has<TagComponent>() && other->has<TransformComponent>())
-						{
-							ComponentHandle<TransformComponent> other_transform = other->get<TransformComponent>();
-							ComponentHandle<ColliderComponent> other_collider = other->get<ColliderComponent>();
+						if (ent == other)
+							continue;
 
+						other->with<TransformComponent, ColliderComponent>
+						([&](ECS::ComponentHandle<TransformComponent> other_transform, ECS::ComponentHandle<ColliderComponent> other_collider)
+						{
 							glm::vec2 other_collider_origin = other_transform->center + other_collider->offset;
 							glm::vec4 other_collider_rect(
 								other_collider_origin.x,
@@ -374,9 +394,9 @@ namespace cotwin
 							{
 								collisions.push_back(std::make_pair(ent, other));
 							}
-						}
+						});
 					}
-				}
+				});
 			}
 		}
 	};
