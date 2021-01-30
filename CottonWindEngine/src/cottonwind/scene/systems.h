@@ -40,9 +40,12 @@ namespace cotwin
 	
 	void CameraSystem(flecs::iter& it, TransformComponent* transform, CameraComponent* camera)
 	{
-		CameraSystemContext* context = static_cast<CameraSystemContext*>(it.param());
+		//CameraSystemContext* context = static_cast<CameraSystemContext*>(it.param());
+		//int* context = (int*)it.param();
+		int* context = static_cast<int*>(it.param());
+		Logger::Debug("%d", *context);
 		
-		for (auto i : it)
+		/*for (auto i : it)
 		{
 			if (context->window_size_updated)
 			{
@@ -52,7 +55,7 @@ namespace cotwin
 
 				context->window_size_updated = false;
 			}
-		}
+		}*/
 	}
 
 	void CameraControllerSystem(flecs::iter& it, TransformComponent* transform, CameraComponent* camera)

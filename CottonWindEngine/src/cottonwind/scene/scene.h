@@ -10,14 +10,13 @@
 
 namespace cotwin
 {
-	CameraSystemContext camera_system_context;
-	
 	class Scene
 	{
 	private:
 		flecs::world world;
 		
-		SpriteRenderSystemContext sprite_render_system_context;
+		CameraSystemContext camera_system_context;
+		int test_context = 57;
 		
 		//ColliderSystem* collider_system;
 
@@ -45,12 +44,12 @@ namespace cotwin
 			world.system<TransformComponent>("TransformSystem").iter(TransformSystem);
 			
 			//auto camera_system = world.system<TransformComponent, CameraComponent>().iter(CameraSystem);
-			//camera_system.set<flecs::Context>({ &camera_system_context });
+			//camera_system.set<flecs::Context>({ &test_context });
 			
 			world.system<TransformComponent, CameraComponent>().iter(CameraControllerSystem);
 			world.system<SpriteComponent, AnimationComponent>().iter(AnimationSystem);
 			
-			auto sprite_render_system = world.system<TransformComponent, SpriteComponent>().iter(SpriteRenderSystem);
+			world.system<TransformComponent, SpriteComponent>().iter(SpriteRenderSystem);
 			
 			world.system<AudioEffectComponent>().iter(AudioSystem);
 			
@@ -83,14 +82,23 @@ namespace cotwin
 			//		}
 			//	}
 			//);
+			test_context = 112;
 
 			world.progress();
 		}
 
 		void on_window_resize_event(const glm::ivec2& new_size)
 		{
-			camera_system_context.window_size_updated = true;
-			camera_system_context.window_size = new_size;
+			world.query<CameraComponent>().iter(
+				[&](flecs::iter& it, CameraComponent* camera) {
+					for (auto i : it)
+					{
+						// update camera scale
+						camera[i].scale.x = (float)new_size.x / (float)camera[i].bounds.x;
+						camera[i].scale.y = (float)new_size.y / (float)camera[i].bounds.y;
+					}
+				}
+			);
 		}
 
 		// a conveniance function that returns a sub-vector of collisions of entities with two specified tags
