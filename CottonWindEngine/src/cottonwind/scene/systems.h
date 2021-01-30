@@ -324,6 +324,7 @@ namespace cotwin
 		}
 	};
 
+	// TODO : rename this to collision system
 	class ColliderSystem : public ECS::EntitySystem
 	{
 	public:
@@ -339,30 +340,32 @@ namespace cotwin
 		{
 			collisions.clear();
 			
-			for (Entity* ent : world->each<TagComponent, TransformComponent, ColliderComponent>())
+			for (Entity* ent : world->each<ColliderComponent>())
 			{
-				ent->with<TagComponent, TransformComponent, ColliderComponent>([&](
-					ECS::ComponentHandle<TagComponent> tag,
-					ECS::ComponentHandle<TransformComponent> transform,
-					ECS::ComponentHandle<ColliderComponent> collider
-					) {
+				if (ent->has<TagComponent>() && ent->has<TransformComponent>())
+				{
+					ComponentHandle<TransformComponent> transform = ent->get<TransformComponent>();
+					ComponentHandle<ColliderComponent> collider = ent->get<ColliderComponent>();
+
+					glm::vec2 collider_origin = transform->center + collider->offset;
 					glm::vec4 collider_rect(
-						transform->center.x + collider->offset.x,
-						transform->center.y + collider->offset.y,
+						collider_origin.x,
+						collider_origin.y,
 						collider->size.x,
 						collider->size.y
 					);
-					
-					for (Entity* other : world->each<TagComponent, TransformComponent, ColliderComponent>())
+
+					for (Entity* other : world->each<ColliderComponent>())
 					{
-						other->with<TagComponent, TransformComponent, ColliderComponent>([&](
-							ECS::ComponentHandle<TagComponent> other_tag,
-							ECS::ComponentHandle<TransformComponent> other_transform,
-							ECS::ComponentHandle<ColliderComponent> other_collider
-							) {
+						if (ent != other && other->has<TagComponent>() && other->has<TransformComponent>())
+						{
+							ComponentHandle<TransformComponent> other_transform = other->get<TransformComponent>();
+							ComponentHandle<ColliderComponent> other_collider = other->get<ColliderComponent>();
+
+							glm::vec2 other_collider_origin = other_transform->center + other_collider->offset;
 							glm::vec4 other_collider_rect(
-								other_transform->center.x + other_collider->offset.x,
-								other_transform->center.y + other_collider->offset.y,
+								other_collider_origin.x,
+								other_collider_origin.y,
 								other_collider->size.x,
 								other_collider->size.y
 							);
@@ -371,9 +374,9 @@ namespace cotwin
 							{
 								collisions.push_back(std::make_pair(ent, other));
 							}
-						});
+						}
 					}
-				});
+				}
 			}
 		}
 	};
