@@ -9,7 +9,7 @@
 #include <vector>
 #include <functional>
 
-#include "../vendor/ecs/ECS.h"
+#include "../vendor/flecs/flecs.h"
 
 
 namespace cotwin
@@ -28,6 +28,9 @@ namespace cotwin
 		Audio audio;
 		bool play;
 
+		AudioEffectComponent()
+		{}
+		
 		AudioEffectComponent(Audio& s_audio)
 			: audio(s_audio), play(false)
 		{}
@@ -55,6 +58,9 @@ namespace cotwin
 		// scale based on the game's window
 		glm::vec2 scale;
 
+		CameraComponent()
+		{}
+		
 		CameraComponent(const glm::ivec2& s_bounds, const glm::ivec2& window_size)
 			: bounds(s_bounds), scale(window_size / s_bounds)
 		{}
@@ -68,6 +74,9 @@ namespace cotwin
 		glm::ivec2 center_offset;	// an offset of position from transform->center
 
 		bool active;
+
+		SpriteComponent()
+		{}
 
 		SpriteComponent(Texture s_texture, const glm::ivec4& s_texture_rect, const glm::ivec2& s_size)
 			: texture(s_texture), texture_rect(s_texture_rect), size(s_size), center_offset(0, 0), active(true)
@@ -87,6 +96,9 @@ namespace cotwin
 
 		// NOTE: count in initialized to frequency to force resfresh() in AnimationSystem on init, so that
 		//	sprite component is initialized to a proper texture_rect
+		
+		AnimationComponent()
+		{}
 		
 		AnimationComponent(float s_frequency)
 			: frequency(s_frequency), count(s_frequency), frames(0)
@@ -111,6 +123,9 @@ namespace cotwin
 	{
 		std::function<void(glm::vec2&, float)> controller;
 
+		MovementControlComponent()
+		{}
+		
 		MovementControlComponent(std::function<void(glm::vec2&, float)> s_controller)
 			: controller(s_controller)
 		{}
@@ -118,9 +133,12 @@ namespace cotwin
 
 	struct ScriptComponent
 	{
-		std::function<void(ECS::Entity*, float)> script;
+		std::function<void(flecs::entity, float)> script;
 
-		ScriptComponent(std::function<void(ECS::Entity*, float)> s_script)
+		ScriptComponent()
+		{}
+		
+		ScriptComponent(std::function<void(flecs::entity, float)> s_script)
 			: script(s_script)
 		{}
 	};
@@ -130,6 +148,9 @@ namespace cotwin
 		glm::vec2 size;
 		glm::vec2 offset;	// an offset from transform->position
 
+		ColliderComponent()
+		{}
+		
 		ColliderComponent(const glm::vec2& s_size)
 			: size(s_size), offset(0.0f, 0.0f)
 		{}

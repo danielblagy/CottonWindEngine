@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../vendor/ecs/ECS.h"
+#include "../vendor/flecs/flecs.h"
 
 #include "components.h"
 
@@ -22,33 +22,19 @@
 namespace cotwin
 {
 	// just do that for now to conceal implementation details
-	typedef ECS::Entity Entity;
+	typedef flecs::entity Entity;
 
-	template<typename T>
-	using ComponentHandle = ECS::ComponentHandle<T>; // typedef for ECS::ComponentHandle
-
-	class TransformSystem : public ECS::EntitySystem
+	void TransformSystem(flecs::entity entity, TransformComponent* transform)
 	{
-	public:
-		TransformSystem()
-		{}
+		transform->center += transform->velocity;
+	}
 
-		virtual ~TransformSystem()
-		{}
+	void CameraSystem(Entity entity, TransformComponent& transform, CameraComponent& camera)
+	{
+		
+	}
 
-		virtual void tick(ECS::World* world, float deltaTime) override
-		{
-			for (Entity* ent : world->each<TransformComponent>())
-			{
-				ent->with<TransformComponent>([&](ECS::ComponentHandle<TransformComponent> transform) {
-					// update transform's position with velocity
-					transform->center += transform->velocity;
-				});
-			}
-		}
-	};
-
-	class CameraSystem : public ECS::EntitySystem
+	/*class CameraSystem : public ECS::EntitySystem
 	{
 	private:
 		bool window_size_updated = false;
@@ -97,9 +83,14 @@ namespace cotwin
 			window_size_updated = true;
 			window_size = new_window_size;
 		}
-	};
+	};*/
 
-	class CameraControllerSystem : public ECS::EntitySystem
+	void CameraControllerSystem(Entity entity, TransformComponent& transform, CameraComponent& camera)
+	{
+		
+	}
+	
+	/*class CameraControllerSystem : public ECS::EntitySystem
 	{
 	private:
 		Entity * camera_entity = 0;
@@ -146,9 +137,17 @@ namespace cotwin
 					transform->velocity.y = 0.0f;
 			}
 		}
-	};
+	};*/
 
-	class SpriteRenderSystem : public ECS::EntitySystem
+	//flecs::iter& it,
+	void SpriteRenderSystem(Entity entity, TransformComponent& transform, SpriteComponent& sprite)
+	{
+		int sprites_drawn = 0;
+		Renderer2D::render_texture(sprite.texture, sprite.texture_rect, transform.center, sprite.size);
+		sprites_drawn++;
+	}
+	
+	/*class SpriteRenderSystem : public ECS::EntitySystem
 	{
 	private:
 		Entity* camera_entity = 0;
@@ -240,164 +239,80 @@ namespace cotwin
 			Text sprites_drawn_text(std::to_string(sprites_drawn), main_font, { 200, 200, 200, 255 }, { 200, 0 });
 			Renderer2D::render_text(sprites_drawn_text);
 		}
-	};
+	};*/
 
-	class AnimationSystem : public ECS::EntitySystem
+	void AnimationSystem(Entity entity, SpriteComponent& sprite, AnimationComponent& animation)
 	{
-	public:
-		AnimationSystem()
-		{}
-
-		virtual ~AnimationSystem()
-		{}
-
-		virtual void tick(ECS::World* world, float deltaTime) override
+		if (sprite.active)
 		{
-			for (Entity* ent : world->each<AnimationComponent>())
-			{
-				// TODO : maybe get entities with AnimationComponent, and then check if it has SpriteComponent,
-				//			and if not, log error message
-				ent->with<SpriteComponent, AnimationComponent>([&](
-					ECS::ComponentHandle<SpriteComponent> sprite, ECS::ComponentHandle<AnimationComponent> animation
-					) {
-					if (sprite->active)
-					{
-						animation->count += deltaTime;
+			animation.count += entity.delta_time();
 
-						if (animation->count >= animation->frequency)
-						{
-							if (animation->i >= animation->frames->size())
-								animation->i = 0;
-							
-							sprite->texture_rect = animation->frames->at(animation->i);
-							animation->i++;
-							
-							animation->count -= animation->frequency;
-						}
-					}
-				});
+			if (animation.count >= animation.frequency)
+			{
+				if (animation.i >= animation.frames->size())
+					animation.i = 0;
+
+				sprite.texture_rect = animation.frames->at(animation.i);
+				animation.i++;
+
+				animation.count -= animation.frequency;
 			}
 		}
-	};
+	}
 
-	class AudioSystem : public ECS::EntitySystem
+	void AudioSystem(Entity entity, AudioEffectComponent& audio_effect)
 	{
-	public:
-		AudioSystem()
-		{}
-
-		virtual ~AudioSystem()
-		{}
-
-		virtual void tick(ECS::World* world, float deltaTime) override
+		if (audio_effect.play)
 		{
-			for (Entity* ent : world->each<AudioEffectComponent>())
-			{
-				ent->with<AudioEffectComponent>([&](ECS::ComponentHandle<AudioEffectComponent> audio_effect) {
-					if (audio_effect->play)
-					{
-						audio_effect->audio.play();
-						audio_effect->play = false;
-					}
-				});
-			}
+			audio_effect.audio.play();
+			audio_effect.play = false;
 		}
-	};
+	}
 
-	class MovementControlSystem : public ECS::EntitySystem
+	void MovementControlSystem(Entity entity, TransformComponent& transform, MovementControlComponent& movement_control)
 	{
-	public:
-		MovementControlSystem()
-		{}
+		movement_control.controller(transform.velocity, entity.delta_time());
+	}
 
-		virtual ~MovementControlSystem()
-		{}
-
-		virtual void tick(ECS::World* world, float deltaTime) override
-		{
-			for (Entity* ent : world->each<MovementControlComponent>())
-			{
-				ent->with<TransformComponent, MovementControlComponent>([&](
-					ECS::ComponentHandle<TransformComponent> transform, ECS::ComponentHandle<MovementControlComponent> movement_control) {
-					movement_control->controller(transform->velocity, deltaTime);
-				});
-			}
-		}
-	};
-
-	class ScriptSystem : public ECS::EntitySystem
+	void ScriptSystem(Entity entity, ScriptComponent& script)
 	{
-	public:
-		ScriptSystem()
-		{}
+		script.script(entity, entity.delta_time());
+	}
 
-		virtual ~ScriptSystem()
-		{}
-
-		virtual void tick(ECS::World* world, float deltaTime) override
-		{
-			for (Entity* ent : world->each<ScriptComponent>())
-			{
-				ent->with<ScriptComponent>([&](ECS::ComponentHandle<ScriptComponent> script) {
-					script->script(ent, deltaTime);
-				});
-			}
-		}
-	};
-
-	// TODO : rename this to collision system
-	class ColliderSystem : public ECS::EntitySystem
+	void CollisionSystem(flecs::iter& it, TransformComponent* transform, ColliderComponent* collider)
 	{
-	public:
-		std::vector<std::pair<Entity*, Entity*>> collisions;
+		static std::vector<std::pair<Entity, Entity>> collisions;
 		
-		ColliderSystem()
-		{}
-
-		virtual ~ColliderSystem()
-		{}
-
-		virtual void tick(ECS::World* world, float deltaTime) override
+		collisions.clear();
+		
+		for (auto i : it)
 		{
-			collisions.clear();
+			glm::vec2 collider_origin = transform[i].center + collider[i].offset;
+			glm::vec4 collider_rect(
+				collider_origin.x,
+				collider_origin.y,
+				collider[i].size.x,
+				collider[i].size.y
+			);
 			
-			for (Entity* ent : world->each<ColliderComponent>())
+			for (auto j : it)
 			{
-				ent->with<TransformComponent, ColliderComponent>
-				([&](ECS::ComponentHandle<TransformComponent> transform, ECS::ComponentHandle<ColliderComponent> collider)
+				if (i == j)
+					continue;
+
+				glm::vec2 other_collider_origin = transform[j].center + collider[j].offset;
+				glm::vec4 other_collider_rect(
+					other_collider_origin.x,
+					other_collider_origin.y,
+					collider[j].size.x,
+					collider[j].size.y
+				);
+
+				if (physics::collide_aabb(collider_rect, other_collider_rect))
 				{
-					glm::vec2 collider_origin = transform->center + collider->offset;
-					glm::vec4 collider_rect(
-						collider_origin.x,
-						collider_origin.y,
-						collider->size.x,
-						collider->size.y
-					);
-
-					for (Entity* other : world->each<ColliderComponent>())
-					{
-						if (ent == other)
-							continue;
-
-						other->with<TransformComponent, ColliderComponent>
-						([&](ECS::ComponentHandle<TransformComponent> other_transform, ECS::ComponentHandle<ColliderComponent> other_collider)
-						{
-							glm::vec2 other_collider_origin = other_transform->center + other_collider->offset;
-							glm::vec4 other_collider_rect(
-								other_collider_origin.x,
-								other_collider_origin.y,
-								other_collider->size.x,
-								other_collider->size.y
-							);
-
-							if (physics::collide_aabb(collider_rect, other_collider_rect))
-							{
-								collisions.push_back(std::make_pair(ent, other));
-							}
-						});
-					}
-				});
+					collisions.push_back(std::make_pair(it.entity(i), it.entity(j)));
+				}
 			}
 		}
-	};
+	}
 }

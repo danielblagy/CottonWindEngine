@@ -166,6 +166,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\cottonwind\vendor\flecs\flecs.c" />
     <ClCompile Include="src\cottonwind\vendor\glad_v3.2_core\src\glad.c" />
     <ClCompile Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imgui.cpp" />
     <ClCompile Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imgui_demo.cpp" />
@@ -218,6 +219,7 @@
     <ClInclude Include="src\cottonwind\graphics\sdl2\renderer_2d.h" />
     <ClInclude Include="src\cottonwind\scene\scene.h" />
     <ClInclude Include="src\cottonwind\vendor\ecs\ECS.h" />
+    <ClInclude Include="src\cottonwind\vendor\flecs\flecs.h" />
     <ClInclude Include="src\cottonwind\vendor\glad_v3.2_core\include\glad\glad.h" />
     <ClInclude Include="src\cottonwind\vendor\glad_v3.2_core\include\KHR\khrplatform.h" />
     <ClInclude Include="src\cottonwind\vendor\glm\common.hpp" />
