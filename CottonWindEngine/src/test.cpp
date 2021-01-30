@@ -98,16 +98,25 @@ public:
 				// get_mut return mutable pointer, if get is used, the pointer will be const, const cotwin::AnimationComponent* in this case
 				cotwin::AnimationComponent* animation = entity.get_mut<cotwin::AnimationComponent>();
 
-				if (velocity.x > 0.0f)
-					animation->set_animation(&player_running_right_frames);
-				else if (velocity.x < 0.0f)
-					animation->set_animation(&player_running_left_frames);
-				else if (velocity.y > 0.0f)
-					animation->set_animation(&player_running_down_frames);
-				else if (velocity.y < 0.0f)
-					animation->set_animation(&player_running_up_frames);
-				else
-					animation->set_animation(&player_idle_frames);
+				// TODO : player animation doesn't update properly
+
+				static glm::vec2 old_velocity = velocity;
+				
+				if (old_velocity.x != velocity.x || old_velocity.y != velocity.y)
+				{
+					if (velocity.x > 0.0f)
+						animation->set_animation(&player_running_right_frames);
+					else if (velocity.x < 0.0f)
+						animation->set_animation(&player_running_left_frames);
+					else if (velocity.y > 0.0f)
+						animation->set_animation(&player_running_down_frames);
+					else if (velocity.y < 0.0f)
+						animation->set_animation(&player_running_up_frames);
+					else
+						animation->set_animation(&player_idle_frames);
+
+					old_velocity = velocity;
+				}
 
 				// since there is only one player, scene.get_collisions is expected to return just one collision
 				// if the player entity & a sensei entity collide, in this case simply display a text on the screen

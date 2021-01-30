@@ -18,6 +18,9 @@ namespace cotwin
 	{
 		std::string tag;
 
+		TagComponent()
+		{}
+		
 		TagComponent(std::string s_tag)
 			: tag(s_tag)
 		{}
@@ -92,7 +95,7 @@ namespace cotwin
 		float frequency;
 		float count;
 		std::vector<glm::ivec4>* frames;
-		std::size_t i = 0;
+		std::size_t frame = 0;
 
 		// NOTE: count in initialized to frequency to force resfresh() in AnimationSystem on init, so that
 		//	sprite component is initialized to a proper texture_rect
@@ -113,7 +116,7 @@ namespace cotwin
 			if (frames != s_frames)
 			{
 				frames = s_frames;
-				i = 0;
+				frame = 0;
 				count = frequency;
 			}
 		}
