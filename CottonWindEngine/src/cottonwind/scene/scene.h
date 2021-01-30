@@ -16,6 +16,9 @@ namespace cotwin
 		ECS::World* world;
 		CameraSystem* camera_system;
 		ColliderSystem* collider_system;
+
+		// used for collision querying from ColliderSystem
+		std::vector<std::pair<Entity*, Entity*>> collisions;
 	
 	public:
 		Scene()
@@ -59,11 +62,9 @@ namespace cotwin
 		}
 
 		// a conveniance function that returns a sub-vector of collisions of entities with two specified tags
-		std::vector<std::pair<Entity*, Entity*>> get_collisions(std::string t1, std::string t2)
+		std::vector<std::pair<Entity*, Entity*>>& get_collisions(std::string t1, std::string t2)
 		{
-			// TODO : make  it faster (maybe have this as a scene member, and clear it in the beginning of this function),
-			//			and then also perhaps return it as a reference
-			std::vector<std::pair<Entity*, Entity*>> collisions;
+			collisions.clear();
 			
 			for (std::pair<Entity*, Entity*>& collision : collider_system->collisions)
 			{

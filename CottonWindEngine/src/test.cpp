@@ -271,7 +271,7 @@ public:
 	{
 		attach_layer(new TestMainLayer());
 		
-		enable_vsync();
+		//enable_vsync();
 		//set_fps_cap(120);
 		glm::u8vec4 clear_color = { 120, 70, 150, 255 };
 		cotwin::Renderer2D::set_clear_color(clear_color);
