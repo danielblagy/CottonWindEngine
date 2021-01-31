@@ -14,9 +14,6 @@
 #include "../graphics/renderer.h"
 #include "../graphics/render_camera_2d.h"
 
-// TODO : for sprites drawn text, remove later
-#include "../resource_manager/resource_manager.h"
-
 #include <vector>
 #include "../physics/2d/collision.h"
 
@@ -77,44 +74,8 @@ namespace cotwin
 	private:
 		entt::registry registry;
 		
-		// used for collision querying from CollisionSystem
+		// used for collision querying from Collision System
 		std::vector<std::pair<Entity, Entity>> collisions;
-
-		// collision system (in here, since system context doesn't work, it.param() gives garbage values)
-		/*void CollisionSystem(flecs::iter& it, TransformComponent* transform, ColliderComponent* collider)
-		{
-			for (auto i : it)
-			{
-				glm::vec2 collider_origin = transform[i].center + collider[i].offset;
-				glm::vec4 collider_rect(
-					collider_origin.x,
-					collider_origin.y,
-					collider[i].size.x,
-					collider[i].size.y
-				);
-
-				// TODO : start from i + 1 index (so don't iterate over the same collisions twice)
-				size_t end = it.count();
-				for (size_t j = i + 1; j < it.count(); j++)
-				{
-					//if (i == j)
-					//	continue;
-
-					glm::vec2 other_collider_origin = transform[j].center + collider[j].offset;
-					glm::vec4 other_collider_rect(
-						other_collider_origin.x,
-						other_collider_origin.y,
-						collider[j].size.x,
-						collider[j].size.y
-					);
-
-					if (physics::collide_aabb(collider_rect, other_collider_rect))
-					{
-						collisions.push_back(std::make_pair(it.entity(i), it.entity(j)));
-					}
-				}
-			}
-		}*/
 
 	public:
 		Scene()
@@ -207,8 +168,6 @@ namespace cotwin
 				}
 			}
 			
-			int sprites_drawn = 0;
-			
 			// Sprite Render System
 			auto view = registry.view<TransformComponent, SpriteComponent>();
 			for (auto [entity, transform, sprite] : view.each()) {
@@ -260,14 +219,9 @@ namespace cotwin
 						};
 
 						Renderer2D::render_texture(sprite.texture, sprite.texture_rect, sprite_relative_position, sprite_relative_size);
-						sprites_drawn++;
 					}
 				}
 			}
-
-			static Font& main_font = cotwin::ResourceManager::get_font("src/test/resources/fonts/Lato/Lato-Regular.ttf");
-			Text sprites_drawn_text(std::to_string(sprites_drawn), main_font, { 200, 200, 200, 255 }, { 200, 0 });
-			Renderer2D::render_text(sprites_drawn_text);
 
 			// Collision System
 			collisions.clear();
