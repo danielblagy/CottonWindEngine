@@ -92,34 +92,27 @@ public:
 		// set update logic for the player entity
 		player_entity.set<cotwin::ScriptComponent>({
 			[&](cotwin::Entity entity, float delta) {
-				const cotwin::TransformComponent* transform = entity.get<cotwin::TransformComponent>();
-				
-				//if (transform->prev_velocity != transform->velocity)
-				//{
-					// create a new animation component (or re-create ?)
-					cotwin::AnimationComponent* animation = entity.get_mut<cotwin::AnimationComponent>();
-					cotwin::Logger::Debug("fr %f  c  %f  fms %d  fm  %d", animation->frequency, animation->count, animation->frames, animation->frame);
+				glm::vec2 velocity = entity.get<cotwin::TransformComponent>()->velocity;
+				cotwin::AnimationComponent* animation = entity.get_mut<cotwin::AnimationComponent>();
+				//cotwin::Logger::Debug("fr %f  c  %f  fms %d  fm  %d", animation->frequency, animation->count, animation->frames, animation->frame);
 
-					if (transform->velocity.x > 0.0f)
-						animation->set_animation(&player_running_right_frames);
-					else if (transform->velocity.x < 0.0f)
-						animation->set_animation(&player_running_left_frames);
-					else if (transform->velocity.y > 0.0f)
-						animation->set_animation(&player_running_down_frames);
-					else if (transform->velocity.y < 0.0f)
-						animation->set_animation(&player_running_up_frames);
-					else
-						animation->set_animation(&player_idle_frames);
-		
-					//transform->prev_velocity = transform->velocity;
-				//}
+				if (velocity.x > 0.0f)
+					animation->set_animation(&player_running_right_frames);
+				else if (velocity.x < 0.0f)
+					animation->set_animation(&player_running_left_frames);
+				else if (velocity.y > 0.0f)
+					animation->set_animation(&player_running_down_frames);
+				else if (velocity.y < 0.0f)
+					animation->set_animation(&player_running_up_frames);
+				else
+					animation->set_animation(&player_idle_frames);
 		
 				// since there is only one player, scene.get_collisions is expected to return just one collision
 				// if the player entity & a sensei entity collide, in this case simply display a text on the screen
-				/*for (auto& collision : scene.get_collisions("player", "sensei"))
+				for (auto& collision : scene.get_collisions("player", "sensei"))
 				{
 					cotwin::Renderer2D::render_text(collision_detected_message);
-				}*/
+				}
 			}
 		});
 
@@ -225,7 +218,7 @@ public:
 
 	void on_key_press(cotwin::KeyboardEvent* event)
 	{
-		cotwin::Logger::Debug("TestGame: %s was pressed!", event->data.key.keyname);
+		//cotwin::Logger::Debug("TestGame: %s was pressed!", event->data.key.keyname);
 
 		if (event->data.key.keycode == CW_KEY_G)
 		{
@@ -287,8 +280,6 @@ int main(int argc, char* args[])
 	TestGame game(cotwin::WindowProperties("Test Game", 0, 0, 1280, 720, cotwin::Centered | cotwin::Resizable));
 	
 	game.start();
-
-	system("pause");
 	
 	return 0;
 }

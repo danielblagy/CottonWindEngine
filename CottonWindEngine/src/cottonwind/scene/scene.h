@@ -15,10 +15,45 @@ namespace cotwin
 	private:
 		flecs::world world;
 		
-		// used for collision querying from ColliderSystem
-		std::vector<std::pair<Entity*, Entity*>> collisions;
+		// used for collision querying from CollisionSystem
+		std::vector<std::pair<Entity, Entity>> collisions;
 
-	
+		// collision system (in here, since system context doesn't work, it.param() gives garbage values)
+		void CollisionSystem(flecs::iter& it, TransformComponent* transform, ColliderComponent* collider)
+		{
+			for (auto i : it)
+			{
+				glm::vec2 collider_origin = transform[i].center + collider[i].offset;
+				glm::vec4 collider_rect(
+					collider_origin.x,
+					collider_origin.y,
+					collider[i].size.x,
+					collider[i].size.y
+				);
+
+				// TODO : start from i + 1 index (so don't iterate over the same collisions twice)
+				size_t end = it.count();
+				for (size_t j = i + 1; j < it.count(); j++)
+				{
+					//if (i == j)
+					//	continue;
+
+					glm::vec2 other_collider_origin = transform[j].center + collider[j].offset;
+					glm::vec4 other_collider_rect(
+						other_collider_origin.x,
+						other_collider_origin.y,
+						collider[j].size.x,
+						collider[j].size.y
+					);
+
+					if (physics::collide_aabb(collider_rect, other_collider_rect))
+					{
+						collisions.push_back(std::make_pair(it.entity(i), it.entity(j)));
+					}
+				}
+			}
+		}
+
 	public:
 		Scene()
 		{
@@ -33,16 +68,16 @@ namespace cotwin
 			//world.component<ScriptComponent>();
 			//world.component<ColliderComponent>();
 			
-			// TODO : why doesn't system.each compile? (only .iter compiles)
-			world.system<TransformComponent>().iter(TransformSystem);
-			world.system<TransformComponent, MovementControlComponent>().iter(MovementControlSystem);
-			world.system<SpriteComponent, AnimationComponent>().iter(AnimationSystem);
-			world.system<ScriptComponent>().iter(ScriptSystem);
-			world.system<TransformComponent, CameraComponent>().iter(CameraControllerSystem);
+			world.system<TransformComponent>().each(TransformSystem);
+			world.system<TransformComponent, MovementControlComponent>().each(MovementControlSystem);
+			world.system<SpriteComponent, AnimationComponent>().each(AnimationSystem);
+			world.system<ScriptComponent>().each(ScriptSystem);
+			world.system<TransformComponent, CameraComponent>().each(CameraControllerSystem);
+			world.system<AudioEffectComponent>().each(AudioSystem);
+			
 			world.system<TransformComponent, SpriteComponent>().iter(SpriteRenderSystem);
-			world.system<AudioEffectComponent>().iter(AudioSystem);
-			world.system<TransformComponent, ColliderComponent>().iter(CollisionSystem);
-
+			
+			world.system<TransformComponent, ColliderComponent>().iter(&Scene::CollisionSystem);
 		}
 
 		~Scene()
@@ -75,18 +110,18 @@ namespace cotwin
 		}
 
 		// a conveniance function that returns a sub-vector of collisions of entities with two specified tags
-		/*std::vector<std::pair<Entity*, Entity*>>& get_collisions(std::string t1, std::string t2)
+		std::vector<std::pair<Entity, Entity>> get_collisions(std::string t1, std::string t2)
 		{
-			collisions.clear();
+			std::vector<std::pair<Entity, Entity>> collisions_of_interest;
 			
-			for (std::pair<Entity*, Entity*>& collision : collider_system->collisions)
+			for (std::pair<Entity, Entity>& collision : collisions)
 			{
-				// TODO : now order of tags matters, is that a right choice ??
-				if (collision.first->get<TagComponent>()->tag == t1 && collision.second->get<TagComponent>()->tag == t2)
-					collisions.push_back(collision);
+				// TODO : order of tags doesn't matter , so check each tag for both t1 & t2
+				if (collision.first.get<TagComponent>()->tag == t1 && collision.second.get<TagComponent>()->tag == t2)
+					collisions_of_interest.push_back(collision);
 			}
 
-			return collisions;
-		}*/
+			return collisions_of_interest;
+		}
 	};
 }

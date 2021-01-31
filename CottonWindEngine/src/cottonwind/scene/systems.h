@@ -24,58 +24,26 @@ namespace cotwin
 	// just do that for now to conceal implementation details
 	typedef flecs::entity Entity;
 
-	void TransformSystem(flecs::iter& it, TransformComponent* transform)
+	void TransformSystem(Entity entity, TransformComponent& transform)
 	{
-		for (auto i : it)
-		{
-			transform[i].center += transform[i].velocity;
-		}
+		transform.center += transform.velocity;
 	}
 
-	struct CameraSystemContext
+	void CameraControllerSystem(Entity entity, TransformComponent& transform, CameraComponent& camera)
 	{
-		bool window_size_updated = false;
-		glm::ivec2 window_size;
-	};
-	
-	void CameraSystem(flecs::iter& it, TransformComponent* transform, CameraComponent* camera)
-	{
-		//CameraSystemContext* context = static_cast<CameraSystemContext*>(it.param());
-		//int* context = (int*)it.param();
-		int* context = static_cast<int*>(it.param());
-		Logger::Debug("%d", *context);
-		
-		/*for (auto i : it)
-		{
-			if (context->window_size_updated)
-			{
-				// update camera scale
-				camera[i].scale.x = (float)context->window_size.x / (float)camera[i].bounds.x;
-				camera[i].scale.y = (float)context->window_size.y / (float)camera[i].bounds.y;
+		if (Input::is_key_pressed(CW_KEY_A))
+			transform.velocity.x = -120.0f * entity.delta_time();
+		else if (Input::is_key_pressed(CW_KEY_D))
+			transform.velocity.x = 120.0f * entity.delta_time();
+		else
+			transform.velocity.x = 0.0f;
 
-				context->window_size_updated = false;
-			}
-		}*/
-	}
-
-	void CameraControllerSystem(flecs::iter& it, TransformComponent* transform, CameraComponent* camera)
-	{
-		for (auto i : it)
-		{
-			if (Input::is_key_pressed(CW_KEY_A))
-				transform[i].velocity.x = -120.0f * it.delta_time();
-			else if (Input::is_key_pressed(CW_KEY_D))
-				transform[i].velocity.x = 120.0f * it.delta_time();
-			else
-				transform[i].velocity.x = 0.0f;
-
-			if (Input::is_key_pressed(CW_KEY_W))
-				transform[i].velocity.y = -120.0f * it.delta_time();
-			else if (Input::is_key_pressed(CW_KEY_S))
-				transform[i].velocity.y = 120.0f * it.delta_time();
-			else
-				transform[i].velocity.y = 0.0f;
-		}
+		if (Input::is_key_pressed(CW_KEY_W))
+			transform.velocity.y = -120.0f * entity.delta_time();
+		else if (Input::is_key_pressed(CW_KEY_S))
+			transform.velocity.y = 120.0f * entity.delta_time();
+		else
+			transform.velocity.y = 0.0f;
 	}
 
 	void SpriteRenderSystem(flecs::iter& it, TransformComponent* transform, SpriteComponent* sprite)
@@ -99,9 +67,6 @@ namespace cotwin
 		
 		for (auto i : it)
 		{
-			//Renderer2D::render_texture(sprite[i].texture, sprite[i].texture_rect, transform[i].center, sprite[i].size);
-			//sprites_drawn++;
-
 			if (sprite[i].active)
 			{
 				glm::ivec2 camera_half_size = camera_info.bounds / 2;
@@ -147,90 +112,41 @@ namespace cotwin
 		Renderer2D::render_text(sprites_drawn_text);
 	}
 
-	void AnimationSystem(flecs::iter& it, SpriteComponent* sprite, AnimationComponent* animation)
+	void AnimationSystem(Entity entity, SpriteComponent& sprite, AnimationComponent& animation)
 	{
-		for (auto i : it)
-		{	
-			if (sprite[i].active)
+		if (sprite.active)
+		{
+			animation.count += entity.delta_time();
+
+			if (animation.count >= animation.frequency)
 			{
-				animation[i].count += it.delta_time();
+				if (animation.frame >= animation.frames->size())
+					animation.frame = 0;
 
-				if (animation[i].count >= animation[i].frequency)
-				{
-					if (animation[i].frame >= animation[i].frames->size())
-						animation[i].frame = 0;
+				sprite.texture_rect = animation.frames->at(animation.frame);
+				animation.frame++;
 
-					sprite[i].texture_rect = animation[i].frames->at(animation[i].frame);
-					animation[i].frame++;
-
-					animation[i].count -= animation[i].frequency;
-				}
+				animation.count -= animation.frequency;
 			}
 		}
 	}
 
-	void AudioSystem(flecs::iter& it, AudioEffectComponent* audio_effect)
+	void AudioSystem(Entity entity, AudioEffectComponent& audio_effect)
 	{
-		for (auto i : it)
+		if (audio_effect.play)
 		{
-			if (audio_effect[i].play)
-			{
-				audio_effect[i].audio.play();
-				audio_effect[i].play = false;
-			}
+			audio_effect.audio.play();
+			audio_effect.play = false;
 		}
 	}
 
-	void MovementControlSystem(flecs::iter& it, TransformComponent* transform, MovementControlComponent* movement_control)
+	void MovementControlSystem(Entity entity, TransformComponent& transform, MovementControlComponent& movement_control)
 	{
-		for (auto i : it)
-		{
-			movement_control[i].controller(transform[i].velocity, it.delta_time());
-		}
+		movement_control.controller(transform.velocity, entity.delta_time());
 	}
 
-	void ScriptSystem(flecs::iter& it, ScriptComponent* script)
+	void ScriptSystem(Entity entity, ScriptComponent& script)
 	{
-		for (auto i : it)
-		{
-			script[i].script(it.entity(i), it.delta_time());
-		}
-	}
-
-	void CollisionSystem(flecs::iter& it, TransformComponent* transform, ColliderComponent* collider)
-	{
-		static std::vector<std::pair<Entity, Entity>> collisions;
-		
-		collisions.clear();
-		
-		for (auto i : it)
-		{
-			glm::vec2 collider_origin = transform[i].center + collider[i].offset;
-			glm::vec4 collider_rect(
-				collider_origin.x,
-				collider_origin.y,
-				collider[i].size.x,
-				collider[i].size.y
-			);
-			
-			for (auto j : it)
-			{
-				if (i == j)
-					continue;
-
-				glm::vec2 other_collider_origin = transform[j].center + collider[j].offset;
-				glm::vec4 other_collider_rect(
-					other_collider_origin.x,
-					other_collider_origin.y,
-					collider[j].size.x,
-					collider[j].size.y
-				);
-
-				if (physics::collide_aabb(collider_rect, other_collider_rect))
-				{
-					collisions.push_back(std::make_pair(it.entity(i), it.entity(j)));
-				}
-			}
-		}
+		script.script(entity, entity.delta_time());
 	}
 }
