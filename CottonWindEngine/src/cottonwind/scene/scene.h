@@ -14,6 +14,12 @@
 #include "../graphics/renderer.h"
 #include "../graphics/render_camera_2d.h"
 
+// TODO : for sprites drawn text, remove later
+#include "../resource_manager/resource_manager.h"
+
+#include <vector>
+#include "../physics/2d/collision.h"
+
 
 namespace cotwin
 {
@@ -72,7 +78,7 @@ namespace cotwin
 		entt::registry registry;
 		
 		// used for collision querying from CollisionSystem
-		//std::vector<std::pair<Entity, Entity>> collisions;
+		std::vector<std::pair<Entity, Entity>> collisions;
 
 		// collision system (in here, since system context doesn't work, it.param() gives garbage values)
 		/*void CollisionSystem(flecs::iter& it, TransformComponent* transform, ColliderComponent* collider)
@@ -137,6 +143,10 @@ namespace cotwin
 		
 		void update(float delta)
 		{
+			// TODO : Script System
+
+			// TODO : maybe move Script & MovementControl to the top here
+			
 			// Transform System
 			for (auto [entity, transform] : registry.view<TransformComponent>().each())
 			{
@@ -197,6 +207,8 @@ namespace cotwin
 				}
 			}
 			
+			int sprites_drawn = 0;
+			
 			// Sprite Render System
 			auto view = registry.view<TransformComponent, SpriteComponent>();
 			for (auto [entity, transform, sprite] : view.each()) {
@@ -248,6 +260,45 @@ namespace cotwin
 						};
 
 						Renderer2D::render_texture(sprite.texture, sprite.texture_rect, sprite_relative_position, sprite_relative_size);
+						sprites_drawn++;
+					}
+				}
+			}
+
+			static Font& main_font = cotwin::ResourceManager::get_font("src/test/resources/fonts/Lato/Lato-Regular.ttf");
+			Text sprites_drawn_text(std::to_string(sprites_drawn), main_font, { 200, 200, 200, 255 }, { 200, 0 });
+			Renderer2D::render_text(sprites_drawn_text);
+
+			// Collision System
+			collisions.clear();
+			
+			for (auto [entity, transform, collider] : registry.view<TransformComponent, ColliderComponent>().each())
+			{
+				glm::vec2 collider_origin = transform.center + collider.offset;
+				glm::vec4 collider_rect(
+					collider_origin.x,
+					collider_origin.y,
+					collider.size.x,
+					collider.size.y
+				);
+
+				// TODO : start from i + 1 index (so don't iterate over the same collisions twice)
+				for (auto [other, other_transform, other_collider] : registry.view<TransformComponent, ColliderComponent>().each())
+				{
+					if (entity == other)
+						continue;
+
+					glm::vec2 other_collider_origin = other_transform.center + other_collider.offset;
+					glm::vec4 other_collider_rect(
+						other_collider_origin.x,
+						other_collider_origin.y,
+						other_collider.size.x,
+						other_collider.size.y
+					);
+
+					if (physics::collide_aabb(collider_rect, other_collider_rect))
+					{
+						collisions.push_back(std::make_pair(Entity(entity, this), Entity(other, this)));
 					}
 				}
 			}
@@ -265,19 +316,19 @@ namespace cotwin
 		}
 
 		// a conveniance function that returns a sub-vector of collisions of entities with two specified tags
-		/*std::vector<std::pair<Entity, Entity>> get_collisions(std::string t1, std::string t2)
+		std::vector<std::pair<Entity, Entity>> get_collisions(std::string t1, std::string t2)
 		{
 			std::vector<std::pair<Entity, Entity>> collisions_of_interest;
 			
 			for (std::pair<Entity, Entity>& collision : collisions)
 			{
 				// TODO : order of tags doesn't matter , so check each tag for both t1 & t2
-				if (collision.first.get<TagComponent>()->tag == t1 && collision.second.get<TagComponent>()->tag == t2)
+				if (collision.first.get_component<TagComponent>().tag == t1 && collision.second.get_component<TagComponent>().tag == t2)
 					collisions_of_interest.push_back(collision);
 			}
 
 			return collisions_of_interest;
-		}*/
+		}
 
 		friend Entity;
 	};

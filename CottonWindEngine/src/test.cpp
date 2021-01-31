@@ -174,6 +174,12 @@ public:
 		//cotwin::Renderer2D::draw_triangle();
 
 		scene.update(delta);
+
+		// taken from player script component
+		for (auto& collision : scene.get_collisions("player", "sensei"))
+		{
+			cotwin::Renderer2D::render_text(collision_detected_message);
+		}
 	}
 
 	virtual void on_event(cotwin::Event* event) override

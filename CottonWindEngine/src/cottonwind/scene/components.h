@@ -82,9 +82,6 @@ namespace cotwin
 		std::vector<glm::ivec4>* frames;
 		std::size_t frame;
 
-		// use that, since the get
-		//std::vector<glm::ivec4>* new_frames;
-
 		// NOTE: count in initialized to frequency to force resfresh() in AnimationSystem on init, so that
 		//	sprite component is initialized to a proper texture_rect
 		
@@ -118,6 +115,7 @@ namespace cotwin
 		{}
 	};
 	
+	// TODO : work on script component (maybe also make it more powerful by having not only updated, but also init and destroy)
 	/*class Entity;
 	
 	struct ScriptComponent
