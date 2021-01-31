@@ -9,7 +9,7 @@
 #include <vector>
 #include <functional>
 
-#include "../vendor/flecs/flecs.h"
+//#include "../vendor/entt/entt.hpp"
 
 
 namespace cotwin
@@ -138,18 +138,20 @@ namespace cotwin
 			: controller(s_controller)
 		{}
 	};
-
+	
+	/*class Entity;
+	
 	struct ScriptComponent
 	{
-		std::function<void(flecs::entity, float)> script;
+		std::function<void(Scene::Entity, float)> script;
 
 		ScriptComponent()
 		{}
 		
-		ScriptComponent(std::function<void(flecs::entity, float)> s_script)
+		ScriptComponent(std::function<void(Scene::Entity, float)> s_script)
 			: script(s_script)
 		{}
-	};
+	};*/
 
 	struct ColliderComponent
 	{

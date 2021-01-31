@@ -7,8 +7,8 @@
 class TestMainLayer : public cotwin::Layer
 {
 private:
-	cotwin::Entity audio_snap_entity;
-	cotwin::Entity camera_entity;
+	cotwin::Scene::Entity audio_snap_entity;
+	cotwin::Scene::Entity camera_entity;
 
 	cotwin::Scene scene;
 
@@ -31,16 +31,16 @@ public:
 	{
 		static cotwin::Texture& sensei_texture = cotwin::ResourceManager::load_texture("src/test/resources/textures/sensei_running.bmp");
 
-		cotwin::Entity sensei_entity = scene.create_entity("sensei");
-		sensei_entity.set<cotwin::TransformComponent>({ glm::vec2{ (float)position.x, (float)position.y }, glm::vec2{ 0.0f, 0.0f } });
-		sensei_entity.set<cotwin::SpriteComponent>({
+		cotwin::Scene::Entity sensei_entity = scene.create_entity("sensei");
+		sensei_entity.add_component<cotwin::TransformComponent>(glm::vec2{ (float)position.x, (float)position.y }, glm::vec2{ 0.0f, 0.0f });
+		sensei_entity.add_component<cotwin::SpriteComponent>(
 			// here texture_rect is initialized with zeros, since it will be initialized later on by AnimationSystem
 			sensei_texture, glm::ivec4{ 0, 0, 0, 0 }, glm::ivec2{ 100, 100 }
-		});
+		);
 		// set up animation for sensei entity
-		sensei_entity.set<cotwin::AnimationComponent>({ 0.2f, &sensei_animation_frames });
+		sensei_entity.add_component<cotwin::AnimationComponent>(0.2f, &sensei_animation_frames);
 
-		sensei_entity.set<cotwin::ColliderComponent>({ glm::vec2{ 100.0f, 100.0f } });
+		sensei_entity.add_component<cotwin::ColliderComponent>(glm::vec2{ 100.0f, 100.0f });
 	}
 
 	virtual void on_attach() override
@@ -61,16 +61,16 @@ public:
 		// CREATE ENTITIES /////////////////////////////////
 		
 		// Player entity
-		cotwin::Entity player_entity = scene.create_entity("player");
-		player_entity.set<cotwin::TransformComponent>({ glm::vec2{ 700.0f, 500.0f }, glm::vec2{ 0.0f, 0.0f } });
-		player_entity.set<cotwin::SpriteComponent>({
+		cotwin::Scene::Entity player_entity = scene.create_entity("player");
+		player_entity.add_component<cotwin::TransformComponent>(glm::vec2{ 700.0f, 500.0f }, glm::vec2{ 0.0f, 0.0f });
+		player_entity.add_component<cotwin::SpriteComponent>(
 			hero_texture, glm::ivec4{ 0, 0, 0, 0 }, glm::ivec2{ 100, 100 }
-		});
+		);
 
-		player_entity.set<cotwin::AnimationComponent>({ 0.5f, &player_idle_frames });
+		player_entity.add_component<cotwin::AnimationComponent>(0.5f, &player_idle_frames);
 
 		// move player with keyboard input
-		player_entity.set<cotwin::MovementControlComponent>({
+		player_entity.add_component<cotwin::MovementControlComponent>(
 			[](glm::vec2& transform_velocity, float delta) {
 				// TODO : or maybe handle delta in TransformSystem ??
 				
@@ -88,35 +88,35 @@ public:
 				else
 					transform_velocity.y = 0.0f;
 			}
-		});
+		);
 		// set update logic for the player entity
-		player_entity.set<cotwin::ScriptComponent>({
-			[&](cotwin::Entity entity, float delta) {
-				glm::vec2 velocity = entity.get<cotwin::TransformComponent>()->velocity;
-				cotwin::AnimationComponent* animation = entity.get_mut<cotwin::AnimationComponent>();
-				//cotwin::Logger::Debug("fr %f  c  %f  fms %d  fm  %d", animation->frequency, animation->count, animation->frames, animation->frame);
+		//player_entity.add_component<cotwin::ScriptComponent>(
+		//	[&](cotwin::Scene::Entity entity, float delta) {
+		//		glm::vec2 velocity = entity.get_component<cotwin::TransformComponent>().velocity;
+		//		cotwin::AnimationComponent& animation = entity.get_component<cotwin::AnimationComponent>();
+		//		//cotwin::Logger::Debug("fr %f  c  %f  fms %d  fm  %d", animation->frequency, animation->count, animation->frames, animation->frame);
+		//
+		//		if (velocity.x > 0.0f)
+		//			animation.set_animation(&player_running_right_frames);
+		//		else if (velocity.x < 0.0f)
+		//			animation.set_animation(&player_running_left_frames);
+		//		else if (velocity.y > 0.0f)
+		//			animation.set_animation(&player_running_down_frames);
+		//		else if (velocity.y < 0.0f)
+		//			animation.set_animation(&player_running_up_frames);
+		//		else
+		//			animation.set_animation(&player_idle_frames);
+		//
+		//		// since there is only one player, scene.get_collisions is expected to return just one collision
+		//		// if the player entity & a sensei entity collide, in this case simply display a text on the screen
+		//		/*for (auto& collision : scene.get_collisions("player", "sensei"))
+		//		{
+		//			cotwin::Renderer2D::render_text(collision_detected_message);
+		//		}*/
+		//	}
+		//);
 
-				if (velocity.x > 0.0f)
-					animation->set_animation(&player_running_right_frames);
-				else if (velocity.x < 0.0f)
-					animation->set_animation(&player_running_left_frames);
-				else if (velocity.y > 0.0f)
-					animation->set_animation(&player_running_down_frames);
-				else if (velocity.y < 0.0f)
-					animation->set_animation(&player_running_up_frames);
-				else
-					animation->set_animation(&player_idle_frames);
-		
-				// since there is only one player, scene.get_collisions is expected to return just one collision
-				// if the player entity & a sensei entity collide, in this case simply display a text on the screen
-				for (auto& collision : scene.get_collisions("player", "sensei"))
-				{
-					cotwin::Renderer2D::render_text(collision_detected_message);
-				}
-			}
-		});
-
-		player_entity.set<cotwin::ColliderComponent>({ glm::vec2{ 100.0f, 100.0f } });
+		player_entity.add_component<cotwin::ColliderComponent>(glm::vec2{ 100.0f, 100.0f });
 
 		// set sensei animation frames
 		for (int i = 0; i < 11; i++)
@@ -143,13 +143,13 @@ public:
 
 		// Audio entity
 		audio_snap_entity = scene.create_entity("snapper");
-		audio_snap_entity.set<cotwin::AudioEffectComponent>({ snap_audio });
+		audio_snap_entity.add_component<cotwin::AudioEffectComponent>(snap_audio);
 
 		// Camera entity
 		camera_entity = scene.create_entity("primary camera");
-		camera_entity.set<cotwin::TransformComponent>({ glm::vec2{ 1280.0f / 2.0f, 720.0f / 2.0f }, glm::vec2{ 0.0f, 0.0f } });
+		camera_entity.add_component<cotwin::TransformComponent>(glm::vec2{ 1280.0f / 2.0f, 720.0f / 2.0f }, glm::vec2{ 0.0f, 0.0f });
 		// TODO : set up a way to get window size
-		camera_entity.set<cotwin::CameraComponent>({ glm::vec2{ 1280, 720 }, glm::vec2{ 1280, 720 } });
+		camera_entity.add_component<cotwin::CameraComponent>(glm::vec2{ 1280, 720 }, glm::vec2{ 1280, 720 });
 
 
 		// CREATE TEXT /////////////////////////////////
@@ -173,7 +173,7 @@ public:
 		// for OpenGL Renderer2D test
 		//cotwin::Renderer2D::draw_triangle();
 
-		scene.on_update(delta);
+		scene.update(delta);
 	}
 
 	virtual void on_event(cotwin::Event* event) override
@@ -222,7 +222,7 @@ public:
 
 		if (event->data.key.keycode == CW_KEY_G)
 		{
-			audio_snap_entity.get_mut<cotwin::AudioEffectComponent>()->play = true;
+			audio_snap_entity.get_component<cotwin::AudioEffectComponent>().play = true;
 		}
 	}
 
@@ -231,7 +231,7 @@ public:
 		cotwin::Logger::Debug("TestGame: %d mouse button was pressed!", event->data.button.button_code);
 		if (event->data.button.button_code == CW_MOUSEBUTTON_LEFT)
 		{
-			audio_snap_entity.get_mut<cotwin::AudioEffectComponent>()->play = true;
+			audio_snap_entity.get_component<cotwin::AudioEffectComponent>().play = true;
 			create_sensei_entity(event->data.button.cursor_position);
 		}
 	}

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../vendor/flecs/flecs.h"
+#include "../vendor/entt/entt.hpp"
 
 #include "components.h"
-#include "systems.h"
+//#include "systems.h"
 
 #include "../util/logger.h"
 
@@ -12,14 +12,64 @@ namespace cotwin
 {
 	class Scene
 	{
+	public:
+		class Entity
+		{
+		private:
+			entt::entity entity_handle = entt::entity(0);
+			Scene* scene = NULL;
+
+		public:
+			Entity()
+			{}
+
+			Entity(entt::entity s_entity_handle, Scene* s_scene)
+				: entity_handle(s_entity_handle), scene(s_scene)
+			{}
+
+			template<typename T, typename... Args>
+			T& add_component(Args&&... args)
+			{
+				if (has_component<T>())
+					Logger::Debug("CottonWind \tEntity already has this component!");
+
+				return scene->registry.emplace<T>(entity_handle, std::forward<Args>(args)...);
+			}
+
+			template<typename T>
+			T& get_component()
+			{
+				if (!has_component<T>())
+					Logger::Debug("CottonWind \tEntity doesn't have this component!");
+
+				return scene->registry.get<T>(entity_handle);
+			}
+
+			template<typename T>
+			void remove_component()
+			{
+				if (!has_component<T>())
+					Logger::Debug("CottonWind \tEntity doesn't have this component!");
+
+				return scene->registry.remove<T>(entity_handle);
+			}
+
+			template<typename T>
+			bool has_component()
+			{
+				return scene->registry.has<T>(entity_handle);
+			}
+		};
+	
 	private:
-		flecs::world world;
+		entt::registry registry;
+		//flecs::world world;
 		
 		// used for collision querying from CollisionSystem
-		std::vector<std::pair<Entity, Entity>> collisions;
+		//std::vector<std::pair<Entity, Entity>> collisions;
 
 		// collision system (in here, since system context doesn't work, it.param() gives garbage values)
-		void CollisionSystem(flecs::iter& it, TransformComponent* transform, ColliderComponent* collider)
+		/*void CollisionSystem(flecs::iter& it, TransformComponent* transform, ColliderComponent* collider)
 		{
 			for (auto i : it)
 			{
@@ -52,7 +102,7 @@ namespace cotwin
 					}
 				}
 			}
-		}
+		}*/
 
 	public:
 		Scene()
@@ -68,16 +118,16 @@ namespace cotwin
 			//world.component<ScriptComponent>();
 			//world.component<ColliderComponent>();
 			
-			world.system<TransformComponent>().each(TransformSystem);
-			world.system<TransformComponent, MovementControlComponent>().each(MovementControlSystem);
-			world.system<SpriteComponent, AnimationComponent>().each(AnimationSystem);
-			world.system<ScriptComponent>().each(ScriptSystem);
-			world.system<TransformComponent, CameraComponent>().each(CameraControllerSystem);
-			world.system<AudioEffectComponent>().each(AudioSystem);
-			
-			world.system<TransformComponent, SpriteComponent>().iter(SpriteRenderSystem);
-			
-			world.system<TransformComponent, ColliderComponent>().iter(&Scene::CollisionSystem);
+			//world.system<TransformComponent>().each(TransformSystem);
+			//world.system<TransformComponent, MovementControlComponent>().each(MovementControlSystem);
+			//world.system<SpriteComponent, AnimationComponent>().each(AnimationSystem);
+			//world.system<ScriptComponent>().each(ScriptSystem);
+			//world.system<TransformComponent, CameraComponent>().each(CameraControllerSystem);
+			//world.system<AudioEffectComponent>().each(AudioSystem);
+			//
+			//world.system<TransformComponent, SpriteComponent>().iter(SpriteRenderSystem);
+			//
+			//world.system<TransformComponent, ColliderComponent>().iter(&Scene::CollisionSystem);
 		}
 
 		~Scene()
@@ -85,19 +135,21 @@ namespace cotwin
 
 		Entity create_entity(std::string tag)
 		{
-			Entity entity = world.entity().set<TagComponent>({ tag });
-
+			Entity entity(registry.create(), this);
+			entity.add_component<TagComponent>(tag);
 			return entity;
 		}
 		
-		void on_update(float delta)
+		void update(float delta)
 		{
-			world.progress();
+			//world.progress();
+
+
 		}
 
 		void on_window_resize_event(const glm::ivec2& new_size)
 		{
-			world.query<CameraComponent>().iter(
+			/*world.query<CameraComponent>().iter(
 				[&](flecs::iter& it, CameraComponent* camera) {
 					for (auto i : it)
 					{
@@ -106,11 +158,11 @@ namespace cotwin
 						camera[i].scale.y = (float)new_size.y / (float)camera[i].bounds.y;
 					}
 				}
-			);
+			);*/
 		}
 
 		// a conveniance function that returns a sub-vector of collisions of entities with two specified tags
-		std::vector<std::pair<Entity, Entity>> get_collisions(std::string t1, std::string t2)
+		/*std::vector<std::pair<Entity, Entity>> get_collisions(std::string t1, std::string t2)
 		{
 			std::vector<std::pair<Entity, Entity>> collisions_of_interest;
 			
@@ -122,6 +174,8 @@ namespace cotwin
 			}
 
 			return collisions_of_interest;
-		}
+		}*/
+
+		friend Entity;
 	};
 }
