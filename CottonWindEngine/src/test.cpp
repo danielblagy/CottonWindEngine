@@ -12,8 +12,6 @@ private:
 
 	cotwin::Scene scene;
 
-	cotwin::Text sprites_drawn_label;
-
 	std::vector<glm::ivec4> sensei_animation_frames;
 
 	std::vector<glm::ivec4> player_idle_frames;
@@ -94,30 +92,28 @@ public:
 		// set update logic for the player entity
 		player_entity.set<cotwin::ScriptComponent>({
 			[&](cotwin::Entity entity, float delta) {
-				glm::vec2 velocity = entity.get<cotwin::TransformComponent>()->velocity;
-				// get_mut return mutable pointer, if get is used, the pointer will be const, const cotwin::AnimationComponent* in this case
-				cotwin::AnimationComponent* animation = entity.get_mut<cotwin::AnimationComponent>();
-
-				// TODO : player animation doesn't update properly
-
-				static glm::vec2 old_velocity = velocity;
+				const cotwin::TransformComponent* transform = entity.get<cotwin::TransformComponent>();
 				
-				if (old_velocity.x != velocity.x || old_velocity.y != velocity.y)
-				{
-					if (velocity.x > 0.0f)
+				//if (transform->prev_velocity != transform->velocity)
+				//{
+					// create a new animation component (or re-create ?)
+					cotwin::AnimationComponent* animation = entity.get_mut<cotwin::AnimationComponent>();
+					cotwin::Logger::Debug("fr %f  c  %f  fms %d  fm  %d", animation->frequency, animation->count, animation->frames, animation->frame);
+
+					if (transform->velocity.x > 0.0f)
 						animation->set_animation(&player_running_right_frames);
-					else if (velocity.x < 0.0f)
+					else if (transform->velocity.x < 0.0f)
 						animation->set_animation(&player_running_left_frames);
-					else if (velocity.y > 0.0f)
+					else if (transform->velocity.y > 0.0f)
 						animation->set_animation(&player_running_down_frames);
-					else if (velocity.y < 0.0f)
+					else if (transform->velocity.y < 0.0f)
 						animation->set_animation(&player_running_up_frames);
 					else
 						animation->set_animation(&player_idle_frames);
-
-					old_velocity = velocity;
-				}
-
+		
+					//transform->prev_velocity = transform->velocity;
+				//}
+		
 				// since there is only one player, scene.get_collisions is expected to return just one collision
 				// if the player entity & a sensei entity collide, in this case simply display a text on the screen
 				/*for (auto& collision : scene.get_collisions("player", "sensei"))
@@ -163,16 +159,9 @@ public:
 		camera_entity.set<cotwin::CameraComponent>({ glm::vec2{ 1280, 720 }, glm::vec2{ 1280, 720 } });
 
 
-		// CREATE TEXTS /////////////////////////////////
+		// CREATE TEXT /////////////////////////////////
 		
 		// init once, not on each update
-		sprites_drawn_label = cotwin::Text(
-			"Sprites drawn: ",
-			main_font,
-			{ 200, 200, 200, 255 },
-			{ 0, 0 }
-		);
-
 		collision_detected_message = cotwin::Text(
 			"Player & sensei collision detected!",
 			main_font,
@@ -192,8 +181,6 @@ public:
 		//cotwin::Renderer2D::draw_triangle();
 
 		scene.on_update(delta);
-
-		cotwin::Renderer2D::render_text(sprites_drawn_label);
 	}
 
 	virtual void on_event(cotwin::Event* event) override

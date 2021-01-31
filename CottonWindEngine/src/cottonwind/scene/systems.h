@@ -78,22 +78,14 @@ namespace cotwin
 		}
 	}
 
-	struct SpriteRenderSystemContext
-	{
-		TransformComponent camera_transform;
-		CameraComponent camera;
-		int a;
-	};
-	
 	void SpriteRenderSystem(flecs::iter& it, TransformComponent* transform, SpriteComponent* sprite)
 	{
-		//SpriteRenderSystemContext* context = static_cast<SpriteRenderSystemContext*>(it.param());
-		
 		TransformComponent camera_transform;
 		CameraComponent camera_info;
 		
 		it.world().query<TransformComponent, CameraComponent>().iter(
 			[&](flecs::iter& it, TransformComponent* transform, CameraComponent* camera) {
+			// TODO : support multiple cameras in a scene (primary flag), but here determine and use the primary one
 			// this loop is expected to iterate only once
 			for (auto i : it)
 			{
@@ -158,7 +150,7 @@ namespace cotwin
 	void AnimationSystem(flecs::iter& it, SpriteComponent* sprite, AnimationComponent* animation)
 	{
 		for (auto i : it)
-		{
+		{	
 			if (sprite[i].active)
 			{
 				animation[i].count += it.delta_time();

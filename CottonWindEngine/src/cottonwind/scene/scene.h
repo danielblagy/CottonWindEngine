@@ -15,11 +15,6 @@ namespace cotwin
 	private:
 		flecs::world world;
 		
-		CameraSystemContext camera_system_context;
-		int test_context = 57;
-		
-		//ColliderSystem* collider_system;
-
 		// used for collision querying from ColliderSystem
 		std::vector<std::pair<Entity*, Entity*>> collisions;
 
@@ -39,21 +34,15 @@ namespace cotwin
 			//world.component<ColliderComponent>();
 			
 			// TODO : why doesn't system.each compile? (only .iter compiles)
-			world.system<ScriptComponent>().iter(ScriptSystem);
+			world.system<TransformComponent>().iter(TransformSystem);
 			world.system<TransformComponent, MovementControlComponent>().iter(MovementControlSystem);
-			world.system<TransformComponent>("TransformSystem").iter(TransformSystem);
-			
-			//auto camera_system = world.system<TransformComponent, CameraComponent>().iter(CameraSystem);
-			//camera_system.set<flecs::Context>({ &test_context });
-			
-			world.system<TransformComponent, CameraComponent>().iter(CameraControllerSystem);
 			world.system<SpriteComponent, AnimationComponent>().iter(AnimationSystem);
-			
+			world.system<ScriptComponent>().iter(ScriptSystem);
+			world.system<TransformComponent, CameraComponent>().iter(CameraControllerSystem);
 			world.system<TransformComponent, SpriteComponent>().iter(SpriteRenderSystem);
-			
 			world.system<AudioEffectComponent>().iter(AudioSystem);
-			
 			world.system<TransformComponent, ColliderComponent>().iter(CollisionSystem);
+
 		}
 
 		~Scene()
@@ -68,22 +57,6 @@ namespace cotwin
 		
 		void on_update(float delta)
 		{
-			// TODO : make a special method for initializing contexts for systems
-			//			and require a client to call it once the camera entity was set
-			//		or create a camera entity by default ?????????????????????????????????
-			//world.query<TransformComponent, CameraComponent>().iter(
-			//	[&](flecs::iter& it, TransformComponent* transform, CameraComponent* camera) {
-			//		// this loop is expected to iterate only once
-			//		for (auto i : it)
-			//		{
-			//			sprite_render_system_context.camera_transform = transform[i];
-			//			sprite_render_system_context.camera = camera[i];
-			//			sprite_render_system_context.a = 2807;
-			//		}
-			//	}
-			//);
-			test_context = 112;
-
 			world.progress();
 		}
 

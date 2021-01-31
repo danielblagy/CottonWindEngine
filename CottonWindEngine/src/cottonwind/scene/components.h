@@ -95,7 +95,10 @@ namespace cotwin
 		float frequency;
 		float count;
 		std::vector<glm::ivec4>* frames;
-		std::size_t frame = 0;
+		std::size_t frame;
+
+		// use that, since the get
+		//std::vector<glm::ivec4>* new_frames;
 
 		// NOTE: count in initialized to frequency to force resfresh() in AnimationSystem on init, so that
 		//	sprite component is initialized to a proper texture_rect
@@ -104,13 +107,13 @@ namespace cotwin
 		{}
 		
 		AnimationComponent(float s_frequency)
-			: frequency(s_frequency), count(s_frequency), frames(0)
+			: frequency(s_frequency), count(s_frequency), frames(0), frame(0)
 		{}
 
 		AnimationComponent(float s_frequency, std::vector<glm::ivec4>* s_frames)
-			: frequency(s_frequency), count(s_frequency), frames(s_frames)
+			: frequency(s_frequency), count(s_frequency), frames(s_frames), frame(0)
 		{}
-
+		
 		void set_animation(std::vector<glm::ivec4>* s_frames)
 		{
 			if (frames != s_frames)
@@ -118,6 +121,8 @@ namespace cotwin
 				frames = s_frames;
 				frame = 0;
 				count = frequency;
+
+				Logger::Debug("Animation updated");
 			}
 		}
 	};
