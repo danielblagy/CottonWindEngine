@@ -3,9 +3,16 @@
 #include "../vendor/entt/entt.hpp"
 
 #include "components.h"
-//#include "systems.h"
 
 #include "../util/logger.h"
+
+// NOTE : at least for now systems are in scene.update
+
+#include "../input/input.h"
+#include "../input/keycodes.h"
+
+#include "../graphics/renderer.h"
+#include "../graphics/render_camera_2d.h"
 
 
 namespace cotwin
@@ -63,7 +70,6 @@ namespace cotwin
 	
 	private:
 		entt::registry registry;
-		//flecs::world world;
 		
 		// used for collision querying from CollisionSystem
 		//std::vector<std::pair<Entity, Entity>> collisions;
@@ -107,17 +113,6 @@ namespace cotwin
 	public:
 		Scene()
 		{
-			// register the components
-			//world.component<TagComponent>();
-			//world.component<AudioEffectComponent>();
-			//world.component<TransformComponent>();
-			//world.component<CameraComponent>();
-			//world.component<SpriteComponent>();
-			//world.component<AnimationComponent>();
-			//world.component<MovementControlComponent>();
-			//world.component<ScriptComponent>();
-			//world.component<ColliderComponent>();
-			
 			//world.system<TransformComponent>().each(TransformSystem);
 			//world.system<TransformComponent, MovementControlComponent>().each(MovementControlSystem);
 			//world.system<SpriteComponent, AnimationComponent>().each(AnimationSystem);
@@ -142,23 +137,131 @@ namespace cotwin
 		
 		void update(float delta)
 		{
-			//world.progress();
+			// Transform System
+			for (auto [entity, transform] : registry.view<TransformComponent>().each())
+			{
+				transform.center += transform.velocity;
+			}
 
+			// Movement Control System
+			for (auto [entity, transform, movement_control] : registry.view<TransformComponent, MovementControlComponent>().each())
+			{
+				movement_control.controller(transform.velocity, delta);
+			}
 
+			// Animation System
+			for (auto [entity, sprite, animation] : registry.view<SpriteComponent, AnimationComponent>().each())
+			{
+				if (sprite.active)
+				{
+					animation.count += delta;
+
+					if (animation.count >= animation.frequency)
+					{
+						if (animation.frame >= animation.frames->size())
+							animation.frame = 0;
+
+						sprite.texture_rect = animation.frames->at(animation.frame);
+						animation.frame++;
+
+						animation.count -= animation.frequency;
+					}
+				}
+			}
+
+			// Camera Controller System
+			for (auto [entity, transform, camera] : registry.view<TransformComponent, CameraComponent>().each())
+			{
+				if (Input::is_key_pressed(CW_KEY_A))
+					transform.velocity.x = -120.0f * delta;
+				else if (Input::is_key_pressed(CW_KEY_D))
+					transform.velocity.x = 120.0f * delta;
+				else
+					transform.velocity.x = 0.0f;
+
+				if (Input::is_key_pressed(CW_KEY_W))
+					transform.velocity.y = -120.0f * delta;
+				else if (Input::is_key_pressed(CW_KEY_S))
+					transform.velocity.y = 120.0f * delta;
+				else
+					transform.velocity.y = 0.0f;
+			}
+
+			// Audio System
+			for (auto [entity, audio_effect] : registry.view<AudioEffectComponent>().each())
+			{
+				if (audio_effect.play)
+				{
+					audio_effect.audio.play();
+					audio_effect.play = false;
+				}
+			}
+			
+			// Sprite Render System
+			auto view = registry.view<TransformComponent, SpriteComponent>();
+			for (auto [entity, transform, sprite] : view.each()) {
+				//Renderer2D::render_texture(sprite.texture, sprite.texture_rect, transform.center, sprite.size);
+				
+				TransformComponent camera_transform(glm::vec2{0.0f, 0.0f}, glm::vec2{0.0f, 0.0f});
+				CameraComponent camera_info(glm::ivec2{1, 1}, glm::vec2{1.0f, 1.0f});
+
+				// TODO : support multiple cameras in a scene (primary flag), but here determine and use the primary one
+				// this loop is expected to iterate only once (until multiple cameras will be supported)
+				for (auto [entity, c_transform, c_camera] : registry.view<TransformComponent, CameraComponent>().each())
+				{
+					camera_transform = c_transform;
+					camera_info = c_camera;
+				}
+				
+				if (sprite.active)
+				{
+					glm::ivec2 camera_half_size = camera_info.bounds / 2;
+					RenderCamera render_camera(
+						camera_transform.center.x - camera_half_size.x,
+						camera_transform.center.y - camera_half_size.y,
+						camera_transform.center.x + camera_half_size.x,
+						camera_transform.center.y + camera_half_size.y
+					);
+
+					// convert rect with left, top, right, bottom
+					glm::ivec2 sprite_center = {
+						transform.center.x + sprite.center_offset.x,
+						transform.center.y + sprite.center_offset.y
+					};
+					glm::ivec4 sprite_rect = {
+						sprite_center.x,
+						sprite_center.y,
+						sprite_center.x + sprite.size.x,
+						sprite_center.y + sprite.size.y
+					};
+
+					if (render_camera.captures(sprite_rect))
+					{
+						glm::ivec2 sprite_relative_position = {
+							camera_info.scale.x * (sprite_rect.x - render_camera.left),
+							camera_info.scale.y * (sprite_rect.y - render_camera.top)
+						};
+
+						glm::ivec2 sprite_relative_size = {
+							sprite.size.x * camera_info.scale.x,
+							sprite.size.y * camera_info.scale.y
+						};
+
+						Renderer2D::render_texture(sprite.texture, sprite.texture_rect, sprite_relative_position, sprite_relative_size);
+					}
+				}
+			}
 		}
 
 		void on_window_resize_event(const glm::ivec2& new_size)
 		{
-			/*world.query<CameraComponent>().iter(
-				[&](flecs::iter& it, CameraComponent* camera) {
-					for (auto i : it)
-					{
-						// update camera scale
-						camera[i].scale.x = (float)new_size.x / (float)camera[i].bounds.x;
-						camera[i].scale.y = (float)new_size.y / (float)camera[i].bounds.y;
-					}
-				}
-			);*/
+			auto view = registry.view<CameraComponent>();
+			for (auto [entity, camera] : view.each())
+			{
+				// update camera scale
+				camera.scale.x = (float)new_size.x / (float)camera.bounds.x;
+				camera.scale.y = (float)new_size.y / (float)camera.bounds.y;
+			}
 		}
 
 		// a conveniance function that returns a sub-vector of collisions of entities with two specified tags

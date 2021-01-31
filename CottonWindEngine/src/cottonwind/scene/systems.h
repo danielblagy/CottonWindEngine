@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../vendor/flecs/flecs.h"
+//#include "../vendor/entt/entt.hpp"
 
 #include "components.h"
 
@@ -21,15 +21,12 @@
 
 namespace cotwin
 {
-	// just do that for now to conceal implementation details
-	typedef flecs::entity Entity;
-
-	void TransformSystem(Entity entity, TransformComponent& transform)
+	void TransformSystem(TransformComponent& transform)
 	{
 		transform.center += transform.velocity;
 	}
 
-	void CameraControllerSystem(Entity entity, TransformComponent& transform, CameraComponent& camera)
+	/*void CameraControllerSystem(TransformComponent& transform, CameraComponent& camera)
 	{
 		if (Input::is_key_pressed(CW_KEY_A))
 			transform.velocity.x = -120.0f * entity.delta_time();
@@ -143,10 +140,10 @@ namespace cotwin
 	void MovementControlSystem(Entity entity, TransformComponent& transform, MovementControlComponent& movement_control)
 	{
 		movement_control.controller(transform.velocity, entity.delta_time());
-	}
+	}*/
 
-	void ScriptSystem(Entity entity, ScriptComponent& script)
-	{
-		script.script(entity, entity.delta_time());
-	}
+	//void ScriptSystem(Entity entity, ScriptComponent& script)
+	//{
+	//	script.script(entity, entity.delta_time());
+	//}
 }
