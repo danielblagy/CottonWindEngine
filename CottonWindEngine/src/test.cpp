@@ -138,21 +138,11 @@ public:
 			virtual void on_update(float delta) override
 			{
 				cotwin::TransformComponent& transform = entity.get_component<cotwin::TransformComponent>();
-				glm::vec2 velocity = transform.velocity;
 				cotwin::AnimationComponent& animation = entity.get_component<cotwin::AnimationComponent>();
 				//cotwin::Logger::Debug("fr %f  c  %f  fms %d  fm  %d", animation.frequency, animation.count, animation.frames, animation.frame);
 
-				if (velocity.x > 0.0f)
-					animation.set_animation(&player_running_right_frames);
-				else if (velocity.x < 0.0f)
-					animation.set_animation(&player_running_left_frames);
-				else if (velocity.y > 0.0f)
-					animation.set_animation(&player_running_down_frames);
-				else if (velocity.y < 0.0f)
-					animation.set_animation(&player_running_up_frames);
-				else
-					animation.set_animation(&player_idle_frames);
-
+				glm::vec2 old_velocity = transform.velocity;
+				
 				if (cotwin::Input::is_key_pressed(CW_KEY_LEFT))
 					transform.velocity.x = -150.0f * delta;
 				else if (cotwin::Input::is_key_pressed(CW_KEY_RIGHT))
@@ -166,6 +156,22 @@ public:
 					transform.velocity.y = 150.0f * delta;
 				else
 					transform.velocity.y = 0.0f;
+				
+				//cotwin::Logger::Debug("%f", delta);
+				
+				if (old_velocity != transform.velocity)
+				{
+					if (transform.velocity.x > 0.0f)
+						animation.set_animation(&player_running_right_frames);
+					else if (transform.velocity.x < 0.0f)
+						animation.set_animation(&player_running_left_frames);
+					else if (transform.velocity.y > 0.0f)
+						animation.set_animation(&player_running_down_frames);
+					else if (transform.velocity.y < 0.0f)
+						animation.set_animation(&player_running_up_frames);
+					else
+						animation.set_animation(&player_idle_frames);
+				}
 
 				// TODO : collision resolution will be done is a special virtual function, which will be a part of the ScriptableEntity class
 				

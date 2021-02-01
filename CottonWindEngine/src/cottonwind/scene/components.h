@@ -101,10 +101,6 @@ namespace cotwin
 
 				Logger::Debug("Animation updated");
 			}
-			else
-			{
-				Logger::Debug("No.");
-			}
 		}
 	};
 
