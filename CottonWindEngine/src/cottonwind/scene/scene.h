@@ -70,6 +70,44 @@ namespace cotwin
 				return scene->registry.has<T>(entity_handle);
 			}
 		};
+
+		// A Script Component is a special kind of component
+		struct ScriptComponent;
+
+		class ScriptableEntity
+		{
+		protected:
+			Scene::Entity entity;
+
+		public:
+			ScriptableEntity()
+			{}
+
+			~ScriptableEntity()
+			{}
+
+			virtual void on_create() {}
+			virtual void on_destroy() {}
+			virtual void on_update(float delta) {}
+
+			friend ScriptComponent;
+		};
+
+		// TODO : improve the api for adding this component (client has to pass entity as an argument to this component,
+		//				even though the component is being added to the entity)
+		struct ScriptComponent
+		{
+			ScriptableEntity* scriptable_entity;
+
+			ScriptComponent(ScriptableEntity* s_scriptable_entity, const Scene::Entity& entity)
+			{
+				scriptable_entity = s_scriptable_entity;
+				scriptable_entity->entity = entity;
+
+				// TODO : call on_create in Scene::create_entity ??
+				scriptable_entity->on_create();
+			}
+		};
 	
 	private:
 		entt::registry registry;
@@ -104,9 +142,11 @@ namespace cotwin
 		
 		void update(float delta)
 		{
-			// TODO : Script System
-
-			// TODO : maybe move Script & MovementControl to the top here
+			// Script System
+			for (auto [entity, script] : registry.view<ScriptComponent>().each())
+			{
+				script.scriptable_entity->on_update(delta);
+			}
 			
 			// Transform System
 			for (auto [entity, transform] : registry.view<TransformComponent>().each())
@@ -114,6 +154,7 @@ namespace cotwin
 				transform.center += transform.velocity;
 			}
 
+			// TODO : delete this system, as it is obsolete
 			// Movement Control System
 			for (auto [entity, transform, movement_control] : registry.view<TransformComponent, MovementControlComponent>().each())
 			{
@@ -168,6 +209,11 @@ namespace cotwin
 				}
 			}
 			
+			static float count = 0.0f;
+			count += delta;
+
+			int sprites_drawn = 0;
+
 			// Sprite Render System
 			auto view = registry.view<TransformComponent, SpriteComponent>();
 			for (auto [entity, transform, sprite] : view.each()) {
@@ -219,8 +265,16 @@ namespace cotwin
 						};
 
 						Renderer2D::render_texture(sprite.texture, sprite.texture_rect, sprite_relative_position, sprite_relative_size);
+						
+						sprites_drawn++;
 					}
 				}
+			}
+
+			if (count >= 0.5f)
+			{
+				count -= 0.5f;
+				Logger::Debug("Sprites drawn: %d", sprites_drawn);
 			}
 
 			// Collision System

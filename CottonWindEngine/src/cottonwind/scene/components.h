@@ -9,8 +9,6 @@
 #include <vector>
 #include <functional>
 
-//#include "../vendor/entt/entt.hpp"
-
 
 namespace cotwin
 {
@@ -103,9 +101,14 @@ namespace cotwin
 
 				Logger::Debug("Animation updated");
 			}
+			else
+			{
+				Logger::Debug("No.");
+			}
 		}
 	};
 
+	// TODO : delete this component, as it is obsolete
 	struct MovementControlComponent
 	{
 		std::function<void(glm::vec2&, float)> controller;
@@ -114,21 +117,6 @@ namespace cotwin
 			: controller(s_controller)
 		{}
 	};
-	
-	// TODO : work on script component (maybe also make it more powerful by having not only updated, but also init and destroy)
-	/*class Entity;
-	
-	struct ScriptComponent
-	{
-		std::function<void(Scene::Entity, float)> script;
-
-		ScriptComponent()
-		{}
-		
-		ScriptComponent(std::function<void(Scene::Entity, float)> s_script)
-			: script(s_script)
-		{}
-	};*/
 
 	struct ColliderComponent
 	{
