@@ -110,6 +110,17 @@ namespace cotwin
 				scriptable_entity->on_create();
 			}
 		};
+
+		// Collision Resolution Component is a special kind of component
+		struct CollisionResolutionComponent
+		{
+			// TODO : make entity objects be referenced ??
+			std::function<void(Entity entity, Entity other)> resolution;
+
+			CollisionResolutionComponent(std::function<void(Entity entity, Entity other)> s_resolution)
+				: resolution(s_resolution)
+			{}
+		};
 	
 	private:
 		entt::registry registry;
@@ -286,9 +297,8 @@ namespace cotwin
 			}
 
 			// Collision System
-			collisions.clear();
-			
-			for (auto [entity, transform, collider] : registry.view<TransformComponent, ColliderComponent>().each())
+			for (auto [entity, transform, collider, collision_resolution] 
+								: registry.view<TransformComponent, ColliderComponent, CollisionResolutionComponent>().each())
 			{
 				glm::vec2 collider_origin = transform.center + collider.offset;
 				glm::vec4 collider_rect(
@@ -297,12 +307,14 @@ namespace cotwin
 					collider.size.x,
 					collider.size.y
 				);
-
-				// TODO : start from i + 1 index (so don't iterate over the same collisions twice)
-				for (auto [other, other_transform, other_collider] : registry.view<TransformComponent, ColliderComponent>().each())
+				
+				auto others = registry.view<TransformComponent, ColliderComponent>();
+				for (auto other : others)
 				{
-					if (entity == other)
+					if (other == entity)
 						continue;
+
+					auto [other_transform, other_collider] = others.get<TransformComponent, ColliderComponent>(other);
 
 					glm::vec2 other_collider_origin = other_transform.center + other_collider.offset;
 					glm::vec4 other_collider_rect(
@@ -314,7 +326,7 @@ namespace cotwin
 
 					if (physics::collide_aabb(collider_rect, other_collider_rect))
 					{
-						collisions.push_back(std::make_pair(Entity(entity, this), Entity(other, this)));
+						collision_resolution.resolution(Entity(entity, this), Entity(other, this));
 					}
 				}
 			}

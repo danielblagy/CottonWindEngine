@@ -36,6 +36,16 @@ public:
 
 		entity.add_component<cotwin::ColliderComponent>(glm::vec2{ 100.0f, 100.0f });
 
+		entity.add_component<cotwin::Scene::CollisionResolutionComponent>(
+			[&](cotwin::Scene::Entity entity, cotwin::Scene::Entity other) {
+				if (other.get_component<cotwin::TagComponent>().tag == "sensei")
+				{
+					cotwin::Renderer2D::render_text(collision_detected_message);
+					cotwin::Logger::Info("player & sensei collision!");
+				}
+			}
+		);
+
 		// set player animation frames
 
 		player_running_down_frames.reserve(4);
@@ -110,10 +120,12 @@ public:
 
 		// since there is only one player, scene.get_collisions is expected to return just one collision
 		// if the player entity & a sensei entity collide, in this case simply display a text on the screen
-		for (auto& collision : scene.get_collisions("player", "sensei"))
+		/*for (auto& collision : scene.get_collisions("player", "sensei"))
 		{
 			cotwin::Renderer2D::render_text(collision_detected_message);
-		}
+		}*/
+
+
 
 		// delete the entity with PlayerScript
 		if (cotwin::Input::is_key_pressed(CW_KEY_G))
