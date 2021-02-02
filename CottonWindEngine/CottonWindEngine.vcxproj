@@ -484,6 +484,7 @@
     <ClInclude Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imstb_rectpack.h" />
     <ClInclude Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imstb_textedit.h" />
     <ClInclude Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imstb_truetype.h" />
+    <ClInclude Include="src\test\player_script.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\cottonwind\vendor\glm\ext\matrix_clip_space.inl" />

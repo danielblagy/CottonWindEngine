@@ -104,16 +104,6 @@ namespace cotwin
 		}
 	};
 
-	// TODO : delete this component, as it is obsolete
-	struct MovementControlComponent
-	{
-		std::function<void(glm::vec2&, float)> controller;
-
-		MovementControlComponent(std::function<void(glm::vec2&, float)> s_controller)
-			: controller(s_controller)
-		{}
-	};
-
 	struct ColliderComponent
 	{
 		glm::vec2 size;

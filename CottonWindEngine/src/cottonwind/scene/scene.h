@@ -154,13 +154,6 @@ namespace cotwin
 				transform.center += transform.velocity;
 			}
 
-			// TODO : delete this system, as it is obsolete
-			// Movement Control System
-			for (auto [entity, transform, movement_control] : registry.view<TransformComponent, MovementControlComponent>().each())
-			{
-				movement_control.controller(transform.velocity, delta);
-			}
-
 			// Animation System
 			for (auto [entity, sprite, animation] : registry.view<SpriteComponent, AnimationComponent>().each())
 			{
