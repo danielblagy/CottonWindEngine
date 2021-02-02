@@ -93,14 +93,18 @@ namespace cotwin
 				// update screen with rendering
 				Renderer2D::flush();
 
-				if (delta_cap)
-				{
-					accumulated_delta -= delta_cap;
-				}
-				else
-				{
+				// TODO : if the commented code is in use, the limiter works poorly for high fps limits (e.g. 500, 800) - delta is not usable
+				//			if the code is not in use, the limiter works porrly as well, in terms of actual limit
+				//					(e.g. for limit of 120 fps, it limits to 115, since some of the delta is lost when accumulated_delta is set to zero)
+				
+				//if (delta_cap)
+				//{
+				//	accumulated_delta -= delta_cap;
+				//}
+				//else
+				//{
 					accumulated_delta = 0.0f;
-				}
+				//}
 			}
 
 			stop();
