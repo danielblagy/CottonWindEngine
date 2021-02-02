@@ -21,9 +21,11 @@ public:
 	PlayerScript(cotwin::Scene& s_scene)
 		: ScriptableEntity(), scene(s_scene)
 	{}
-
+	
 	virtual void on_create() override
 	{
+		cotwin::Logger::Info("PlayerScript on create!");
+		
 		entity.add_component<cotwin::TransformComponent>(glm::vec2{ 700.0f, 500.0f }, glm::vec2{ 0.0f, 0.0f });
 		auto& hero_texture = cotwin::ResourceManager::get_texture("src/test/resources/textures/Hero.bmp");
 		entity.add_component<cotwin::SpriteComponent>(
@@ -31,28 +33,6 @@ public:
 		);
 
 		entity.add_component<cotwin::AnimationComponent>(0.5f, &player_idle_frames);
-
-		// TODO : move the code to PlayerScript.on_update()
-		// move player with keyboard input
-		/*entity.add_component<cotwin::MovementControlComponent>(
-			[](glm::vec2& transform_velocity, float delta) {
-				// TODO : or maybe handle delta in TransformSystem ??
-
-				if (cotwin::Input::is_key_pressed(CW_KEY_LEFT))
-					transform_velocity.x = -150.0f * delta;
-				else if (cotwin::Input::is_key_pressed(CW_KEY_RIGHT))
-					transform_velocity.x = 150.0f * delta;
-				else
-					transform_velocity.x = 0.0f;
-
-				if (cotwin::Input::is_key_pressed(CW_KEY_UP))
-					transform_velocity.y = -150.0f * delta;
-				else if (cotwin::Input::is_key_pressed(CW_KEY_DOWN))
-					transform_velocity.y = 150.0f * delta;
-				else
-					transform_velocity.y = 0.0f;
-			}
-		);*/
 
 		entity.add_component<cotwin::ColliderComponent>(glm::vec2{ 100.0f, 100.0f });
 
@@ -81,6 +61,11 @@ public:
 			{ 200, 200, 200, 255 },
 			{ 300, 300 }
 		);
+	}
+
+	virtual void on_destroy() override
+	{
+		cotwin::Logger::Info("PlayerScript on destroy!");
 	}
 
 	virtual void on_update(float delta) override
@@ -129,5 +114,9 @@ public:
 		{
 			cotwin::Renderer2D::render_text(collision_detected_message);
 		}
+
+		// delete the entity with PlayerScript
+		if (cotwin::Input::is_key_pressed(CW_KEY_G))
+			scene.destroy_entity(entity);
 	}
 };

@@ -37,6 +37,8 @@ namespace cotwin
 				: entity_handle(s_entity_handle), scene(s_scene)
 			{}
 
+			operator entt::entity() const { return entity_handle; }
+
 			template<typename T, typename... Args>
 			T& add_component(Args&&... args)
 			{
@@ -117,18 +119,7 @@ namespace cotwin
 
 	public:
 		Scene()
-		{
-			//world.system<TransformComponent>().each(TransformSystem);
-			//world.system<TransformComponent, MovementControlComponent>().each(MovementControlSystem);
-			//world.system<SpriteComponent, AnimationComponent>().each(AnimationSystem);
-			//world.system<ScriptComponent>().each(ScriptSystem);
-			//world.system<TransformComponent, CameraComponent>().each(CameraControllerSystem);
-			//world.system<AudioEffectComponent>().each(AudioSystem);
-			//
-			//world.system<TransformComponent, SpriteComponent>().iter(SpriteRenderSystem);
-			//
-			//world.system<TransformComponent, ColliderComponent>().iter(&Scene::CollisionSystem);
-		}
+		{}
 
 		~Scene()
 		{}
@@ -138,6 +129,18 @@ namespace cotwin
 			Entity entity(registry.create(), this);
 			entity.add_component<TagComponent>(tag);
 			return entity;
+		}
+
+		void destroy_entity(Entity entity)
+		{
+			if (entity.has_component<ScriptComponent>())
+			{
+				ScriptComponent& scriptable = entity.get_component<ScriptComponent>();
+				scriptable.scriptable_entity->on_destroy();
+				delete scriptable.scriptable_entity;
+			}
+
+			registry.destroy(entity);
 		}
 		
 		void update(float delta)
