@@ -86,19 +86,33 @@ public:
 
 		glm::vec2 old_velocity = transform.velocity;
 
+		float speed = 150.0f * delta;
+		glm::vec2 vec;
+		
 		if (cotwin::Input::is_key_pressed(CW_KEY_LEFT))
-			transform.velocity.x = -150.0f * delta;
+			vec.x = -1.0f;
 		else if (cotwin::Input::is_key_pressed(CW_KEY_RIGHT))
-			transform.velocity.x = 150.0f * delta;
+			vec.x = 1.0f;
 		else
-			transform.velocity.x = 0.0f;
+			vec.x = 0.0f;
 
 		if (cotwin::Input::is_key_pressed(CW_KEY_UP))
-			transform.velocity.y = -150.0f * delta;
+			vec.y = -1.0f;
 		else if (cotwin::Input::is_key_pressed(CW_KEY_DOWN))
-			transform.velocity.y = 150.0f * delta;
+			vec.y = 1.0f;
 		else
-			transform.velocity.y = 0.0f;
+			vec.y = 0.0f;
+
+		if (vec.x != 0.0f || vec.y != 0.0f)
+		{
+			glm::vec2 direction = normalize(vec);
+
+			transform.velocity = direction * speed;
+		}
+		else
+		{
+			transform.velocity = { 0.0f, 0.0f };
+		}
 
 		//cotwin::Logger::Debug("%f", delta);
 

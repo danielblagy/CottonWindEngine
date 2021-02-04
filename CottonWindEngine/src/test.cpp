@@ -3,6 +3,7 @@
 #include "cottonwind/cottonwind.h"
 
 #include "test/player_script.h"
+#include "test/follower_script.h"
 
 
 // layer where the main game logic and render is
@@ -15,6 +16,8 @@ private:
 	cotwin::Scene scene;
 
 	std::vector<glm::ivec4> sensei_animation_frames;
+
+	cotwin::Scene::Entity player_entity;
 
 public:
 	TestMainLayer()
@@ -37,6 +40,22 @@ public:
 		sensei_entity.add_component<cotwin::ColliderComponent>(glm::vec2{ 100.0f, 100.0f });
 	}
 
+	void create_follower_entity(const glm::ivec2& position)
+	{
+		static cotwin::Texture& follower_texture = cotwin::ResourceManager::load_texture("src/test/resources/textures/sensei_running.bmp");
+
+		cotwin::Scene::Entity follower_entity = scene.create_entity("follower");
+		follower_entity.add_component<cotwin::TransformComponent>(glm::vec2{ (float)position.x, (float)position.y }, glm::vec2{ 0.0f, 0.0f });
+		follower_entity.add_component<cotwin::SpriteComponent>(
+			// here texture_rect is initialized with zeros, since it will be initialized later on by AnimationSystem
+			follower_texture, glm::ivec4{ 0, 0, 0, 0 }, glm::ivec2{ 100, 100 }
+		);
+		// set up animation for sensei entity
+		follower_entity.add_component<cotwin::AnimationComponent>(0.2f, &sensei_animation_frames);
+
+		follower_entity.add_component<cotwin::Scene::ScriptComponent>(new FollowerScript(player_entity), follower_entity);
+	}
+
 	virtual void on_attach() override
 	{
 		cotwin::Logger::Trace("test main layer on attach");
@@ -55,7 +74,7 @@ public:
 		// CREATE ENTITIES /////////////////////////////////
 		
 		// Player entity
-		cotwin::Scene::Entity player_entity = scene.create_entity("player");
+		player_entity = scene.create_entity("player");
 
 		player_entity.add_component<cotwin::Scene::ScriptComponent>(new PlayerScript(scene), player_entity);
 
@@ -73,7 +92,8 @@ public:
 		camera_entity = scene.create_entity("primary camera");
 		camera_entity.add_component<cotwin::TransformComponent>(glm::vec2{ 1280.0f / 2.0f, 720.0f / 2.0f }, glm::vec2{ 0.0f, 0.0f });
 		// TODO : set up a way to get window size
-		camera_entity.add_component<cotwin::CameraComponent>(glm::vec2{ 1280, 720 }, glm::vec2{ 1280, 720 });
+		//camera_entity.add_component<cotwin::CameraComponent>(glm::vec2{ 1280, 720 }, glm::vec2{ 1280, 720 });
+		camera_entity.add_component<cotwin::CameraComponent>(glm::vec2{ 1920, 1080 }, glm::vec2{ 1920, 1080 });
 	}
 
 	virtual void on_detach() override
@@ -147,6 +167,10 @@ public:
 			audio_snap_entity.get_component<cotwin::AudioEffectComponent>().play = true;
 			create_sensei_entity(event->data.button.cursor_position);
 		}
+		else if (event->data.button.button_code == CW_MOUSEBUTTON_RIGHT)
+		{
+			create_follower_entity(event->data.button.cursor_position);
+		}
 	}
 
 	void on_window_focus(cotwin::WindowEvent* event)
@@ -175,7 +199,7 @@ public:
 		attach_layer(new TestMainLayer());
 		
 		//enable_vsync();
-		//set_fps_cap(120);
+		set_fps_cap(120);
 		glm::u8vec4 clear_color = { 120, 70, 150, 255 };
 		cotwin::Renderer2D::set_clear_color(clear_color);
 	}
@@ -190,7 +214,8 @@ int main(int argc, char* args[])
 {
 	cotwin::Logger::set_log_priority(cotwin::TracePriority);
 	
-	TestGame game(cotwin::WindowProperties("Test Game", 0, 0, 1280, 720, cotwin::Centered | cotwin::Resizable));
+	//TestGame game(cotwin::WindowProperties("Test Game", 0, 0, 1280, 720, cotwin::Centered | cotwin::Resizable));
+	TestGame game(cotwin::WindowProperties("Test Game", 0, 0, 1920, 1080, cotwin::Centered | cotwin::Borderless));
 	
 	game.start();
 	

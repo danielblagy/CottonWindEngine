@@ -13,6 +13,18 @@ namespace cotwin { namespace physics
 		float b_right = b.x + b.z;
 		float b_bottom = b.y + b.w;
 		
-		return a.x <= b_right && a_right >= b.x && a.y <= b_bottom && a_bottom >= b.y;
+		//return a.x <= b_right && a_right >= b.x && a.y <= b_bottom && a_bottom >= b.y;
+
+		// SAT
+
+		// if there's a horizontal gap
+		if (a_right < b.x || b_right < a.x)
+			return false;
+
+		// if there's a vertical gap
+		if (a_bottom < b.y || b_bottom < a.y)
+			return false;
+
+		return true;
 	}
 } }
