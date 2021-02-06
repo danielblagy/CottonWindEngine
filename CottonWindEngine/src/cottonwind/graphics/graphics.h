@@ -2,6 +2,8 @@
 
 #include <SDL.h>
 
+#include "window.h"
+
 
 namespace cotwin
 {
@@ -48,6 +50,12 @@ namespace cotwin
 		}
 
 	protected:
+		// to set window handle for Window info utility class
+		void set_window(SDL_Window* window)
+		{
+			Window::set_window(window);
+		}
+		
 		Graphics() {}
 		virtual ~Graphics() = default;
 	};

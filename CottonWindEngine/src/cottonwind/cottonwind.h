@@ -21,4 +21,6 @@
 
 #include "graphics/text.h"
 
+#include "graphics/window.h"
+
 #include "game.h"

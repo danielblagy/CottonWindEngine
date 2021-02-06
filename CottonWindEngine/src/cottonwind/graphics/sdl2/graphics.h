@@ -2,6 +2,8 @@
 
 #include "../graphics.h"
 
+#include "../window.h"
+
 #include "renderer_2d.h"
 #include "texture_manager.h"
 
@@ -76,6 +78,8 @@ namespace cotwin
 
 			// init sdl renderer handle for the SDL TextureManager
 			TextureManager::set_renderer_handle(renderer);
+
+			set_window(window);
 
 			return true;
 		}

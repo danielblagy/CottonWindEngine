@@ -3,6 +3,8 @@
 #include "../graphics.h"
 #include <glad/glad.h>
 
+#include "../window.h"
+
 #include "renderer_2d.h"
 
 #include "../../util/logger.h"
@@ -105,6 +107,8 @@ namespace cotwin
 
 			// since SDL OpenGL render functions require SDL_Window instance, supply it
 			Renderer2D::set_window_instance(window);
+
+			set_window(window);
 
 			return true;
 		}

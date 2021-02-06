@@ -190,6 +190,7 @@
     <ClInclude Include="src\cottonwind\graphics\sdl2\texture_manager.h" />
     <ClInclude Include="src\cottonwind\graphics\text.h" />
     <ClInclude Include="src\cottonwind\graphics\texture.h" />
+    <ClInclude Include="src\cottonwind\graphics\window.h" />
     <ClInclude Include="src\cottonwind\physics\2d\collision.h" />
     <ClInclude Include="src\cottonwind\physics\2d\physics.h" />
     <ClInclude Include="src\cottonwind\resource_manager\resource_manager.h" />

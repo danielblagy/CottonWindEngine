@@ -88,13 +88,12 @@ public:
 		audio_snap_entity = scene.create_entity("snapper");
 		audio_snap_entity.add_component<cotwin::AudioEffectComponent>(snap_audio);
 
+		glm::ivec2 window_size = cotwin::Window::get_window_size();
+		
 		// Camera entity
 		camera_entity = scene.create_entity("primary camera");
-		//camera_entity.add_component<cotwin::TransformComponent>(glm::vec2{ 1280.0f / 2.0f, 720.0f / 2.0f }, glm::vec2{ 0.0f, 0.0f });
-		camera_entity.add_component<cotwin::TransformComponent>(glm::vec2{ 1920.0f / 2.0f, 1080.0f / 2.0f }, glm::vec2{ 0.0f, 0.0f });
-		// TODO : set up a way to get window size
-		//camera_entity.add_component<cotwin::CameraComponent>(glm::vec2{ 1280, 720 }, glm::vec2{ 1280, 720 });
-		camera_entity.add_component<cotwin::CameraComponent>(glm::vec2{ 1920, 1080 }, glm::vec2{ 1920, 1080 });
+		camera_entity.add_component<cotwin::TransformComponent>(glm::vec2{ window_size.x / 2.0f, window_size.y / 2.0f }, glm::vec2{ 0.0f, 0.0f });
+		camera_entity.add_component<cotwin::CameraComponent>(glm::vec2{ 1280.0f, 720.0f }, window_size);
 	}
 
 	virtual void on_detach() override
@@ -254,7 +253,7 @@ public:
 		//attach_layer(new DubugInfoLayer(static_cast<cotwin::OpenGLGraphics*>(get_graphics())));
 		
 		//enable_vsync();
-		set_fps_cap(120);
+		//set_fps_cap(120);
 		glm::u8vec4 clear_color = { 110, 120, 125, 255 };
 		cotwin::Renderer2D::set_clear_color(clear_color);
 	}

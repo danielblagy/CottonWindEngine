@@ -46,11 +46,11 @@ namespace cotwin
 	struct CameraComponent
 	{
 		// width & height of 2D camera
-		glm::ivec2 bounds;
+		glm::vec2 bounds;
 		// scale based on the game's window
 		glm::vec2 scale;
 
-		CameraComponent(const glm::ivec2& s_bounds, const glm::ivec2& window_size)
+		CameraComponent(const glm::vec2& s_bounds, const glm::vec2& window_size)
 			: bounds(s_bounds), scale(window_size / s_bounds)
 		{}
 	};
