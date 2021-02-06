@@ -192,6 +192,7 @@
     <ClInclude Include="src\cottonwind\graphics\texture.h" />
     <ClInclude Include="src\cottonwind\graphics\window.h" />
     <ClInclude Include="src\cottonwind\physics\2d\collision.h" />
+    <ClInclude Include="src\cottonwind\physics\2d\object.h" />
     <ClInclude Include="src\cottonwind\physics\2d\physics.h" />
     <ClInclude Include="src\cottonwind\resource_manager\resource_manager.h" />
     <ClInclude Include="src\cottonwind\scene\components.h" />
