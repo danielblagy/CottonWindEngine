@@ -20,6 +20,7 @@ namespace cotwin
 	{
 	private:
 		static SDL_Window* window;
+		static glm::vec4 clear_color;
 		// for quick opengl test
 		static unsigned int vertex_array;
 		static unsigned int vertex_buffer;
@@ -30,13 +31,28 @@ namespace cotwin
 		{
 			window = s_window;
 		}
+
+		static void set_clear_color(const glm::vec4& s_clear_color)
+		{
+			clear_color = s_clear_color;
+		}
+
+		static void set_clear_color(const glm::u8vec4 s_clear_color)
+		{
+			clear_color = {
+				(float)s_clear_color.r / 255.0f,
+				(float)s_clear_color.g / 255.0f,
+				(float)s_clear_color.b / 255.0f,
+				(float)s_clear_color.a / 255.0f
+			};
+		}
 		
-		static void clear(const glm::vec4& color)
+		static void clear()
 		{
 			int window_w, window_h;
 			SDL_GetWindowSize(window, &window_w, &window_h);
 			glViewport(0, 0, window_w, window_h);
-			glClearColor(color.r, color.g, color.b, color.a);
+			glClearColor(clear_color.r, clear_color.g, clear_color.b, clear_color.a);
 			glClear(GL_COLOR_BUFFER_BIT);
 		}
 
@@ -84,6 +100,7 @@ namespace cotwin
 	};
 
 	SDL_Window* Renderer2D::window = 0;
+	glm::vec4 Renderer2D::clear_color = { 0.0f, 0.0f, 0.0f, 1.0f };	// black by default
 
 	// for quick opengl test
 	unsigned int Renderer2D::vertex_array = 0;

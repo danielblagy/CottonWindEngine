@@ -64,12 +64,48 @@ namespace cotwin
 
 				time_passed += ms_passed;
 
-				if (delta_cap > accumulated_delta)
+				if (delta_cap <= accumulated_delta)
 				{
-					continue;
+					if (time_passed >= 1000)
+					{
+						Logger::Debug("fps: %d", fps_count);
+						fps_count = 0;
+						time_passed -= 1000;
+					}
+
+					fps_count++;
+
+					float excess = 0.0f;
+					if (delta_cap)
+					{
+						excess = accumulated_delta - delta_cap;
+						accumulated_delta = delta_cap;
+					}
+
+					handle_sdl_events();
+
+					// clear screen
+					Renderer2D::clear();
+
+					// update and render for each layer from the bottom to the top
+					for (Layer* layer : layer_stack)
+						layer->on_update(accumulated_delta);
+
+					// update screen with rendering
+					Renderer2D::flush();
+
+					if (delta_cap)
+					{
+						//accumulated_delta -= delta_cap;
+						accumulated_delta = excess;
+					}
+					else
+					{
+						accumulated_delta = 0.0f;
+					}
 				}
 
-				if (time_passed >= 1000)
+				/*if (time_passed >= 1000)
 				{
 					Logger::Debug("fps: %d", fps_count);
 					fps_count = 0;
@@ -104,7 +140,7 @@ namespace cotwin
 				//else
 				//{
 					accumulated_delta = 0.0f;
-				//}
+				//}*/
 			}
 
 			stop();
@@ -141,12 +177,6 @@ namespace cotwin
 			graphics.disable_vsync(&delta_cap);
 		}
 		
-		// uncapped by default (if vsync is off)
-		void set_delta_cap(float delta_in_seconds)
-		{
-			delta_cap = delta_in_seconds;
-		}
-
 		// uncapped by default (if vsync is off)
 		void set_fps_cap(unsigned int fps)
 		{
