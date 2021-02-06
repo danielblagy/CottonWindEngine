@@ -100,4 +100,10 @@ namespace cotwin
 			SDL_Quit();
 		}
 	};
+
+	// Allocate a new graphics instance
+	Graphics* new_graphics_instance()
+	{
+		return new SDLGraphics();
+	}
 }

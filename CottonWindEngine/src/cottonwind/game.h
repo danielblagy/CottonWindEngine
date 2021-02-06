@@ -22,12 +22,7 @@ namespace cotwin
 		bool running = false;
 
 	private:
-// TODO : Simply use generic Graphics class with new ...() for graphics instance, since it will only be created once
-#ifdef CW_MODERN_OPENGL
-		OpenGLGraphics graphics;
-#else
-		SDLGraphics graphics;
-#endif
+		Graphics* graphics;
 	
 		LayerStack layer_stack;
 
@@ -88,7 +83,7 @@ namespace cotwin
 		{
 			on_destroy();
 			
-			graphics.destroy();
+			graphics->destroy();
 		}
 
 		void attach_layer(Layer* layer)
@@ -107,35 +102,24 @@ namespace cotwin
 
 		void enable_vsync()
 		{
-			// SDL2 doesn not support vsync switching on/off during the runtime
-			// NOTE : it could be done by destroying and re-initializing SDL_Renderer instance,
-			//		  but at least for now there won't be vsync switching feature,
-			//		  a client can only do that in WindowProperties during init
-#ifdef CW_MODERN_OPENGL
-			graphics.enable_vsync();
-#endif
+			graphics->enable_vsync();
 		}
 
 		void disable_vsync()
 		{
-			// SDL2 doesn not support vsync switching on/off during the runtime
-			// NOTE : it could be done by destroying and re-initializing SDL_Renderer instance,
-			//		  but at least for now there won't be vsync switching feature,
-			//		  a client can only do that in WindowProperties during init
-#ifdef CW_MODERN_OPENGL
-			graphics.disable_vsync();
-#endif
+			graphics->disable_vsync();
 		}
 		
 		Graphics* get_graphics()
 		{
-			return &graphics;
+			return graphics;
 		}
 
 	private:
 		bool init(WindowProperties window_properties)
 		{
-			return graphics.init(&window_properties);
+			graphics = new_graphics_instance();
+			return graphics->init(&window_properties);
 		}
 
 		void on_event(Event* event)

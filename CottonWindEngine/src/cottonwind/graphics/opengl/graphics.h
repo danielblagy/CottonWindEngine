@@ -129,12 +129,12 @@ namespace cotwin
 			SDL_Quit();
 		}
 
-		void enable_vsync()
+		virtual void enable_vsync() override
 		{
 			SDL_GL_SetSwapInterval(1);
 		}
 
-		void disable_vsync()
+		virtual void disable_vsync() override
 		{
 			SDL_GL_SetSwapInterval(0);
 		}
@@ -143,4 +143,10 @@ namespace cotwin
 		inline SDL_GLContext get_gl_context() { return gl_context; }
 		inline const char* get_glsl_version() { return glsl_version; }
 	};
+
+	// Allocate a new graphics instance
+	Graphics* new_graphics_instance()
+	{
+		return new OpenGLGraphics();
+	}
 }

@@ -37,6 +37,13 @@ namespace cotwin
 		virtual bool init(WindowProperties* window_properties) = 0;
 		virtual void destroy() = 0;
 
+		// SDL2 doesn not support vsync switching on/off during the runtime, so only Modern OpenGL supports vsync switching during runtime
+		// NOTE : it could be done by destroying and re-initializing SDL_Renderer instance,
+		//		  but at least for now there won't be vsync switching feature,
+		//		  a client can only do that in WindowProperties during init
+		virtual void enable_vsync() {}
+		virtual void disable_vsync() {}
+
 	protected:
 		// to set window handle for Window info utility class
 		void set_window(SDL_Window* window)

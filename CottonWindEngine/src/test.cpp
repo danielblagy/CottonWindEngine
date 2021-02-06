@@ -27,7 +27,6 @@ public:
 };
 
 
-
 int main(int argc, char* args[])
 {
 	cotwin::Logger::set_log_priority(cotwin::TracePriority);
