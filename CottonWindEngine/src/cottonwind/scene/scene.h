@@ -161,6 +161,10 @@ namespace cotwin
 			{
 				script.scriptable_entity->on_update(delta);
 			}
+
+			// TODO : move collision system code & physics engine somewhere in here,
+			//		  make the physics engine work with constant framerate ??
+			//		  and maybe also the collision ??
 			
 			// Transform System
 			for (auto [entity, transform] : registry.view<TransformComponent>().each())

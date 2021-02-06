@@ -71,6 +71,8 @@ namespace cotwin
 				}
 			}
 
+			bool vsync = window_properties->flags & Vsync;
+
 			window = SDL_CreateWindow(
 				window_properties->title,
 				window_properties->left, window_properties->top,
@@ -99,6 +101,11 @@ namespace cotwin
 
 			Logger::Trace("CottonWind\t Created GL Context and initialized OpenGL Loader (glad)");
 
+			if (vsync)
+			{
+				enable_vsync();
+			}
+
 			// display opengl version
 			int opengl_major_version, opengl_minor_version;
 			SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &opengl_major_version);
@@ -122,15 +129,13 @@ namespace cotwin
 			SDL_Quit();
 		}
 
-		virtual void enable_vsync(float* delta_cap) override
+		void enable_vsync()
 		{
-			*delta_cap = 0.0;
 			SDL_GL_SetSwapInterval(1);
 		}
 
-		virtual void disable_vsync(float* delta_cap) override
+		void disable_vsync()
 		{
-			*delta_cap = 0.0;
 			SDL_GL_SetSwapInterval(0);
 		}
 

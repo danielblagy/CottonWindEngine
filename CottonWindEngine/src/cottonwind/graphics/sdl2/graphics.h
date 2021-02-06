@@ -52,6 +52,8 @@ namespace cotwin
 				}
 			}
 
+			bool vsync = window_properties->flags & Vsync;
+
 			window = SDL_CreateWindow(
 				window_properties->title,
 				window_properties->left, window_properties->top,
@@ -66,7 +68,14 @@ namespace cotwin
 
 			Logger::Trace("CottonWind\t Initialized SDL2 and SDL_Window");
 
-			renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+			if (vsync)
+			{
+				renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+			}
+			else
+			{
+				renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+			}
 
 			if (renderer == NULL) {
 				SDL_Log("CottonWind: Could not create renderer: %s\n", SDL_GetError());

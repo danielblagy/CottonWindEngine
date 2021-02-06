@@ -30,8 +30,6 @@ namespace cotwin
 #endif
 	
 		LayerStack layer_stack;
-		
-		float delta_cap = 0.0;
 
 	
 	public:
@@ -47,7 +45,6 @@ namespace cotwin
 			on_init();
 			
 			Uint32 last_time = SDL_GetTicks();
-			float accumulated_delta = 0.0;
 			Uint32 time_passed = 0;
 			int fps_count = 0;
 
@@ -58,54 +55,11 @@ namespace cotwin
 				last_time = current_time;
 
 				// time delta in seconds
-				float current_frame_delta = ms_passed / 1000.0f;
-
-				accumulated_delta += current_frame_delta;
+				float delta = ms_passed / 1000.0f;
 
 				time_passed += ms_passed;
 
-				if (delta_cap <= accumulated_delta)
-				{
-					if (time_passed >= 1000)
-					{
-						Logger::Debug("fps: %d", fps_count);
-						fps_count = 0;
-						time_passed -= 1000;
-					}
-
-					fps_count++;
-
-					float excess = 0.0f;
-					if (delta_cap)
-					{
-						excess = accumulated_delta - delta_cap;
-						accumulated_delta = delta_cap;
-					}
-
-					handle_sdl_events();
-
-					// clear screen
-					Renderer2D::clear();
-
-					// update and render for each layer from the bottom to the top
-					for (Layer* layer : layer_stack)
-						layer->on_update(accumulated_delta);
-
-					// update screen with rendering
-					Renderer2D::flush();
-
-					if (delta_cap)
-					{
-						//accumulated_delta -= delta_cap;
-						accumulated_delta = excess;
-					}
-					else
-					{
-						accumulated_delta = 0.0f;
-					}
-				}
-
-				/*if (time_passed >= 1000)
+				if (time_passed >= 1000)
 				{
 					Logger::Debug("fps: %d", fps_count);
 					fps_count = 0;
@@ -116,31 +70,15 @@ namespace cotwin
 				
 				handle_sdl_events();
 
-				// TODO : have a global WindowData struct which is updated when window events come up
-				//										(either handle that in the engine, or require it from the user)
-				
 				// clear screen
 				Renderer2D::clear();
 				
 				// update and render for each layer from the bottom to the top
 				for (Layer* layer : layer_stack)
-					layer->on_update(accumulated_delta);
+					layer->on_update(delta);
 
 				// update screen with rendering
 				Renderer2D::flush();
-
-				// TODO : if the commented code is in use, the limiter works poorly for high fps limits (e.g. 500, 800) - delta is not usable
-				//			if the code is not in use, the limiter works porrly as well, in terms of actual limit
-				//					(e.g. for limit of 120 fps, it limits to 115, since some of the delta is lost when accumulated_delta is set to zero)
-				
-				//if (delta_cap)
-				//{
-				//	accumulated_delta -= delta_cap;
-				//}
-				//else
-				//{
-					accumulated_delta = 0.0f;
-				//}*/
 			}
 
 			stop();
@@ -169,20 +107,26 @@ namespace cotwin
 
 		void enable_vsync()
 		{
-			graphics.enable_vsync(&delta_cap);
+			// SDL2 doesn not support vsync switching on/off during the runtime
+			// NOTE : it could be done by destroying and re-initializing SDL_Renderer instance,
+			//		  but at least for now there won't be vsync switching feature,
+			//		  a client can only do that in WindowProperties during init
+#ifdef CW_MODERN_OPENGL
+			graphics.enable_vsync();
+#endif
 		}
 
 		void disable_vsync()
 		{
-			graphics.disable_vsync(&delta_cap);
+			// SDL2 doesn not support vsync switching on/off during the runtime
+			// NOTE : it could be done by destroying and re-initializing SDL_Renderer instance,
+			//		  but at least for now there won't be vsync switching feature,
+			//		  a client can only do that in WindowProperties during init
+#ifdef CW_MODERN_OPENGL
+			graphics.disable_vsync();
+#endif
 		}
 		
-		// uncapped by default (if vsync is off)
-		void set_fps_cap(unsigned int fps)
-		{
-			delta_cap = 1.0f / fps;
-		}
-
 		Graphics* get_graphics()
 		{
 			return &graphics;

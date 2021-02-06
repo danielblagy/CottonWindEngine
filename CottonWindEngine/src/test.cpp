@@ -252,8 +252,6 @@ public:
 		attach_layer(new TestMainLayer());
 		//attach_layer(new DubugInfoLayer(static_cast<cotwin::OpenGLGraphics*>(get_graphics())));
 		
-		//enable_vsync();
-		//set_fps_cap(120);
 		glm::u8vec4 clear_color = { 110, 120, 125, 255 };
 		cotwin::Renderer2D::set_clear_color(clear_color);
 	}
@@ -271,7 +269,7 @@ int main(int argc, char* args[])
 	cotwin::Logger::set_log_priority(cotwin::TracePriority);
 	
 	//TestGame game(cotwin::WindowProperties("Test Game", 0, 0, 1280, 720, cotwin::Centered | cotwin::Resizable));
-	TestGame game(cotwin::WindowProperties("Test Game", 0, 0, 1920, 1080, cotwin::Centered | cotwin::Borderless));
+	TestGame game(cotwin::WindowProperties("Test Game", 0, 0, 1920, 1080, cotwin::Centered | cotwin::Borderless | cotwin::Vsync));
 	
 	game.start();
 	

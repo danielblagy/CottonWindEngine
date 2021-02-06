@@ -13,7 +13,8 @@ namespace cotwin
 		Fullscreen = 1 << 0,
 		Centered = 1 << 1,
 		Resizable = 1 << 2,
-		Borderless = 1 << 3
+		Borderless = 1 << 3,
+		Vsync = 1 << 4
 	};
 
 	struct WindowProperties
@@ -35,19 +36,6 @@ namespace cotwin
 	public:
 		virtual bool init(WindowProperties* window_properties) = 0;
 		virtual void destroy() = 0;
-
-		virtual void enable_vsync(float* delta_cap)
-		{
-			SDL_DisplayMode display_mode;
-			SDL_GetCurrentDisplayMode(0, &display_mode);
-			int fps = display_mode.refresh_rate;
-			*delta_cap = 1.0f / fps;
-		}
-
-		virtual void disable_vsync(float* delta_cap)
-		{
-			*delta_cap = 0.0f;
-		}
 
 	protected:
 		// to set window handle for Window info utility class
