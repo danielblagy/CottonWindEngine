@@ -166,6 +166,15 @@ namespace cotwin
 			//		  make the physics engine work with constant framerate ??
 			//		  and maybe also the collision ??
 			
+			// Physics system
+			for (auto [entity, transform, phys] : registry.view<TransformComponent, PhysicsObjectComponent>().each())
+			{
+				phys.object.position = transform.center + phys.offset;
+				phys.object.min = phys.object.position - phys.size / 2.0f;
+				phys.object.max = phys.object.position + phys.size / 2.0f;
+				//phys.object.velocity = transform
+			}
+
 			// Transform System
 			for (auto [entity, transform] : registry.view<TransformComponent>().each())
 			{

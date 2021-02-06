@@ -195,7 +195,6 @@
     <ClInclude Include="src\cottonwind\physics\2d\physics.h" />
     <ClInclude Include="src\cottonwind\resource_manager\resource_manager.h" />
     <ClInclude Include="src\cottonwind\scene\components.h" />
-    <ClInclude Include="src\cottonwind\scene\systems.h" />
     <ClInclude Include="src\cottonwind\util\event_dispatcher.h" />
     <ClInclude Include="src\cottonwind\events\keyboard_event.h" />
     <ClInclude Include="src\cottonwind\events\mouse_event.h" />

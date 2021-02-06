@@ -17,6 +17,9 @@ namespace cotwin { namespace physics
 		float mass = 0.0f;	// 0 for infinite mass
 		float restitution = 0.0f;
 
+		Object()
+		{}
+		
 		Object(const glm::vec2& s_min, const glm::vec2& s_max, float s_mass, float s_restitution)
 			: min(s_min), max(s_max), position(min + (max - min) / 2.0f), mass(s_mass), restitution(s_restitution)
 		{}

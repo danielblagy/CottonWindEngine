@@ -5,6 +5,8 @@
 #include "../graphics/texture.h"
 #include "../audio/audio.h"
 
+#include "../physics/2d/physics.h"
+
 #include <string>
 #include <vector>
 #include <functional>
@@ -116,5 +118,26 @@ namespace cotwin
 		ColliderComponent(const glm::vec2& s_size, const glm::vec2& s_offset)
 			: size(s_size), offset(s_offset)
 		{}
+	};
+
+	struct PhysicsObjectComponent
+	{
+		physics::Object object;
+		glm::vec2 size;
+		glm::vec2 offset;	// an offset from transform->position
+
+		PhysicsObjectComponent(const glm::vec2& s_size, float mass, float restitution)
+			: size(s_size), offset(0.0f, 0.0f)
+		{
+			object.mass = mass;
+			object.restitution = restitution;
+		}
+		
+		PhysicsObjectComponent(const glm::vec2& s_size, const glm::vec2& s_offset, float mass, float restitution)
+			: size(s_size), offset(s_offset)
+		{
+			object.mass = mass;
+			object.restitution = restitution;
+		}
 	};
 }
