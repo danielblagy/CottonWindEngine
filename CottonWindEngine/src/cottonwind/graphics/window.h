@@ -20,6 +20,11 @@ namespace cotwin
 			return size;
 		}
 
+		static const char* get_window_title()
+		{
+			return SDL_GetWindowTitle(get_instance().window);
+		}
+
 	private:
 		static Window& get_instance()
 		{

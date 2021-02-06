@@ -270,6 +270,10 @@ int main(int argc, char* args[])
 	
 	//TestGame game(cotwin::WindowProperties("Test Game", 0, 0, 1280, 720, cotwin::Centered | cotwin::Resizable));
 	TestGame game(cotwin::WindowProperties("Test Game", 0, 0, 1920, 1080, cotwin::Centered | cotwin::Borderless | cotwin::Vsync));
+	//TestGame game(cotwin::WindowProperties("Test Game", 0, 0, 1920, 1080, cotwin::Centered | cotwin::Borderless));
+
+	glm::ivec2 window_size = cotwin::Window::get_window_size();
+	cotwin::Logger::Info("Window info:\n\tTitle: %s\n\tDimensions: %d, %d", cotwin::Window::get_window_title(), window_size.x, window_size.y);
 	
 	game.start();
 	
