@@ -487,7 +487,9 @@
     <ClInclude Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imstb_textedit.h" />
     <ClInclude Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imstb_truetype.h" />
     <ClInclude Include="src\test\follower_script.h" />
+    <ClInclude Include="src\test\opengl_test_layer.h" />
     <ClInclude Include="src\test\player_script.h" />
+    <ClInclude Include="src\test\sdl2_test_layer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\cottonwind\vendor\glm\ext\matrix_clip_space.inl" />
