@@ -12,12 +12,13 @@ namespace cotwin { namespace physics
 		glm::vec2 min;	// left, top
 		glm::vec2 max;	// right, bottom
 		glm::vec2 position;
+		glm::vec2 velocity;
 
-		// 0 for infinite mass
-		float mass;
+		float mass = 0.0f;	// 0 for infinite mass
+		float restitution = 0.0f;
 
-		Object(const glm::vec2& s_min, const glm::vec2& s_max)
-			: min(s_min), max(s_max), position(min + (max - min) / 2.0f)
+		Object(const glm::vec2& s_min, const glm::vec2& s_max, float s_mass, float s_restitution)
+			: min(s_min), max(s_max), position(min + (max - min) / 2.0f), mass(s_mass), restitution(s_restitution)
 		{}
 	};
 
@@ -57,8 +58,7 @@ namespace cotwin { namespace physics
 		return true;
 	}
 
-	// TODO : make them pointers ??
-	Manifold aabb(Object a, Object b)
+	Manifold aabb(const Object& a, const Object& b)
 	{
 		Manifold manifold(a, b);
 
@@ -98,9 +98,39 @@ namespace cotwin { namespace physics
 	}
 
 	// impulse collision resolution
-	void resolve_impulse(Object* a, Object* b)
+	void resolve_impulse(Manifold* manifold)
 	{
+		Object* a = &manifold->a;
+		Object* b = &manifold->b;
 		
+		// relative velocity
+		glm::vec2 vel_ab = b->velocity = a->velocity;
+
+		// relative velocity in terms of the normal direction
+		float vel_along_normal = glm::dot(vel_ab, manifold->collision_normal);
+
+		// don't resolve if velocities are separating (intuitive for humans effect)
+		if (vel_along_normal > 0.0f)
+			return;
+
+		// calculate restitution to use (min one is used)
+		float e = glm::min(a->restitution, b->restitution);
+
+		float a_inv_mass = 0.0f;
+		if (a->mass != 0.0f)
+			a_inv_mass = 1.0f / a->mass;
+
+		float b_inv_mass = 0.0f;
+		if (b->mass != 0.0f)
+			b_inv_mass = 1.0f / b->mass;
+		
+		// calculate an impulse scalar
+		float j = (-(1 + e) + vel_along_normal) / (a_inv_mass + b_inv_mass);
+
+		// apply the impulse
+		glm::vec2 impulse = j * manifold->collision_normal;
+		a->velocity -= a_inv_mass * impulse;
+		b->velocity -= b_inv_mass * impulse;
 	}
 
 	class World
