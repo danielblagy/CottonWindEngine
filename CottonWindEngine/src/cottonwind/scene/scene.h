@@ -176,6 +176,7 @@ namespace cotwin
 				phys.object.max = phys.object.position + phys.size / 2.0f;
 				phys.object.velocity = transform.velocity;
 			}
+			std::vector<std::pair<entt::entity, entt::entity>> processed_pairs;
 			// check for collision & resolve if needed
 			for (auto [entity, transform, phys] : registry.view<TransformComponent, PhysicsObjectComponent>().each())
 			{
@@ -185,10 +186,22 @@ namespace cotwin
 					if (entity == other_entity)
 						continue;
 
+					bool skip = false;
+					for (auto [a, b] : processed_pairs)
+					{
+						if ((entity == a && other_entity == b) || (entity == b && other_entity == a))
+							skip = true;
+					}
+
+					if (skip)
+						continue;
+
 					physics::Manifold manifold = physics::aabb(&phys.object, &other_phys.object);
 					// if they collide, resolve the collision
 					if (manifold.penetration)
 						physics::resolve_impulse(&manifold);
+
+					processed_pairs.push_back(std::make_pair(entity, other_entity));
 				}
 			}
 
