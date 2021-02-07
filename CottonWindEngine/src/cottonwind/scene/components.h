@@ -126,6 +126,8 @@ namespace cotwin
 		glm::vec2 size;
 		glm::vec2 offset;	// an offset from transform->position
 
+		bool registered = false;
+
 		PhysicsObjectComponent(const glm::vec2& s_size, float mass, float restitution)
 			: size(s_size), offset(0.0f, 0.0f)
 		{

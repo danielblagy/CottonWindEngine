@@ -38,6 +38,8 @@ public:
 		sensei_entity.add_component<cotwin::AnimationComponent>(0.2f, &sensei_animation_frames);
 
 		sensei_entity.add_component<cotwin::ColliderComponent>(glm::vec2{ 100.0f, 100.0f });
+
+		sensei_entity.add_component<cotwin::PhysicsObjectComponent>(glm::vec2{ 100.0f, 100.0f }, 50.0f, 0.0f);
 	}
 
 	void create_follower_entity(const glm::ivec2& position)
@@ -77,6 +79,7 @@ public:
 		player_entity = scene.create_entity("player");
 
 		player_entity.add_component<cotwin::Scene::ScriptComponent>(new PlayerScript(scene), player_entity);
+		player_entity.add_component<cotwin::PhysicsObjectComponent>(glm::vec2{ 100.0f, 100.0f }, 0.0f, 0.0f);
 
 		// set sensei animation frames
 		for (int i = 0; i < 11; i++)

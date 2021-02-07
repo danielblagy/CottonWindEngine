@@ -4,6 +4,8 @@
 
 #include <vector>
 
+#include "../../util/logger.h"
+
 
 namespace cotwin { namespace physics
 {
@@ -28,54 +30,33 @@ namespace cotwin { namespace physics
 	// data about a collision
 	struct Manifold
 	{
-		Object a;
-		Object b;
+		Object* a;
+		Object* b;
 		float penetration;
 		glm::vec2 collision_normal;
 
-		Manifold(Object s_a, Object s_b)
+		Manifold(Object* s_a, Object* s_b)
 			: a(s_a), b(s_b), penetration(0.0f)
 		{}
 	};
-	
-	// test for collision of two rects, rect is left, top, width, height
-	bool collide_aabb(const glm::vec4& a, const glm::vec4& b)
-	{
-		float a_right = a.x + a.z;
-		float a_bottom = a.y + a.w;
-		float b_right = b.x + b.z;
-		float b_bottom = b.y + b.w;
 
-		//return a.x <= b_right && a_right >= b.x && a.y <= b_bottom && a_bottom >= b.y;
-
-		// SAT
-
-		// if there's a horizontal gap
-		if (a_right < b.x || b_right < a.x)
-			return false;
-
-		// if there's a vertical gap
-		if (a_bottom < b.y || b_bottom < a.y)
-			return false;
-
-		return true;
-	}
-
-	Manifold aabb(const Object& a, const Object& b)
+	Manifold aabb(Object* a, Object* b)
 	{
 		Manifold manifold(a, b);
 
-		glm::vec2 vec_ab = b.position - a.position;
+		glm::vec2 vec_ab = b->position - a->position;
 		
 		// calculate half extents along both axis for each object
-		glm::vec2 a_extent = (a.max - a.min) / 2.0f;
-		glm::vec2 b_extent = (b.max - b.min) / 2.0f;
+		glm::vec2 a_extent = (a->max - a->min) / 2.0f;
+		glm::vec2 b_extent = (b->max - b->min) / 2.0f;
 
 		glm::vec2 overlap = a_extent + b_extent - abs(vec_ab);
 
 		// if collide
 		if (overlap.x > 0.0f && overlap.y > 0.0f)
 		{
+			Logger::Debug("aabb manifold generation: collision detected");
+			
 			// which axis is the axis of least penetration
 			if (overlap.x > overlap.y)
 			{
@@ -103,8 +84,10 @@ namespace cotwin { namespace physics
 	// impulse collision resolution
 	void resolve_impulse(Manifold* manifold)
 	{
-		Object* a = &manifold->a;
-		Object* b = &manifold->b;
+		Logger::Debug("resolve impulse function call");
+		
+		Object* a = manifold->a;
+		Object* b = manifold->b;
 		
 		// relative velocity
 		glm::vec2 vel_ab = b->velocity = a->velocity;
@@ -115,6 +98,8 @@ namespace cotwin { namespace physics
 		// don't resolve if velocities are separating (intuitive for humans effect)
 		if (vel_along_normal > 0.0f)
 			return;
+
+		Logger::Debug("resolve impulse function: velocities aren't separating");
 
 		// calculate restitution to use (min one is used)
 		float e = glm::min(a->restitution, b->restitution);
@@ -154,7 +139,20 @@ namespace cotwin { namespace physics
 
 		void update(float delta)
 		{
-			
+			for (Object* object : objects)
+			{
+				// TODO : "remember" already processed object pairs
+				for (Object* other : objects)
+				{
+					if (object == other)
+						continue;
+					
+					Manifold manifold = aabb(object, other);
+					// if they collide, resolve the collision
+					if (manifold.penetration)
+						resolve_impulse(&manifold);
+				}
+			}
 		}
 	};
 } }

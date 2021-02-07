@@ -27,7 +27,4 @@ namespace cotwin { namespace physics
 
 		return true;
 	}
-
-	// impulse collision resolution
-	void resolve_impulse(Object)
 } }

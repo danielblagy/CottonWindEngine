@@ -16,6 +16,7 @@
 
 #include <vector>
 #include "../physics/2d/collision.h"
+#include "../physics/2d/physics.h"
 
 
 namespace cotwin
@@ -167,12 +168,35 @@ namespace cotwin
 			//		  and maybe also the collision ??
 			
 			// Physics system
+			// update the physics object struct
 			for (auto [entity, transform, phys] : registry.view<TransformComponent, PhysicsObjectComponent>().each())
 			{
 				phys.object.position = transform.center + phys.offset;
 				phys.object.min = phys.object.position - phys.size / 2.0f;
 				phys.object.max = phys.object.position + phys.size / 2.0f;
-				//phys.object.velocity = transform
+				phys.object.velocity = transform.velocity;
+			}
+			// check for collision & resolve if needed
+			for (auto [entity, transform, phys] : registry.view<TransformComponent, PhysicsObjectComponent>().each())
+			{
+				// TODO : "remember" already processed object pairs
+				for (auto [other_entity, other_transform, other_phys] : registry.view<TransformComponent, PhysicsObjectComponent>().each())
+				{
+					if (entity == other_entity)
+						continue;
+
+					physics::Manifold manifold = physics::aabb(&phys.object, &other_phys.object);
+					// if they collide, resolve the collision
+					if (manifold.penetration)
+						physics::resolve_impulse(&manifold);
+				}
+			}
+
+			// TODO : this is not the best, make a phys component have a pointer to transform velocity
+			// update entities' transform velocities if they are physics objects
+			for (auto [entity, transform, phys] : registry.view<TransformComponent, PhysicsObjectComponent>().each())
+			{
+				transform.velocity = phys.object.velocity;
 			}
 
 			// Transform System
