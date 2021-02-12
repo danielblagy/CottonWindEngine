@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdio.h>
+#include <mutex>
 
 
 namespace cotwin
@@ -14,6 +15,7 @@ namespace cotwin
 	{
 	protected:
 		static LogPriority priority;
+		static std::mutex log_mutex;
 
 	public:
 		static inline void set_log_priority(LogPriority s_priority)
@@ -26,6 +28,7 @@ namespace cotwin
 		{
 			if (priority <= TracePriority)
 			{
+				std::scoped_lock lock(log_mutex);
 				printf("TRACE: ");
 				printf(message, args...);
 				printf("\n");
@@ -37,6 +40,7 @@ namespace cotwin
 		{
 			if (priority <= DebugPriority)
 			{
+				std::scoped_lock lock(log_mutex);
 				printf("DEBUG: ");
 				printf(message, args...);
 				printf("\n");
@@ -48,6 +52,7 @@ namespace cotwin
 		{
 			if (priority <= InfoPriority)
 			{
+				std::scoped_lock lock(log_mutex);
 				printf("INFO: ");
 				printf(message, args...);
 				printf("\n");
@@ -59,6 +64,7 @@ namespace cotwin
 		{
 			if (priority <= WarnPriority)
 			{
+				std::scoped_lock lock(log_mutex);
 				printf("WARN: ");
 				printf(message, args...);
 				printf("\n");
@@ -70,6 +76,7 @@ namespace cotwin
 		{
 			if (priority <= ErrorPriority)
 			{
+				std::scoped_lock lock(log_mutex);
 				printf("ERROR: ");
 				printf(message, args...);
 				printf("\n");
@@ -81,6 +88,7 @@ namespace cotwin
 		{
 			if (priority <= CriticalPriority)
 			{
+				std::scoped_lock lock(log_mutex);
 				printf("CRITICAL: ");
 				printf(message, args...);
 				printf("\n");
@@ -89,4 +97,5 @@ namespace cotwin
 	};
 
 	LogPriority Logger::priority = InfoPriority;
+	std::mutex Logger::log_mutex;
 }
