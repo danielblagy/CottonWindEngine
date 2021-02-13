@@ -9,16 +9,17 @@
 
 namespace cotwin
 {
-	// a component for the scene
-	struct QTElementComponent
-	{
-		// to quickly tell if two objects are different, unique for each object
-		unsigned int id;
-		glm::vec4 rect;
-	};
-	
 	class Quadtree
 	{
+	public:
+		struct Element
+		{
+			// to quickly tell if two objects are different, unique for each object
+			unsigned int id;
+			// top, left, width, height
+			glm::vec4 rect;
+		};
+	
 	private:
 		// will be left as zero if it's the root
 		Quadtree* parent = 0;
@@ -29,11 +30,11 @@ namespace cotwin
 		Quadtree* child_se = 0;	// south-east
 		Quadtree* child_sw = 0;	// south-west
 
-		// x,y - center, half_width, half_height
+		// top, left, width, height
 		glm::vec4 bounds;
 		int capacity;	// if capacity reached, subdivide the quad
 		// TODO : store entities instead ??
-		std::vector<QTElementComponent> elements;
+		std::vector<Element> elements;
 
 		bool divided = false;
 
@@ -42,24 +43,18 @@ namespace cotwin
 			: parent(s_parent), bounds(s_bounds), capacity(s_capacity)
 		{}
 
-		bool insert(const QTElementComponent& element)
+		~Quadtree()
 		{
-			// TODO : this conversion is terrible, find another way
-			glm::vec4 bounds_converted = {
-				bounds.x - bounds.z,
-				bounds.y - bounds.w,
-				bounds.z * 2.0f,
-				bounds.w * 2.0f
-			};
-			glm::vec4 element_rect_converted = {
-				element.rect.x - element.rect.z,
-				element.rect.y - element.rect.w,
-				element.rect.z * 2.0f,
-				element.rect.w * 2.0f
-			};
-			
+			delete child_nw;
+			delete child_ne;
+			delete child_se;
+			delete child_sw;
+		}
+
+		bool insert(const Element& element)
+		{
 			// TODO : edge cases ??
-			if (!physics::collide_aabb(bounds_converted, element_rect_converted))
+			if (!physics::collide_aabb(bounds, element.rect))
 			{
 				return false;
 			}
@@ -83,16 +78,30 @@ namespace cotwin
 			if (child_sw->insert(element)) return true;
 		}
 
+		// clears elements array
+		void clear()
+		{
+			elements.clear();
+
+			if (divided)
+			{
+				child_nw->clear();
+				child_ne->clear();
+				child_se->clear();
+				child_sw->clear();
+			}
+		}
+
 	private:
 		void subdivide()
 		{
 			glm::vec2 size = { bounds.z / 2.0f, bounds.w / 2.0f };
 
-			glm::vec4 nw_rect = { bounds.x - size.x, bounds.y - size.y, size.x, size.y };
-			glm::vec4 ne_rect = { bounds.x + size.x, bounds.y - size.y, size.x, size.y };
+			glm::vec4 nw_rect = { bounds.x, bounds.y, size.x, size.y };
+			glm::vec4 ne_rect = { bounds.x + size.x, bounds.y, size.x, size.y };
 
-			glm::vec4 sw_rect = { bounds.x - size.x, bounds.y + size.y, size.x, size.y };
-			glm::vec4 se_rect = { bounds.x + size.x, bounds.y + size.y, size.x, size.y };
+			glm::vec4 sw_rect = { bounds.x + size.x, bounds.y + size.y, size.x, size.y };
+			glm::vec4 se_rect = { bounds.x, bounds.y + size.y, size.x, size.y };
 
 			child_nw = new Quadtree(this, nw_rect, capacity);
 			child_ne = new Quadtree(this, ne_rect, capacity);
