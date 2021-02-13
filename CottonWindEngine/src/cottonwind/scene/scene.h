@@ -18,6 +18,8 @@
 #include "../physics/2d/collision.h"
 #include "../physics/2d/physics.h"
 
+#include "../physics/2d/quadtree.h"
+
 
 namespace cotwin
 {
@@ -126,12 +128,15 @@ namespace cotwin
 	private:
 		entt::registry registry;
 		
-		// used for collision querying from Collision System
-		std::vector<std::pair<Entity, Entity>> collisions;
+		// for the collision system
+		Quadtree qtree;//(0, glm::vec4{ 0.0f, 0.0f, 1280.0f, 720.0f }, 4);
 
 	public:
 		Scene()
-		{}
+		{
+			// TODO : have a world info, feed it here as bounds
+			qtree = Quadtree(0, glm::vec4(0.0f, 0.0f, 1280.0f, 720.0f), 4);
+		}
 
 		~Scene()
 		{}
@@ -169,7 +174,7 @@ namespace cotwin
 			
 			// Physics system
 			// update the physics object struct
-			for (auto [entity, transform, phys] : registry.view<TransformComponent, PhysicsObjectComponent>().each())
+			/*for (auto [entity, transform, phys] : registry.view<TransformComponent, PhysicsObjectComponent>().each())
 			{
 				phys.object.position = transform.center + phys.offset;
 				phys.object.min = phys.object.position - phys.size / 2.0f;
@@ -210,7 +215,7 @@ namespace cotwin
 			for (auto [entity, transform, phys] : registry.view<TransformComponent, PhysicsObjectComponent>().each())
 			{
 				transform.velocity = phys.object.velocity;
-			}
+			}*/
 
 			// Transform System
 			for (auto [entity, transform] : registry.view<TransformComponent>().each())
@@ -347,7 +352,27 @@ namespace cotwin
 			}
 
 			// Collision System
-			for (auto [entity, transform, collider, collision_resolution] 
+			qtree.clear();
+			
+			// generate a quadtree for this frame
+			for (auto [entity, transform, collider]
+				: registry.view<TransformComponent, ColliderComponent>().each())
+			{
+				glm::vec2 collider_origin = transform.center + collider.offset;
+				glm::vec4 collider_rect(
+					collider_origin.x,
+					collider_origin.y,
+					collider.size.x,
+					collider.size.y
+				);
+
+				// TODO : utilize element id field
+				qtree.insert(Quadtree::Element(1, collider_rect));
+			}
+
+
+			
+			/*for (auto [entity, transform, collider, collision_resolution] 
 								: registry.view<TransformComponent, ColliderComponent, CollisionResolutionComponent>().each())
 			{
 				glm::vec2 collider_origin = transform.center + collider.offset;
@@ -379,7 +404,7 @@ namespace cotwin
 						collision_resolution.resolution(Entity(entity, this), Entity(other, this));
 					}
 				}
-			}
+			}*/
 		}
 
 		void on_window_resize_event(const glm::ivec2& new_size)
@@ -391,21 +416,6 @@ namespace cotwin
 				camera.scale.x = (float)new_size.x / (float)camera.bounds.x;
 				camera.scale.y = (float)new_size.y / (float)camera.bounds.y;
 			}
-		}
-
-		// a conveniance function that returns a sub-vector of collisions of entities with two specified tags
-		std::vector<std::pair<Entity, Entity>> get_collisions(std::string t1, std::string t2)
-		{
-			std::vector<std::pair<Entity, Entity>> collisions_of_interest;
-			
-			for (std::pair<Entity, Entity>& collision : collisions)
-			{
-				// TODO : order of tags doesn't matter , so check each tag for both t1 & t2
-				if (collision.first.get_component<TagComponent>().tag == t1 && collision.second.get_component<TagComponent>().tag == t2)
-					collisions_of_interest.push_back(collision);
-			}
-
-			return collisions_of_interest;
 		}
 
 		friend Entity;

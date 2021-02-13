@@ -18,6 +18,10 @@ namespace cotwin
 			unsigned int id;
 			// top, left, width, height
 			glm::vec4 rect;
+
+			Element(unsigned int s_id, const glm::vec4& s_rect)
+				: id(s_id), rect(s_rect)
+			{}
 		};
 	
 	private:
@@ -39,6 +43,10 @@ namespace cotwin
 		bool divided = false;
 
 	public:
+		Quadtree()
+			: parent(0), bounds(glm::vec4(0.0f, 0.0f, 100.0f, 100.0f)), capacity(4)
+		{}
+		
 		Quadtree(Quadtree* s_parent, const glm::vec4& s_bounds, int s_capacity)
 			: parent(s_parent), bounds(s_bounds), capacity(s_capacity)
 		{}
@@ -100,8 +108,8 @@ namespace cotwin
 			glm::vec4 nw_rect = { bounds.x, bounds.y, size.x, size.y };
 			glm::vec4 ne_rect = { bounds.x + size.x, bounds.y, size.x, size.y };
 
-			glm::vec4 sw_rect = { bounds.x + size.x, bounds.y + size.y, size.x, size.y };
-			glm::vec4 se_rect = { bounds.x, bounds.y + size.y, size.x, size.y };
+			glm::vec4 se_rect = { bounds.x + size.x, bounds.y + size.y, size.x, size.y };
+			glm::vec4 sw_rect = { bounds.x, bounds.y + size.y, size.x, size.y };
 
 			child_nw = new Quadtree(this, nw_rect, capacity);
 			child_ne = new Quadtree(this, ne_rect, capacity);
