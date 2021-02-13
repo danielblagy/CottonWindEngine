@@ -4,6 +4,8 @@
 
 #include <vector>
 
+#include "collision.h"
+
 
 namespace cotwin
 {
@@ -40,18 +42,45 @@ namespace cotwin
 			: parent(s_parent), bounds(s_bounds), capacity(s_capacity)
 		{}
 
-		void insert(const QTElementComponent& element)
+		bool insert(const QTElementComponent& element)
 		{
+			// TODO : this conversion is terrible, find another way
+			glm::vec4 bounds_converted = {
+				bounds.x - bounds.z,
+				bounds.y - bounds.w,
+				bounds.z * 2.0f,
+				bounds.w * 2.0f
+			};
+			glm::vec4 element_rect_converted = {
+				element.rect.x - element.rect.z,
+				element.rect.y - element.rect.w,
+				element.rect.z * 2.0f,
+				element.rect.w * 2.0f
+			};
+			
+			// TODO : edge cases ??
+			if (!physics::collide_aabb(bounds_converted, element_rect_converted))
+			{
+				return false;
+			}
+			
 			if (elements.size() < capacity)
 			{
 				elements.push_back(element);
+				return true;
 			}
-			else if (!divided)
+			
+			if (!divided)
 			{
 				// subdivide the quad into 4 new smaller quads
 				subdivide();
-				divided = true;
 			}
+
+			// so that an element won't be addded twice if it's on the edge
+			if (child_nw->insert(element)) return true;
+			if (child_ne->insert(element)) return true;
+			if (child_se->insert(element)) return true;
+			if (child_sw->insert(element)) return true;
 		}
 
 	private:
@@ -69,6 +98,8 @@ namespace cotwin
 			child_ne = new Quadtree(this, ne_rect, capacity);
 			child_se = new Quadtree(this, se_rect, capacity);
 			child_sw = new Quadtree(this, sw_rect, capacity);
+
+			divided = true;
 		}
 	};
 }
