@@ -352,6 +352,9 @@ namespace cotwin
 				Logger::Debug("Sprites drawn: %d", sprites_drawn);
 			}
 
+			Logger::Debug("Collision checks: %d", physics::collision_checks);
+			physics::collision_checks = 0;
+			
 			// Collision System
 			qtree.clear();
 			
