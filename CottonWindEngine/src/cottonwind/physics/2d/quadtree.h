@@ -18,9 +18,11 @@ namespace cotwin
 			entt::entity entity_handle;
 			// top, left, width, height
 			glm::vec4 rect;
+			
+			glm::vec2 center;
 
 			Element(entt::entity s_entity_handle, const glm::vec4& s_rect)
-				: entity_handle(s_entity_handle), rect(s_rect)
+				: entity_handle(s_entity_handle), rect(s_rect), center(rect.x + rect.z / 2.0f, rect.y + rect.w / 2.0f)
 			{}
 		};
 	
@@ -60,8 +62,7 @@ namespace cotwin
 
 		bool insert(const Element& element)
 		{
-			// TODO : edge cases ??
-			if (!physics::collide_aabb(bounds, element.rect))
+			if (!inside(element.center, bounds))
 			{
 				return false;
 			}
@@ -144,6 +145,11 @@ namespace cotwin
 			child_sw = new Quadtree(this, sw_rect, capacity);
 
 			divided = true;
+		}
+
+		static bool inside(const glm::vec2& point, const glm::vec4& quad)
+		{
+			return point.x >= quad.x && point.x <= quad.x + quad.z && point.y >= quad.y && point.y <= quad.y + quad.w;
 		}
 	};
 }
