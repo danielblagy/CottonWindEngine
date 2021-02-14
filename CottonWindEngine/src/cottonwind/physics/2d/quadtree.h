@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../vendor/glm/glm.hpp"
+#include "../../vendor/entt/entt.hpp"
 
 #include <vector>
 
@@ -14,13 +15,12 @@ namespace cotwin
 	public:
 		struct Element
 		{
-			// to quickly tell if two objects are different, unique for each object
-			unsigned int id;
+			entt::entity entity_handle;
 			// top, left, width, height
 			glm::vec4 rect;
 
-			Element(unsigned int s_id, const glm::vec4& s_rect)
-				: id(s_id), rect(s_rect)
+			Element(entt::entity s_entity_handle, const glm::vec4& s_rect)
+				: entity_handle(s_entity_handle), rect(s_rect)
 			{}
 		};
 	
@@ -37,7 +37,6 @@ namespace cotwin
 		// top, left, width, height
 		glm::vec4 bounds;
 		int capacity;	// if capacity reached, subdivide the quad
-		// TODO : store entities instead ??
 		std::vector<Element> elements;
 
 		bool divided = false;
@@ -84,6 +83,8 @@ namespace cotwin
 			if (child_ne->insert(element)) return true;
 			if (child_se->insert(element)) return true;
 			if (child_sw->insert(element)) return true;
+
+			return false;
 		}
 
 		// clears elements array
@@ -97,6 +98,32 @@ namespace cotwin
 				child_ne->clear();
 				child_se->clear();
 				child_sw->clear();
+			}
+
+			// NOTE : the children are not deallocated to save time (next frame allocs & bounds calculation)
+		}
+
+		// get the elements that may be colliding with an element
+		void get_potentially_colliding(std::vector<Element>& elements_array, const Element& element)
+		{
+			for (Element& e : elements)
+				if (e.entity_handle != element.entity_handle && physics::collide_aabb(e.rect, element.rect))
+					elements_array.push_back(e);
+
+			// if children are allocated (exist)
+			if (divided)
+			{
+				if (physics::collide_aabb(child_nw->bounds, element.rect))
+					child_nw->get_potentially_colliding(elements_array, element);
+
+				if (physics::collide_aabb(child_ne->bounds, element.rect))
+					child_ne->get_potentially_colliding(elements_array, element);
+
+				if (physics::collide_aabb(child_se->bounds, element.rect))
+					child_se->get_potentially_colliding(elements_array, element);
+
+				if (physics::collide_aabb(child_sw->bounds, element.rect))
+					child_sw->get_potentially_colliding(elements_array, element);
 			}
 		}
 

@@ -328,6 +328,7 @@ namespace cotwin
 
 					if (render_camera.captures(sprite_rect))
 					{
+						// TODO : a position is not scaled properly
 						glm::ivec2 sprite_relative_position = {
 							camera_info.scale.x * (sprite_rect.x - render_camera.left),
 							camera_info.scale.y * (sprite_rect.y - render_camera.top)
@@ -366,11 +367,33 @@ namespace cotwin
 					collider.size.y
 				);
 
-				// TODO : utilize element id field
-				qtree.insert(Quadtree::Element(1, collider_rect));
+				qtree.insert(Quadtree::Element(entity, collider_rect));
 			}
 
+			for (auto [entity, transform, collider, collision_resolution]
+				: registry.view<TransformComponent, ColliderComponent, CollisionResolutionComponent>().each())
+			{
+				glm::vec2 collider_origin = transform.center + collider.offset;
+				glm::vec4 collider_rect(
+					collider_origin.x,
+					collider_origin.y,
+					collider.size.x,
+					collider.size.y
+				);
+				
+				// TODO : make this a reusable global variable ??
+				std::vector<Quadtree::Element> potentially_colliding;
 
+				qtree.get_potentially_colliding(potentially_colliding, Quadtree::Element(entity, collider_rect));
+
+				for (Quadtree::Element& element : potentially_colliding)
+				{
+					if (physics::collide_aabb(collider_rect, element.rect))
+					{
+						collision_resolution.resolution(Entity(entity, this), Entity(element.entity_handle, this));
+					}
+				}
+			}
 			
 			/*for (auto [entity, transform, collider, collision_resolution] 
 								: registry.view<TransformComponent, ColliderComponent, CollisionResolutionComponent>().each())
