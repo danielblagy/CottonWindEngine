@@ -7,6 +7,8 @@
 
 #include "collision.h"
 
+#include "../../util/logger.h"
+
 
 namespace cotwin
 {
@@ -59,17 +61,12 @@ namespace cotwin
 			delete child_sw;
 		}
 
-		bool insert(const Element& element)
+		void insert(const Element& element)
 		{
-			if (!physics::collide_aabb(element.rect, bounds))
-			{
-				return false;
-			}
-			
 			if (elements.size() < capacity)
 			{
 				elements.push_back(element);
-				return true;
+				return;
 			}
 			
 			if (!divided)
@@ -78,44 +75,43 @@ namespace cotwin
 				subdivide();
 			}
 
-			int element_quad_collision_count = 0;
-			bool quad_collisions[4];	// nw, ne, se, sw
+			float vertical_line = bounds.x + bounds.z / 2.0f;
+			float horizontal_line = bounds.y + bounds.w / 2.0f;
 			
-			if (quad_collisions[0] = physics::collide_aabb(element.rect, child_nw->bounds)) element_quad_collision_count++;
-			if (quad_collisions[1] = physics::collide_aabb(element.rect, child_ne->bounds)) element_quad_collision_count++;
-			if (quad_collisions[2] = physics::collide_aabb(element.rect, child_se->bounds)) element_quad_collision_count++;
-			if (quad_collisions[3] = physics::collide_aabb(element.rect, child_sw->bounds)) element_quad_collision_count++;
+			// check if an element is totally contained inside w, e, n, s
+			bool west = element.rect.x + element.rect.z < vertical_line;
+			bool east = element.rect.x > vertical_line;
+			bool north = element.rect.y + element.rect.w < horizontal_line;
+			bool south = element.rect.y > horizontal_line;
 			
 			// if an element is on the edge, add it to the current node (to both not duplicate and have proper collision detection)
-			if (element_quad_collision_count > 1)
+			if ((!west && !east) || (!north && !south))
 			{
 				elements.push_back(element);
 			}
 			else
 			{
-				if (quad_collisions[0])
+				if (north)
 				{
-					child_nw->insert(element);
-					return true;
+					if (west)
+						child_nw->insert(element);
+					else if (east)
+						child_ne->insert(element);
+					else
+						// NOTE : this should never happen (how could it ??)
+						Logger::Debug("Quadtree: isertion failed, an element is neither on the edges nor in quads");
 				}
-				else if (quad_collisions[1])
+				else if (south)
 				{
-					child_ne->insert(element);
-					return true;
-				}
-				else if (quad_collisions[2])
-				{
-					child_se->insert(element);
-					return true;
-				}
-				else if (quad_collisions[3])
-				{
-					child_sw->insert(element);
-					return true;
+					if (east)
+						child_se->insert(element);
+					else if (west)
+						child_sw->insert(element);
+					else
+						// NOTE : this should never happen (how could it ??)
+						Logger::Debug("Quadtree: isertion failed, an element is neither on the edges nor in quads");
 				}
 			}
-
-			return false;
 		}
 
 		// clears elements array
