@@ -18,11 +18,9 @@ namespace cotwin
 			entt::entity entity_handle;
 			// top, left, width, height
 			glm::vec4 rect;
-			
-			glm::vec2 center;
 
 			Element(entt::entity s_entity_handle, const glm::vec4& s_rect)
-				: entity_handle(s_entity_handle), rect(s_rect), center(rect.x + rect.z / 2.0f, rect.y + rect.w / 2.0f)
+				: entity_handle(s_entity_handle), rect(s_rect)
 			{}
 		};
 	
@@ -39,6 +37,7 @@ namespace cotwin
 		// top, left, width, height
 		glm::vec4 bounds;
 		int capacity;	// if capacity reached, subdivide the quad
+						// (if an element is an edge case, the element will be inserted in this node's elements array, event if capacity is reached)
 		std::vector<Element> elements;
 
 		bool divided = false;
@@ -62,7 +61,7 @@ namespace cotwin
 
 		bool insert(const Element& element)
 		{
-			if (!inside(element.center, bounds))
+			if (!physics::collide_aabb(element.rect, bounds))
 			{
 				return false;
 			}
@@ -79,11 +78,42 @@ namespace cotwin
 				subdivide();
 			}
 
-			// so that an element won't be addded twice if it's on the edge
-			if (child_nw->insert(element)) return true;
-			if (child_ne->insert(element)) return true;
-			if (child_se->insert(element)) return true;
-			if (child_sw->insert(element)) return true;
+			int element_quad_collision_count = 0;
+			bool quad_collisions[4];	// nw, ne, se, sw
+			
+			if (quad_collisions[0] = physics::collide_aabb(element.rect, child_nw->bounds)) element_quad_collision_count++;
+			if (quad_collisions[1] = physics::collide_aabb(element.rect, child_ne->bounds)) element_quad_collision_count++;
+			if (quad_collisions[2] = physics::collide_aabb(element.rect, child_se->bounds)) element_quad_collision_count++;
+			if (quad_collisions[3] = physics::collide_aabb(element.rect, child_sw->bounds)) element_quad_collision_count++;
+			
+			// if an element is on the edge, add it to the current node (to both not duplicate and have proper collision detection)
+			if (element_quad_collision_count > 1)
+			{
+				elements.push_back(element);
+			}
+			else
+			{
+				if (quad_collisions[0])
+				{
+					child_nw->insert(element);
+					return true;
+				}
+				else if (quad_collisions[1])
+				{
+					child_ne->insert(element);
+					return true;
+				}
+				else if (quad_collisions[2])
+				{
+					child_se->insert(element);
+					return true;
+				}
+				else if (quad_collisions[3])
+				{
+					child_sw->insert(element);
+					return true;
+				}
+			}
 
 			return false;
 		}
@@ -145,11 +175,6 @@ namespace cotwin
 			child_sw = new Quadtree(this, sw_rect, capacity);
 
 			divided = true;
-		}
-
-		static bool inside(const glm::vec2& point, const glm::vec4& quad)
-		{
-			return point.x >= quad.x && point.x <= quad.x + quad.z && point.y >= quad.y && point.y <= quad.y + quad.w;
 		}
 	};
 }
