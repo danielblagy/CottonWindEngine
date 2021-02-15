@@ -130,8 +130,8 @@ namespace cotwin
 			// NOTE : the children are not deallocated to save time (next frame allocs & bounds calculation)
 		}
 
-		// get the elements that may be colliding with an element
-		void get_potentially_colliding(std::vector<Element>& elements_array, const Element& element)
+		// get the elements that collide with an element
+		void get_colliding(std::vector<Element>& elements_array, const Element& element)
 		{
 			for (Element& e : elements)
 				if (e.entity_handle != element.entity_handle && physics::collide_aabb(e.rect, element.rect))
@@ -141,16 +141,16 @@ namespace cotwin
 			if (divided)
 			{
 				if (physics::collide_aabb(child_nw->bounds, element.rect))
-					child_nw->get_potentially_colliding(elements_array, element);
+					child_nw->get_colliding(elements_array, element);
 
 				if (physics::collide_aabb(child_ne->bounds, element.rect))
-					child_ne->get_potentially_colliding(elements_array, element);
+					child_ne->get_colliding(elements_array, element);
 
 				if (physics::collide_aabb(child_se->bounds, element.rect))
-					child_se->get_potentially_colliding(elements_array, element);
+					child_se->get_colliding(elements_array, element);
 
 				if (physics::collide_aabb(child_sw->bounds, element.rect))
-					child_sw->get_potentially_colliding(elements_array, element);
+					child_sw->get_colliding(elements_array, element);
 			}
 		}
 

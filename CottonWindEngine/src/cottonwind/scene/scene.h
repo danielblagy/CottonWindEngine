@@ -385,52 +385,15 @@ namespace cotwin
 				);
 				
 				// TODO : make this a reusable global variable ??
-				std::vector<Quadtree::Element> potentially_colliding;
+				std::vector<Quadtree::Element> colliding_elements;
 
-				qtree.get_potentially_colliding(potentially_colliding, Quadtree::Element(entity, collider_rect));
+				qtree.get_colliding(colliding_elements, Quadtree::Element(entity, collider_rect));
 
-				for (Quadtree::Element& element : potentially_colliding)
+				for (Quadtree::Element& element : colliding_elements)
 				{
-					if (physics::collide_aabb(collider_rect, element.rect))
-					{
-						collision_resolution.resolution(Entity(entity, this), Entity(element.entity_handle, this));
-					}
+					collision_resolution.resolution(Entity(entity, this), Entity(element.entity_handle, this));
 				}
 			}
-			
-			/*for (auto [entity, transform, collider, collision_resolution] 
-								: registry.view<TransformComponent, ColliderComponent, CollisionResolutionComponent>().each())
-			{
-				glm::vec2 collider_origin = transform.center + collider.offset;
-				glm::vec4 collider_rect(
-					collider_origin.x,
-					collider_origin.y,
-					collider.size.x,
-					collider.size.y
-				);
-				
-				auto others = registry.view<TransformComponent, ColliderComponent>();
-				for (auto other : others)
-				{
-					if (other == entity)
-						continue;
-
-					auto [other_transform, other_collider] = others.get<TransformComponent, ColliderComponent>(other);
-
-					glm::vec2 other_collider_origin = other_transform.center + other_collider.offset;
-					glm::vec4 other_collider_rect(
-						other_collider_origin.x,
-						other_collider_origin.y,
-						other_collider.size.x,
-						other_collider.size.y
-					);
-
-					if (physics::collide_aabb(collider_rect, other_collider_rect))
-					{
-						collision_resolution.resolution(Entity(entity, this), Entity(other, this));
-					}
-				}
-			}*/
 		}
 
 		void on_window_resize_event(const glm::ivec2& new_size)
