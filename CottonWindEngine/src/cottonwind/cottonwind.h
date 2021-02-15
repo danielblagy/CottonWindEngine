@@ -14,6 +14,7 @@
 
 #include "util/logger.h"
 #include "util/event_dispatcher.h"
+#include "util/state.h"
 
 #include "scene/scene.h"
 
