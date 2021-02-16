@@ -78,16 +78,13 @@ private:
 	};
 
 private:
-	// scene here is require for scene.get_collisions function, so this will be removed later,
-	// as collision resolution will be a part of ScriptableEntity virtual function
-	cotwin::Scene& scene;
 	cotwin::Text collision_detected_message;
 
 	cotwin::StateMachine state_machine;
 
 public:
-	PlayerScript(cotwin::Scene& s_scene)
-		: ScriptableEntity(), scene(s_scene)
+	PlayerScript()
+		: ScriptableEntity()
 	{}
 	
 	virtual void on_create() override
@@ -168,18 +165,5 @@ public:
 		state_machine.update(delta);
 
 		// TODO : collision resolution will be done is a special virtual function, which will be a part of the ScriptableEntity class
-
-		// since there is only one player, scene.get_collisions is expected to return just one collision
-		// if the player entity & a sensei entity collide, in this case simply display a text on the screen
-		/*for (auto& collision : scene.get_collisions("player", "sensei"))
-		{
-			cotwin::Renderer2D::render_text(collision_detected_message);
-		}*/
-
-
-
-		// delete the entity with PlayerScript
-		if (cotwin::Input::is_key_pressed(CW_KEY_G))
-			scene.destroy_entity(entity);
 	}
 };

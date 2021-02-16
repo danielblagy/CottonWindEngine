@@ -42,6 +42,12 @@ namespace cotwin
 		StateMachine()
 		{}
 
+		~StateMachine()
+		{
+			for (State* state : states)
+				delete state;
+		}
+
 		void register_state(State* state)
 		{
 			if (state)
