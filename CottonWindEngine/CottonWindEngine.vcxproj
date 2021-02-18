@@ -177,6 +177,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\cottonwind\audio\audio.h" />
+    <ClInclude Include="src\cottonwind\audio\audio_playback.h" />
     <ClInclude Include="src\cottonwind\cottonwind.h" />
     <ClInclude Include="src\cottonwind\events\event.h" />
     <ClInclude Include="src\cottonwind\graphics\render_camera_2d.h" />
@@ -487,6 +488,7 @@
     <ClInclude Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imstb_rectpack.h" />
     <ClInclude Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imstb_textedit.h" />
     <ClInclude Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imstb_truetype.h" />
+    <ClInclude Include="src\cottonwind\vendor\miniaudio\miniaudio.h" />
     <ClInclude Include="src\test\follower_script.h" />
     <ClInclude Include="src\test\opengl_test_layer.h" />
     <ClInclude Include="src\test\player_script.h" />

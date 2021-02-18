@@ -1,40 +1,55 @@
 #pragma once
 
-#include <SDL.h>
+#define MINIAUDIO_IMPLEMENTATION
+#include "../vendor/miniaudio/miniaudio.h"
+
+#include "../util/logger.h"
+
+#define SAMPLE_FORMAT	ma_format_f32
+#define CHANNEL_COUNT	2
+#define SAMPLE_RATE		48000
 
 
 namespace cotwin
 {
-	class ResourceManager;
+	class AudioPlayback;
 	
 	class Audio
 	{
 	private:
-		SDL_AudioSpec spec;
-		SDL_AudioDeviceID device_id;
-		Uint8* audio_buffer;
-		Uint32 buffer_length;
+		ma_decoder_config decoder_config;
+		ma_decoder decoder;
+		ma_bool32 at_end = false;
 
 	public:
 		// NOTE : ResourceManager must set the fields
-		Audio()
-		{}
+		Audio(const char* filepath)
+		{
+			/* All decoders need to have the same output format for simple mixing. */
+			decoder_config = ma_decoder_config_init(SAMPLE_FORMAT, CHANNEL_COUNT, SAMPLE_RATE);
+			ma_result result = result = ma_decoder_init_file(filepath, &decoder_config, &decoder);
+			if (result != MA_SUCCESS) {
+				ma_decoder_uninit(&decoder);
+
+				Logger::Error("Failed to load %s", filepath);
+			}
+			at_end = MA_FALSE;
+		}
 
 		~Audio()
 		{}
 
 		void free()
 		{
-			SDL_CloseAudioDevice(device_id);
-			SDL_FreeWAV(audio_buffer);
+			ma_decoder_uninit(&decoder);
 		}
 
 		void play()
 		{
-			SDL_QueueAudio(device_id, audio_buffer, buffer_length);
-			SDL_PauseAudioDevice(device_id, 0);
+			// add to AudioPlayback
+			AudioPlayback::add_to_play
 		}
 
-		friend ResourceManager;
+		friend AudioPlayback;
 	};
 }
