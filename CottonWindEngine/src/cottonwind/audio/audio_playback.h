@@ -18,6 +18,7 @@ namespace cotwin
 	{
 	private:
 		std::vector<Audio> audio_to_play;
+		ma_device_config device_config;
 
 	public:
 		static void add(Audio audio)
@@ -33,7 +34,48 @@ namespace cotwin
 			return instance;
 		}
 		
-		AudioPlayback() {}
+		AudioPlayback()
+		{
+			/* Create only a single device. The decoders will be mixed together in the callback. In this example the data format needs to be the same as the decoders. */
+			device_config = ma_device_config_init(ma_device_type_playback);
+			device_config.playback.format = SAMPLE_FORMAT;
+			device_config.playback.channels = CHANNEL_COUNT;
+			device_config.sampleRate = SAMPLE_RATE;
+			device_config.dataCallback = this::data_callback;
+			device_config.pUserData = NULL;
+
+			if (ma_device_init(NULL, &deviceConfig, &device) != MA_SUCCESS) {
+				for (iDecoder = 0; iDecoder < g_decoderCount; ++iDecoder) {
+					ma_decoder_uninit(&g_pDecoders[iDecoder]);
+				}
+				free(g_pDecoders);
+				free(g_pDecodersAtEnd);
+
+				printf("Failed to open playback device.\n");
+				return -3;
+			}
+
+			/*
+			We can't stop in the audio thread so we instead need to use an event. We wait on this thread in the main thread, and signal it in the audio thread. This
+			needs to be done before starting the device. We need a context to initialize the event, which we can get from the device. Alternatively you can initialize
+			a context separately, but we don't need to do that for this example.
+			*/
+			ma_event_init(&g_stopEvent);
+
+			/* Now we start playback and wait for the audio thread to tell us to stop. */
+			if (ma_device_start(&device) != MA_SUCCESS) {
+				ma_device_uninit(&device);
+				for (iDecoder = 0; iDecoder < g_decoderCount; ++iDecoder) {
+					ma_decoder_uninit(&g_pDecoders[iDecoder]);
+				}
+				free(g_pDecoders);
+				free(g_pDecodersAtEnd);
+
+				printf("Failed to start playback device.\n");
+				return -4;
+			}
+
+		}
 
 		~AudioPlayback()
 		{
