@@ -12,6 +12,8 @@
 #include "graphics/graphics.h"
 #include "graphics/renderer.h"
 
+//#include "audio/audio.h"
+
 
 namespace cotwin
 {
@@ -64,6 +66,8 @@ namespace cotwin
 				fps_count++;
 				
 				handle_sdl_events();
+
+				//Audio::AudioPlayback::play();
 
 				// clear screen
 				Renderer2D::clear();
