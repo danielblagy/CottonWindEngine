@@ -19,14 +19,14 @@ namespace cotwin
 	{
 	private:
 		std::unordered_map<std::string, Audio> audio_resources;
-	
+
 	public:
 		static ResourceManager& get_instance()
 		{
 			static ResourceManager instance;
 			return instance;
 		}
-		
+
 		static Texture& load_texture(const char* filepath)
 		{
 			return TextureManager::load_texture(filepath);
@@ -60,7 +60,12 @@ namespace cotwin
 	private:
 		Audio& load_audio_internal(const char* filepath)
 		{
-			Audio audio(filepath);
+			Audio audio;
+			if (SDL_LoadWAV(filepath, &audio.spec, &audio.audio_buffer, &audio.buffer_length) == NULL)
+			{
+				Logger::Error("Failed to load audio %s", filepath);
+			}
+			audio.device_id = SDL_OpenAudioDevice(NULL, 0, &audio.spec, NULL, 0);
 			audio_resources[std::string(filepath)] = audio;
 			return audio_resources[filepath];
 		}
@@ -76,7 +81,7 @@ namespace cotwin
 				return load_audio_internal(filepath);
 			}
 		}
-		
+
 		ResourceManager() {}
 
 		~ResourceManager()
