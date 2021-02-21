@@ -20,6 +20,9 @@ namespace cotwin
 	private:
 		std::unordered_map<std::string, Audio> audio_resources;
 
+		SDL_AudioSpec audio_format;
+		SDL_AudioDeviceID device_id;
+
 	public:
 		static ResourceManager& get_instance()
 		{
@@ -65,7 +68,8 @@ namespace cotwin
 			{
 				Logger::Error("Failed to load audio %s", filepath);
 			}
-			audio.device_id = SDL_OpenAudioDevice(NULL, 0, &audio.spec, NULL, 0);
+			// TODO : change to OpenAudio to ensure that the same device is used across all the audio ??
+			audio.device_id = device_id;
 			audio_resources[std::string(filepath)] = audio;
 			return audio_resources[filepath];
 		}
@@ -82,11 +86,23 @@ namespace cotwin
 			}
 		}
 
-		ResourceManager() {}
+		ResourceManager()
+		{
+			/* Set the audio format */
+			audio_format.freq = 22050;
+			audio_format.format = AUDIO_S16;
+			audio_format.channels = 2;    /* 1 = mono, 2 = stereo */
+			audio_format.samples = 1024;  /* Good low-latency value for callback */
+			audio_format.callback = NULL;
+			audio_format.userdata = NULL;
+
+			device_id = SDL_OpenAudio(&audio_format, NULL);
+		}
 
 		~ResourceManager()
 		{
 			// free audio resources
+			SDL_CloseAudioDevice(device_id);
 			for (auto i : audio_resources)
 			{
 				i.second.free();
