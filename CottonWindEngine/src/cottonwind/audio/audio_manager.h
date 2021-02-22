@@ -1,11 +1,10 @@
 #pragma once
 
-#include <SDL.h>
-
 #include <unordered_map>
 
-#include "audio.h"
+#include <SDL.h>
 
+#include "audio.h"
 #include "../util/logger.h"
 
 
@@ -18,15 +17,6 @@ namespace cotwin
 
 		SDL_AudioSpec audio_format;
 		SDL_AudioDeviceID device_id;
-
-		Uint8* audio_data;
-
-		void audio_callback(void* udata, Uint8* stream, int len)
-		{
-			SDL_memset(stream, 0, len);  // make sure this is silence.
-			// mix our audio against the silence
-			SDL_MixAudioFormat(stream, audio_data, len, SDL_MIX_MAXVOLUME);
-		}
 
 	public:
 		static AudioManager& get_instance()
@@ -53,8 +43,8 @@ namespace cotwin
 			{
 				Logger::Error("Failed to load audio %s", filepath);
 			}
-
 			audio.device_id = device_id;
+
 			audio_resources[std::string(filepath)] = audio;
 			return audio_resources[filepath];
 		}
@@ -77,11 +67,9 @@ namespace cotwin
 			audio_format.format = AUDIO_S16LSB;
 			audio_format.channels = 2;
 			audio_format.samples = 4096;
-			audio_format.size = 0;
-			audio_format.padding = 0;
 			audio_format.callback = NULL;
 			audio_format.userdata = NULL;
-
+			
 			device_id = SDL_OpenAudioDevice(NULL, 0, &audio_format, NULL, 0);
 		}
 

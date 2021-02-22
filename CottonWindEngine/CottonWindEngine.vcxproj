@@ -177,6 +177,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\cottonwind\audio\audio.h" />
+    <ClInclude Include="src\cottonwind\audio\audio_manager.h" />
     <ClInclude Include="src\cottonwind\cottonwind.h" />
     <ClInclude Include="src\cottonwind\events\event.h" />
     <ClInclude Include="src\cottonwind\graphics\render_camera_2d.h" />
