@@ -15,6 +15,7 @@
 #include "util/logger.h"
 #include "util/event_dispatcher.h"
 #include "util/state.h"
+#include "util/random.h"
 
 #include "scene/scene.h"
 

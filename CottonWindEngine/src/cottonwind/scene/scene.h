@@ -118,9 +118,9 @@ namespace cotwin
 		struct CollisionResolutionComponent
 		{
 			// TODO : make entity objects be referenced ??
-			std::function<void(Entity entity, Entity other)> resolution;
+			std::function<void(Entity entity, Entity other, float delta)> resolution;
 
-			CollisionResolutionComponent(std::function<void(Entity entity, Entity other)> s_resolution)
+			CollisionResolutionComponent(std::function<void(Entity entity, Entity other, float delta)> s_resolution)
 				: resolution(s_resolution)
 			{}
 		};
@@ -396,7 +396,7 @@ namespace cotwin
 
 				for (Quadtree::Element& element : colliding_elements)
 				{
-					collision_resolution.resolution(Entity(entity, this), Entity(element.entity_handle, this));
+					collision_resolution.resolution(Entity(entity, this), Entity(element.entity_handle, this), delta);
 				}
 			}
 		}

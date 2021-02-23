@@ -92,8 +92,8 @@ namespace cotwin
 			layer->on_attach();
 		}
 
-		virtual void on_init() = 0;
-		virtual void on_destroy() = 0;
+		virtual void on_init() {}
+		virtual void on_destroy() {}
 
 		bool is_running()
 		{

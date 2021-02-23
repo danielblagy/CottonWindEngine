@@ -15,7 +15,7 @@ namespace cotwin
 		}
 
 		// returns a random bool (either true or false)
-		inline bool b(int lowest, int highest)
+		inline bool b()
 		{
 			return std::rand() % 2 == 0;
 		}
