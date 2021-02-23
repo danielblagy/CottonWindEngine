@@ -12,6 +12,7 @@ class TestMainLayer : public cotwin::Layer
 private:
 	cotwin::Scene::Entity audio_snap_entity;
 	cotwin::Scene::Entity camera_entity;
+	cotwin::Scene::Entity secondary_camera_entity;
 
 	cotwin::Scene scene;
 
@@ -96,7 +97,12 @@ public:
 		// Camera entity
 		camera_entity = scene.create_entity("primary camera");
 		camera_entity.add_component<cotwin::TransformComponent>(glm::vec2{ 500.0f, 500.0f }, glm::vec2{ 0.0f, 0.0f });
-		camera_entity.add_component<cotwin::CameraComponent>(glm::vec2{ 1280.0f, 720.0f }, window_size);
+		camera_entity.add_component<cotwin::CameraComponent>(glm::vec2{ 1280.0f, 720.0f }, window_size, true);
+
+		// Secondary Camera entity
+		secondary_camera_entity = scene.create_entity("secondary camera");
+		secondary_camera_entity.add_component<cotwin::TransformComponent>(glm::vec2{ 800.0f, 700.0f }, glm::vec2{ 0.0f, 0.0f });
+		secondary_camera_entity.add_component<cotwin::CameraComponent>(glm::vec2{ 1280.0f, 720.0f }, window_size, false);
 	}
 
 	virtual void on_detach() override
@@ -159,6 +165,16 @@ public:
 		if (event->data.key.keycode == CW_KEY_G)
 		{
 			audio_snap_entity.get_component<cotwin::AudioEffectComponent>().play = true;
+		}
+		else if (event->data.key.keycode == CW_KEY_C)
+		{
+			// switch between two cameras
+			
+			cotwin::CameraComponent& camera_entity_camera = camera_entity.get_component<cotwin::CameraComponent>();
+			cotwin::CameraComponent& secondary_camera_entity_camera = secondary_camera_entity.get_component<cotwin::CameraComponent>();
+
+			camera_entity_camera.primary = !camera_entity_camera.primary;
+			secondary_camera_entity_camera.primary = !secondary_camera_entity_camera.primary;
 		}
 	}
 

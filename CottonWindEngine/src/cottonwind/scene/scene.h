@@ -247,31 +247,34 @@ namespace cotwin
 			// Camera Controller System
 			for (auto [entity, transform, camera] : registry.view<TransformComponent, CameraComponent>().each())
 			{
-				if (Input::is_key_pressed(CW_KEY_A))
-					transform.velocity.x = -120.0f * delta;
-				else if (Input::is_key_pressed(CW_KEY_D))
-					transform.velocity.x = 120.0f * delta;
-				else
-					transform.velocity.x = 0.0f;
-
-				if (Input::is_key_pressed(CW_KEY_W))
-					transform.velocity.y = -120.0f * delta;
-				else if (Input::is_key_pressed(CW_KEY_S))
-					transform.velocity.y = 120.0f * delta;
-				else
-					transform.velocity.y = 0.0f;
-
-				// TODO : make input polling for mouse wheel ??
-				// this is just for test
-				if (Input::is_key_pressed(CW_KEY_LEFTBRACKET))
+				if (camera.primary)
 				{
-					camera.scale += 1.0f * delta;
-					//camera.bounds *= camera.scale;
-				}
-				else if (Input::is_key_pressed(CW_KEY_RIGHTBRACKET))
-				{
-					camera.scale -= 1.0f * delta;
-					//camera.bounds *= camera.scale;
+					if (Input::is_key_pressed(CW_KEY_A))
+						transform.velocity.x = -120.0f * delta;
+					else if (Input::is_key_pressed(CW_KEY_D))
+						transform.velocity.x = 120.0f * delta;
+					else
+						transform.velocity.x = 0.0f;
+
+					if (Input::is_key_pressed(CW_KEY_W))
+						transform.velocity.y = -120.0f * delta;
+					else if (Input::is_key_pressed(CW_KEY_S))
+						transform.velocity.y = 120.0f * delta;
+					else
+						transform.velocity.y = 0.0f;
+
+					// TODO : make input polling for mouse wheel ??
+					// this is just for test
+					if (Input::is_key_pressed(CW_KEY_LEFTBRACKET))
+					{
+						camera.scale += 1.0f * delta;
+						//camera.bounds *= camera.scale;
+					}
+					else if (Input::is_key_pressed(CW_KEY_RIGHTBRACKET))
+					{
+						camera.scale -= 1.0f * delta;
+						//camera.bounds *= camera.scale;
+					}
 				}
 			}
 
@@ -291,15 +294,18 @@ namespace cotwin
 			int sprites_drawn = 0;
 
 			// Sprite Render System
-			TransformComponent camera_transform(glm::vec2{ 0.0f, 0.0f }, glm::vec2{ 0.0f, 0.0f });
-			CameraComponent camera_info(glm::ivec2{ 1, 1 }, glm::vec2{ 1.0f, 1.0f });
+			TransformComponent camera_transform;
+			CameraComponent camera_info;
 
 			// TODO : support multiple cameras in a scene (primary flag), but here determine and use the primary one
 			// this loop is expected to iterate only once (until multiple cameras will be supported)
 			for (auto [entity, c_transform, c_camera] : registry.view<TransformComponent, CameraComponent>().each())
 			{
-				camera_transform = c_transform;
-				camera_info = c_camera;
+				if (c_camera.primary)
+				{
+					camera_transform = c_transform;
+					camera_info = c_camera;
+				}
 			}
 
 			glm::ivec2 camera_half_size = camera_info.bounds / 2.0f;

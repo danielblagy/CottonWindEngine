@@ -43,6 +43,10 @@ namespace cotwin
 		TransformComponent(const glm::vec2& s_center, const glm::vec2& s_velocity)
 			: center(s_center), velocity(s_velocity)
 		{}
+
+		TransformComponent()
+			: center(0.0f, 0.0f), velocity(0.0f, 0.0f)
+		{}
 	};
 
 	struct CameraComponent
@@ -51,9 +55,20 @@ namespace cotwin
 		glm::vec2 bounds;
 		// scale based on the game's window
 		glm::vec2 scale;
+		// primary means that the camera will be used to render stuff in sprite render system
+		// (this allows having multiple cameras and switch between them at runtime)
+		bool primary;
+
+		CameraComponent(const glm::vec2& s_bounds, const glm::vec2& window_size, bool s_primary)
+			: bounds(s_bounds), scale(window_size / s_bounds), primary(s_primary)
+		{}
 
 		CameraComponent(const glm::vec2& s_bounds, const glm::vec2& window_size)
-			: bounds(s_bounds), scale(window_size / s_bounds)
+			: bounds(s_bounds), scale(window_size / s_bounds), primary(false)
+		{}
+
+		CameraComponent()
+			: bounds(1, 1), scale(1.0f, 1.0f), primary(false)
 		{}
 	};
 
