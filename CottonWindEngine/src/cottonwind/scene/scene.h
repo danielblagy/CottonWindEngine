@@ -312,8 +312,6 @@ namespace cotwin
 			
 			auto view = registry.view<TransformComponent, SpriteComponent>();
 			for (auto [entity, transform, sprite] : view.each()) {
-				//Renderer2D::render_texture(sprite.texture, sprite.texture_rect, transform.center, sprite.size);
-				
 				if (sprite.active)
 				{
 					// convert rect with left, top, right, bottom
@@ -330,7 +328,6 @@ namespace cotwin
 
 					if (render_camera.captures(sprite_rect))
 					{
-						// TODO : a position is not scaled properly
 						glm::ivec2 sprite_relative_position = {
 							camera_info.scale.x * (sprite_rect.x - render_camera.left),
 							camera_info.scale.y * (sprite_rect.y - render_camera.top)
