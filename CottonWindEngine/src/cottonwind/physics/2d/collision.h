@@ -5,12 +5,12 @@
 
 namespace cotwin { namespace physics
 {
-	static int collision_checks = 0;
+	//static int collision_checks = 0;
 	
 	// test for collision of two rects, rect is left, top, width, height
 	bool collide_aabb(const glm::vec4& a, const glm::vec4& b)
 	{
-		collision_checks++;
+		//collision_checks++;
 		
 		float a_right = a.x + a.z;
 		float a_bottom = a.y + a.w;

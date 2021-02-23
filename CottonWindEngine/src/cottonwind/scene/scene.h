@@ -266,10 +266,12 @@ namespace cotwin
 				if (Input::is_key_pressed(CW_KEY_LEFTBRACKET))
 				{
 					camera.scale += 1.0f * delta;
+					//camera.bounds *= camera.scale;
 				}
 				else if (Input::is_key_pressed(CW_KEY_RIGHTBRACKET))
 				{
 					camera.scale -= 1.0f * delta;
+					//camera.bounds *= camera.scale;
 				}
 			}
 
@@ -289,31 +291,31 @@ namespace cotwin
 			int sprites_drawn = 0;
 
 			// Sprite Render System
+			TransformComponent camera_transform(glm::vec2{ 0.0f, 0.0f }, glm::vec2{ 0.0f, 0.0f });
+			CameraComponent camera_info(glm::ivec2{ 1, 1 }, glm::vec2{ 1.0f, 1.0f });
+
+			// TODO : support multiple cameras in a scene (primary flag), but here determine and use the primary one
+			// this loop is expected to iterate only once (until multiple cameras will be supported)
+			for (auto [entity, c_transform, c_camera] : registry.view<TransformComponent, CameraComponent>().each())
+			{
+				camera_transform = c_transform;
+				camera_info = c_camera;
+			}
+
+			glm::ivec2 camera_half_size = camera_info.bounds / 2.0f;
+			RenderCamera render_camera(
+				camera_transform.center.x - camera_half_size.x,
+				camera_transform.center.y - camera_half_size.y,
+				camera_transform.center.x + camera_half_size.x,
+				camera_transform.center.y + camera_half_size.y
+			);
+			
 			auto view = registry.view<TransformComponent, SpriteComponent>();
 			for (auto [entity, transform, sprite] : view.each()) {
 				//Renderer2D::render_texture(sprite.texture, sprite.texture_rect, transform.center, sprite.size);
 				
-				TransformComponent camera_transform(glm::vec2{0.0f, 0.0f}, glm::vec2{0.0f, 0.0f});
-				CameraComponent camera_info(glm::ivec2{1, 1}, glm::vec2{1.0f, 1.0f});
-
-				// TODO : support multiple cameras in a scene (primary flag), but here determine and use the primary one
-				// this loop is expected to iterate only once (until multiple cameras will be supported)
-				for (auto [entity, c_transform, c_camera] : registry.view<TransformComponent, CameraComponent>().each())
-				{
-					camera_transform = c_transform;
-					camera_info = c_camera;
-				}
-				
 				if (sprite.active)
 				{
-					glm::ivec2 camera_half_size = camera_info.bounds / 2.0f;
-					RenderCamera render_camera(
-						camera_transform.center.x - camera_half_size.x,
-						camera_transform.center.y - camera_half_size.y,
-						camera_transform.center.x + camera_half_size.x,
-						camera_transform.center.y + camera_half_size.y
-					);
-
 					// convert rect with left, top, right, bottom
 					glm::ivec2 sprite_center = {
 						transform.center.x + sprite.center_offset.x,
@@ -352,8 +354,8 @@ namespace cotwin
 				Logger::Debug("Sprites drawn: %d", sprites_drawn);
 			}
 
-			Logger::Debug("Collision checks: %d", physics::collision_checks);
-			physics::collision_checks = 0;
+			//Logger::Debug("Collision checks: %d", physics::collision_checks);
+			//physics::collision_checks = 0;
 			
 			// Collision System
 			qtree.clear();

@@ -95,7 +95,7 @@ public:
 
 		// Camera entity
 		camera_entity = scene.create_entity("primary camera");
-		camera_entity.add_component<cotwin::TransformComponent>(glm::vec2{ window_size.x / 2.0f, window_size.y / 2.0f }, glm::vec2{ 0.0f, 0.0f });
+		camera_entity.add_component<cotwin::TransformComponent>(glm::vec2{ 500.0f, 500.0f }, glm::vec2{ 0.0f, 0.0f });
 		camera_entity.add_component<cotwin::CameraComponent>(glm::vec2{ 1280.0f, 720.0f }, window_size);
 	}
 
