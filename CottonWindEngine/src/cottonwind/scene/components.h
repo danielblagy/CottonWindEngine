@@ -134,27 +134,4 @@ namespace cotwin
 			: size(s_size), offset(s_offset)
 		{}
 	};
-
-	struct PhysicsObjectComponent
-	{
-		physics::Object object;
-		glm::vec2 size;
-		glm::vec2 offset;	// an offset from transform->position
-
-		bool registered = false;
-
-		PhysicsObjectComponent(const glm::vec2& s_size, float mass, float restitution)
-			: size(s_size), offset(0.0f, 0.0f)
-		{
-			object.mass = mass;
-			object.restitution = restitution;
-		}
-		
-		PhysicsObjectComponent(const glm::vec2& s_size, const glm::vec2& s_offset, float mass, float restitution)
-			: size(s_size), offset(s_offset)
-		{
-			object.mass = mass;
-			object.restitution = restitution;
-		}
-	};
 }

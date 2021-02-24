@@ -1,8 +1,8 @@
-//#include "test/sdl2_test_layer.h"
+#include "test/sdl2_test_layer.h"
 //#include "test/opengl_test_layer.h"
 
 
-/*class TestGame : public cotwin::Game
+class TestGame : public cotwin::Game
 {
 public:
 	TestGame(cotwin::WindowProperties window_properties)
@@ -24,10 +24,10 @@ public:
 	{
 		cotwin::Logger::Trace("test game destroy");
 	}
-};*/
+};
 
 
-/*int main(int argc, char* args[])
+int main(int argc, char* args[])
 {
 	cotwin::Logger::set_log_priority(cotwin::TracePriority);
 	
@@ -41,4 +41,4 @@ public:
 	game.start();
 	
 	return 0;
-}*/
+}

@@ -3,7 +3,7 @@
 #include "../../vendor/glm/glm.hpp"
 
 
-namespace cotwin { namespace physics
+namespace cotwin
 {
 	//static int collision_checks = 0;
 	
@@ -31,4 +31,4 @@ namespace cotwin { namespace physics
 
 		return true;
 	}
-} }
+}

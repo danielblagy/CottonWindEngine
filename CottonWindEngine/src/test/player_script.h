@@ -100,7 +100,7 @@ public:
 		entity.add_component<cotwin::ColliderComponent>(glm::vec2{ 100.0f, 100.0f });
 
 		entity.add_component<cotwin::Scene::CollisionResolutionComponent>(
-			[&](cotwin::Scene::Entity entity, cotwin::Scene::Entity other) {
+			[&](cotwin::Scene::Entity entity, cotwin::Scene::Entity other, float delta) {
 				if (other.get_component<cotwin::TagComponent>().tag == "sensei")
 				{
 					cotwin::Renderer2D::render_text(collision_detected_message);

@@ -1,4 +1,4 @@
-
+/*
 #include "../cottonwind/cottonwind.h"
 
 #include "script.h"
@@ -134,3 +134,4 @@ int main(int argc, char* args[])
 	
 	return 0;
 }
+*/

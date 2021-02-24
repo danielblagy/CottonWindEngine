@@ -130,12 +130,14 @@ namespace cotwin
 		
 		// for the collision system
 		Quadtree qtree;//(0, glm::vec4{ 0.0f, 0.0f, 1280.0f, 720.0f }, 4);
+		Quadtree physics_qtree;//(0, glm::vec4{ 0.0f, 0.0f, 1280.0f, 720.0f }, 4);
 
 	public:
 		Scene()
 		{
 			// TODO : have a world info, feed it here as bounds
 			qtree = Quadtree(0, glm::vec4(0.0f, 0.0f, 1280.0f, 720.0f), 4);
+			physics_qtree = Quadtree(0, glm::vec4(0.0f, 0.0f, 1280.0f, 720.0f), 4);
 		}
 
 		~Scene()
@@ -173,49 +175,52 @@ namespace cotwin
 			//		  and maybe also the collision ??
 			
 			// Physics system
-			// update the physics object struct
-			/*for (auto [entity, transform, phys] : registry.view<TransformComponent, PhysicsObjectComponent>().each())
+			physics_qtree.clear();
+
+			// generate a quadtree for this frame
+			for (auto [entity, transform, physics_object]
+				: registry.view<TransformComponent, PhysicsObjectComponent>().each())
 			{
-				phys.object.position = transform.center + phys.offset;
-				phys.object.min = phys.object.position - phys.size / 2.0f;
-				phys.object.max = phys.object.position + phys.size / 2.0f;
-				phys.object.velocity = transform.velocity;
+				glm::vec2 collider_origin = transform.center + physics_object.offset;
+				glm::vec4 collider_rect(
+					collider_origin.x,
+					collider_origin.y,
+					physics_object.size.x,
+					physics_object.size.y
+				);
+
+				physics_qtree.insert(Quadtree::Element(entity, collider_rect));
 			}
-			std::vector<std::pair<entt::entity, entt::entity>> processed_pairs;
-			// check for collision & resolve if needed
-			for (auto [entity, transform, phys] : registry.view<TransformComponent, PhysicsObjectComponent>().each())
+
+			for (auto [entity, transform, physics_object]
+				: registry.view<TransformComponent, PhysicsObjectComponent>().each())
 			{
-				// TODO : "remember" already processed object pairs
-				for (auto [other_entity, other_transform, other_phys] : registry.view<TransformComponent, PhysicsObjectComponent>().each())
+				glm::vec2 collider_origin = transform.center + physics_object.offset;
+				glm::vec4 collider_rect(
+					collider_origin.x,
+					collider_origin.y,
+					physics_object.size.x,
+					physics_object.size.y
+				);
+
+				// TODO : make this a reusable global variable ??
+				std::vector<Quadtree::Element> colliding_elements;
+
+				physics_qtree.get_colliding(colliding_elements, Quadtree::Element(entity, collider_rect));
+
+				if (physics_object.type == StaticSolidBody)
 				{
-					if (entity == other_entity)
-						continue;
-
-					bool skip = false;
-					for (auto [a, b] : processed_pairs)
+					for (Quadtree::Element& element : colliding_elements)
 					{
-						if ((entity == a && other_entity == b) || (entity == b && other_entity == a))
-							skip = true;
+						// TODO : refactor ??
+						cotwin::PhysicsObjectComponent& element_object = Entity(element.entity_handle, this).get_component<PhysicsObjectComponent>();
+						if (element_object.type == DynamicSolidBody && collide_aabb(collider_rect, element.rect))
+						{
+							
+						}
 					}
-
-					if (skip)
-						continue;
-
-					physics::Manifold manifold = physics::aabb(&phys.object, &other_phys.object);
-					// if they collide, resolve the collision
-					if (manifold.penetration)
-						physics::resolve_impulse(&manifold);
-
-					processed_pairs.push_back(std::make_pair(entity, other_entity));
 				}
 			}
-
-			// TODO : this is not the best, make a phys component have a pointer to transform velocity
-			// update entities' transform velocities if they are physics objects
-			for (auto [entity, transform, phys] : registry.view<TransformComponent, PhysicsObjectComponent>().each())
-			{
-				transform.velocity = phys.object.velocity;
-			}*/
 
 			// Transform System
 			for (auto [entity, transform] : registry.view<TransformComponent>().each())

@@ -134,22 +134,22 @@ namespace cotwin
 		void get_colliding(std::vector<Element>& elements_array, const Element& element)
 		{
 			for (Element& e : elements)
-				if (e.entity_handle != element.entity_handle && physics::collide_aabb(e.rect, element.rect))
+				if (e.entity_handle != element.entity_handle && collide_aabb(e.rect, element.rect))
 					elements_array.push_back(e);
 
 			// if children are allocated (exist)
 			if (divided)
 			{
-				if (physics::collide_aabb(child_nw->bounds, element.rect))
+				if (collide_aabb(child_nw->bounds, element.rect))
 					child_nw->get_colliding(elements_array, element);
 
-				if (physics::collide_aabb(child_ne->bounds, element.rect))
+				if (collide_aabb(child_ne->bounds, element.rect))
 					child_ne->get_colliding(elements_array, element);
 
-				if (physics::collide_aabb(child_se->bounds, element.rect))
+				if (collide_aabb(child_se->bounds, element.rect))
 					child_se->get_colliding(elements_array, element);
 
-				if (physics::collide_aabb(child_sw->bounds, element.rect))
+				if (collide_aabb(child_sw->bounds, element.rect))
 					child_sw->get_colliding(elements_array, element);
 			}
 		}
