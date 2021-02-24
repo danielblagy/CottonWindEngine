@@ -1,3 +1,4 @@
+
 #include "../cottonwind/cottonwind.h"
 
 #include "script.h"
@@ -83,7 +84,15 @@ public:
 	}
 
 	virtual void on_event(cotwin::Event* event) override
-	{}
+	{
+		cotwin::EventDispatcher::dispatch(this, event, cotwin::WindowResize, &MainLayer::on_window_resize);
+	}
+
+	void on_window_resize(cotwin::WindowEvent* event)
+	{
+		glm::ivec2 new_size = event->data.new_size;
+		scene.on_window_resize_event(new_size);
+	}
 
 private:
 	void create_boundary(const char* tag, const glm::vec4& rect)
