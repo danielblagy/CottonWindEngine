@@ -4,6 +4,7 @@
 
 #include "player_script.h"
 #include "follower_script.h"
+#include "freelook_camera_script.h"
 
 
 // layer where the main game logic and render is
@@ -94,12 +95,13 @@ public:
 
 		glm::ivec2 window_size = cotwin::Window::get_window_size();
 
-		// Camera entity
+		// Freelook Camera
 		camera_entity = scene.create_entity("primary camera");
 		camera_entity.add_component<cotwin::TransformComponent>(glm::vec2{ 500.0f, 500.0f }, glm::vec2{ 0.0f, 0.0f });
 		camera_entity.add_component<cotwin::CameraComponent>(glm::vec2{ 1280.0f, 720.0f }, window_size, true);
+		camera_entity.add_component<cotwin::Scene::ScriptComponent>(new FreelookCameraScript(), camera_entity);
 
-		// Secondary Camera entity (focused on the player)
+		// Player Camera (focused on the player entity)
 		secondary_camera_entity = scene.create_entity("secondary camera");
 		secondary_camera_entity.add_component<cotwin::TransformComponent>(glm::vec2{ 0.0f, 0.0f }, glm::vec2{ 0.0f, 0.0f });
 		secondary_camera_entity.add_component<cotwin::CameraComponent>(glm::vec2{ 1280.0f, 720.0f }, window_size, false);

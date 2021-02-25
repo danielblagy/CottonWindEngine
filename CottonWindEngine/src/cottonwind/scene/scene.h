@@ -297,41 +297,6 @@ namespace cotwin
 				}
 			}
 
-			// TODO : maybe provide this class as a convenience script available for use to user, but don't "enforce" it here
-			// Camera Controller System
-			for (auto [entity, transform, camera] : registry.view<TransformComponent, CameraComponent>().each())
-			{
-				if (camera.primary)
-				{
-					if (Input::is_key_pressed(CW_KEY_A))
-						transform.velocity.x = -120.0f * delta;
-					else if (Input::is_key_pressed(CW_KEY_D))
-						transform.velocity.x = 120.0f * delta;
-					else
-						transform.velocity.x = 0.0f;
-
-					if (Input::is_key_pressed(CW_KEY_W))
-						transform.velocity.y = -120.0f * delta;
-					else if (Input::is_key_pressed(CW_KEY_S))
-						transform.velocity.y = 120.0f * delta;
-					else
-						transform.velocity.y = 0.0f;
-
-					// TODO : make input polling for mouse wheel ??
-					// this is just for test
-					if (Input::is_key_pressed(CW_KEY_LEFTBRACKET))
-					{
-						camera.scale += 1.0f * delta;
-						//camera.bounds *= camera.scale;
-					}
-					else if (Input::is_key_pressed(CW_KEY_RIGHTBRACKET))
-					{
-						camera.scale -= 1.0f * delta;
-						//camera.bounds *= camera.scale;
-					}
-				}
-			}
-
 			// Audio System
 			for (auto [entity, audio_effect] : registry.view<AudioEffectComponent>().each())
 			{
