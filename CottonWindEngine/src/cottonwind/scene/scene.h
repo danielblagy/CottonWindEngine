@@ -350,8 +350,8 @@ namespace cotwin
 				{
 					// convert rect with left, top, right, bottom
 					glm::ivec2 sprite_center = {
-						(int)(transform.center.x + 0.5f) + sprite.center_offset.x,
-						(int)(transform.center.y + 0.5f) + sprite.center_offset.y
+						transform.center.x + sprite.center_offset.x,
+						transform.center.y + sprite.center_offset.y
 					};
 					glm::ivec4 sprite_rect = {
 						sprite_center.x,
