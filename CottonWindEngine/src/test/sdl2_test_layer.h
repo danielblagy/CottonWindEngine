@@ -103,6 +103,15 @@ public:
 		secondary_camera_entity = scene.create_entity("secondary camera");
 		secondary_camera_entity.add_component<cotwin::TransformComponent>(glm::vec2{ 800.0f, 700.0f }, glm::vec2{ 0.0f, 0.0f });
 		secondary_camera_entity.add_component<cotwin::CameraComponent>(glm::vec2{ 1280.0f, 720.0f }, window_size, false);
+
+		// A static physics object
+		cotwin::Scene::Entity box = scene.create_entity("box");
+		box.add_component<cotwin::TransformComponent>(glm::vec2{ 400, 500.0f }, glm::vec2{ 0.0f, 0.0f });
+		box.add_component<cotwin::PhysicsObjectComponent>(cotwin::StaticSolidBody, glm::vec2{ 100.0f, 100.0f });
+		cotwin::Texture& box_texture = cotwin::ResourceManager::get_texture("src/bird_game/resources/rect.bmp");
+		box.add_component<cotwin::SpriteComponent>(
+			box_texture, glm::ivec4{ 0, 0, box_texture.get_width(), box_texture.get_height() }, glm::ivec2{ 100, 100 }
+		);
 	}
 
 	virtual void on_detach() override
