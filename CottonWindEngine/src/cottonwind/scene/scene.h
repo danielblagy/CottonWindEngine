@@ -337,8 +337,7 @@ namespace cotwin
 			TransformComponent camera_transform;
 			CameraComponent camera_info;
 
-			// TODO : support multiple cameras in a scene (primary flag), but here determine and use the primary one
-			// this loop is expected to iterate only once (until multiple cameras will be supported)
+			// Get the data about the currently active camera
 			for (auto [entity, c_transform, c_camera] : registry.view<TransformComponent, CameraComponent>().each())
 			{
 				if (c_camera.primary)
@@ -362,8 +361,8 @@ namespace cotwin
 				{
 					// convert rect with left, top, right, bottom
 					glm::ivec2 sprite_center = {
-						transform.center.x + sprite.center_offset.x,
-						transform.center.y + sprite.center_offset.y
+						(int)(transform.center.x + 0.5f) + sprite.center_offset.x,
+						(int)(transform.center.y + 0.5f) + sprite.center_offset.y
 					};
 					glm::ivec4 sprite_rect = {
 						sprite_center.x,
