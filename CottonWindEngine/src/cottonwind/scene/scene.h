@@ -208,6 +208,7 @@ namespace cotwin
 
 				physics_qtree.get_colliding(colliding_elements, Quadtree::Element(entity, collider_rect));
 
+				// Resolve collisions for an object of type StaticSolidBody
 				if (physics_object.type == StaticSolidBody)
 				{
 					for (Quadtree::Element& element : colliding_elements)
@@ -216,58 +217,29 @@ namespace cotwin
 						Entity element_entity(element.entity_handle, this);
 						cotwin::PhysicsObjectComponent& element_object = element_entity.get_component<PhysicsObjectComponent>();
 						cotwin::TransformComponent& element_transform = element_entity.get_component<TransformComponent>();
+						// A collision resolution for StaticSolidBody-DynamicSolidBody
 						if (element_object.type == DynamicSolidBody && collide_aabb(collider_rect, element.rect))
 						{
-							/*float right_penetration = collider_rect.z - element.rect.x;
-							float left_penetration = collider_rect.x - element.rect.z;
-							float bottom_penetration = collider_rect.w - element.rect.y;
-							float top_penetration = collider_rect.y - element.rect.w;
-
-							float x_penetration;
-							if (glm::abs(right_penetration) > glm::abs(left_penetration))
-								x_penetration = left_penetration;
-							else
-								x_penetration = right_penetration;
-
-							float y_penetration;
-							if (glm::abs(bottom_penetration) > glm::abs(top_penetration))
-								y_penetration = top_penetration;
-							else
-								y_penetration = bottom_penetration;
-
-							if (glm::abs(x_penetration) > glm::abs(y_penetration))
-							{
-								element_transform.center.y += y_penetration;
-							}
-							else
-							{
-								element_transform.center.x += y_penetration;
-							}*/
-
 							float	left = collider_rect.x,		right = collider_rect.x + collider_rect.z,
 									top = collider_rect.y,		bottom = collider_rect.y + collider_rect.w;
 
 							float new_x, new_y;
 							
-							if (element.rect.x + element.rect.z > right)
+							if (element.rect.x + element.rect.z >= right)
 							{
-								//element_transform.center.x = right + element_object.offset.x;
 								new_x = right;
 							}
-							else if (element.rect.x < left)
+							else if (element.rect.x <= left)
 							{
-								//element_transform.center.x = left - element.rect.z + element_object.offset.x;
 								new_x = left - element.rect.z;
 							}
 							
-							if (element.rect.y < top)
+							if (element.rect.y <= top)
 							{
-								//element_transform.center.y = top - element.rect.w + element_object.offset.y;
 								new_y = top - element.rect.w;
 							}
-							else if (element.rect.y + element.rect.w > bottom)
+							else if (element.rect.y + element.rect.w >= bottom)
 							{
-								//element_transform.center.y = bottom + element_object.offset.y;
 								new_y = bottom;
 							}
 
