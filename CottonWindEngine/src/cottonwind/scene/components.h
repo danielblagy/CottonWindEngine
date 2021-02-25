@@ -33,8 +33,7 @@ namespace cotwin
 		{}
 	};
 	
-	// TODO : label these components as 2D ?? (e.g. Transform2DComponent)
-	
+	// 2D COMPONENT
 	struct TransformComponent
 	{
 		glm::vec2 center;
@@ -49,6 +48,7 @@ namespace cotwin
 		{}
 	};
 
+	// 2D COMPONENT
 	struct CameraComponent
 	{
 		// width & height of 2D camera
@@ -72,6 +72,7 @@ namespace cotwin
 		{}
 	};
 
+	// 2D COMPONENT
 	struct SpriteComponent
 	{
 		Texture texture;
@@ -90,6 +91,7 @@ namespace cotwin
 		{}
 	};
 
+	// 2D COMPONENT
 	struct AnimationComponent
 	{
 		float frequency;
@@ -121,6 +123,7 @@ namespace cotwin
 		}
 	};
 
+	// 2D COMPONENT
 	struct ColliderComponent
 	{
 		glm::vec2 size;

@@ -23,6 +23,7 @@
 
 namespace cotwin
 {
+	// TODO : world bounds field
 	class Scene
 	{
 	public:
@@ -98,6 +99,9 @@ namespace cotwin
 			friend ScriptComponent;
 		};
 
+		// NOTE : the components that are defined inside of Scene class are utilizing Scene::Entity,
+		//			so they need to be here (since we are header-only)
+		
 		// TODO : improve the api for adding this component (client has to pass entity as an argument to this component,
 		//				even though the component is being added to the entity)
 		struct ScriptComponent
@@ -114,6 +118,7 @@ namespace cotwin
 			}
 		};
 
+		// 2D COMPONENT
 		// Collision Resolution Component is a special kind of component
 		struct CollisionResolutionComponent
 		{
@@ -123,6 +128,15 @@ namespace cotwin
 			CollisionResolutionComponent(std::function<void(Entity entity, Entity other, float delta)> s_resolution)
 				: resolution(s_resolution)
 			{}
+		};
+
+		// 2D COMPONENT
+		// attach this to a camera entity and specify the entity for the camera to follow
+		// this will modify the transform component of the camera entity each update so as to "follow"
+		// the focus entity
+		struct CameraFocusComponent
+		{
+			Entity focus_entity;
 		};
 	
 	private:
@@ -325,6 +339,16 @@ namespace cotwin
 				{
 					audio_effect.audio.play();
 					audio_effect.play = false;
+				}
+			}
+
+			// Camera Focus System
+			for (auto [entity, transform, camera, camera_focus] : registry.view<TransformComponent, CameraComponent, CameraFocusComponent>().each())
+			{
+				// if the camera is active
+				if (camera.primary)
+				{
+					transform.center = camera_focus.focus_entity.get_component<TransformComponent>().center;
 				}
 			}
 			
