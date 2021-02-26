@@ -79,9 +79,7 @@ public:
 
 		// Player entity
 		player_entity = scene.create_entity("player");
-
 		player_entity.add_component<cotwin::Scene::ScriptComponent>(new PlayerScript(), player_entity);
-		player_entity.add_component<cotwin::PhysicsObjectComponent>(cotwin::DynamicSolidBody, glm::vec2{ 100.0f, 100.0f });
 
 		// set sensei animation frames
 		for (int i = 0; i < 11; i++)

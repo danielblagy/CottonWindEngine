@@ -239,6 +239,8 @@ namespace cotwin
 
 							float new_x, new_y;
 							
+							bool no_x = false, no_y = false;
+							
 							if (element.rect.x + element.rect.z >= right)
 							{
 								new_x = right;
@@ -247,6 +249,8 @@ namespace cotwin
 							{
 								new_x = left - element.rect.z;
 							}
+							else
+								no_x = true;
 							
 							if (element.rect.y <= top)
 							{
@@ -256,15 +260,17 @@ namespace cotwin
 							{
 								new_y = bottom;
 							}
+							else
+								no_y = true;
 
 							// find the smallest penetration
-							if (glm::abs(element.rect.x - new_x) < glm::abs(element.rect.y - new_y))
+							if (no_y || (!no_x && glm::abs(element.rect.x - new_x) < glm::abs(element.rect.y - new_y)))
 							{
-								element_transform.center.x = new_x + element_object.offset.x;
+								element_transform.center.x = new_x - element_object.offset.x;
 							}
 							else
 							{
-								element_transform.center.y = new_y + element_object.offset.y;
+								element_transform.center.y = new_y - element_object.offset.y;
 							}
 						}
 					}

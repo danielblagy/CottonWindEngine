@@ -109,6 +109,16 @@ public:
 			}
 		);
 
+		float collider_height = 100.0f;
+		float collider_width = collider_height / 2.0f;
+		float collider_offset_x = collider_width / 2.0f;
+		float collider_offset_y = 0.0f;
+		entity.add_component<cotwin::PhysicsObjectComponent>(
+			cotwin::DynamicSolidBody,
+			glm::vec2{ collider_width / 2.0f, collider_height },
+			glm::vec2{ collider_offset_x, collider_offset_y }
+		);
+
 		// init once, not on each update
 		collision_detected_message = cotwin::Text(
 			"Player & sensei collision detected!",
