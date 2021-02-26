@@ -115,7 +115,7 @@ public:
 		float collider_offset_y = 0.0f;
 		entity.add_component<cotwin::PhysicsObjectComponent>(
 			cotwin::DynamicSolidBody,
-			glm::vec2{ collider_width / 2.0f, collider_height },
+			glm::vec2{ collider_width, collider_height },
 			glm::vec2{ collider_offset_x, collider_offset_y }
 		);
 

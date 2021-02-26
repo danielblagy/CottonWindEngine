@@ -222,6 +222,9 @@ namespace cotwin
 
 				physics_qtree.get_colliding(colliding_elements, Quadtree::Element(entity, collider_rect));
 
+				float	left = collider_rect.x, right = collider_rect.x + collider_rect.z,
+						top = collider_rect.y, bottom = collider_rect.y + collider_rect.w;
+				
 				// Resolve collisions for an object of type StaticSolidBody
 				if (physics_object.type == StaticSolidBody)
 				{
@@ -234,9 +237,6 @@ namespace cotwin
 						// A collision resolution for StaticSolidBody-DynamicSolidBody
 						if (element_object.type == DynamicSolidBody && collide_aabb(collider_rect, element.rect))
 						{
-							float	left = collider_rect.x,		right = collider_rect.x + collider_rect.z,
-									top = collider_rect.y,		bottom = collider_rect.y + collider_rect.w;
-
 							float new_x, new_y;
 							
 							bool no_x = false, no_y = false;
@@ -266,11 +266,11 @@ namespace cotwin
 							// find the smallest penetration
 							if (no_y || (!no_x && glm::abs(element.rect.x - new_x) < glm::abs(element.rect.y - new_y)))
 							{
-								element_transform.center.x = new_x - element_object.offset.x;
+								element_transform.center.x -= element.rect.x - new_x;
 							}
 							else
 							{
-								element_transform.center.y = new_y - element_object.offset.y;
+								element_transform.center.y -= element.rect.y - new_y;
 							}
 						}
 					}
