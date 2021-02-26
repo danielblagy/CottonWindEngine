@@ -17,7 +17,7 @@ namespace cotwin
 
 		// rect is left, top, right, bottom, *NOT* left, top, width, height
 		RenderCamera(const glm::vec4& rect)
-			: left(rect[0]), top(rect[1]), right(rect[2]), bottom(rect[3])
+			: left( static_cast<int>(rect[0]) ), top(static_cast<int>(rect[1]) ), right( static_cast<int>(rect[2]) ), bottom( static_cast<int>(rect[3]) )
 		{}
 
 		bool captures(int rect_left, int rect_top, int rect_right, int rect_bottom)

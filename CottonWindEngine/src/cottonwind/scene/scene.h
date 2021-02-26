@@ -342,12 +342,12 @@ namespace cotwin
 				}
 			}
 
-			glm::ivec2 camera_half_size = camera_info.bounds / 2.0f;
+			glm::vec2 camera_half_size = camera_info.bounds / 2.0f;
 			RenderCamera render_camera(
-				camera_transform.center.x - camera_half_size.x,
-				camera_transform.center.y - camera_half_size.y,
-				camera_transform.center.x + camera_half_size.x,
-				camera_transform.center.y + camera_half_size.y
+				static_cast<int>(camera_transform.center.x - camera_half_size.x),
+				static_cast<int>(camera_transform.center.y - camera_half_size.y),
+				static_cast<int>(camera_transform.center.x + camera_half_size.x),
+				static_cast<int>(camera_transform.center.y + camera_half_size.y)
 			);
 			
 			auto view = registry.view<TransformComponent, SpriteComponent>();

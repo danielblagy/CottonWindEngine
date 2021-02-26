@@ -11,7 +11,7 @@ namespace cotwin
 	{
 		inline void init()
 		{
-			std::srand(std::time(0));
+			std::srand(static_cast<unsigned int>(std::time(0)));
 		}
 
 		// returns a random bool (either true or false)

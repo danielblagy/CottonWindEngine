@@ -132,7 +132,12 @@ namespace cotwin
 			if (text.text_texture.texture_handle == NULL)
 			{
 				//Render text surface
-				SDL_Color sdl_text_color = { text.color[0], text.color[1], text.color[2], text.color[3] };
+				SDL_Color sdl_text_color = {
+					static_cast<Uint8>(text.color[0]),
+					static_cast<Uint8>(text.color[1]),
+					static_cast<Uint8>(text.color[2]),
+					static_cast<Uint8>(text.color[3])
+				};
 				SDL_Surface* textSurface = TTF_RenderText_Solid(text.font.font_handle, text.text.c_str(), sdl_text_color);
 				if (textSurface == NULL)
 				{
