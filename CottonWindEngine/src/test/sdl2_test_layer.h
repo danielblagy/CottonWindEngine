@@ -113,6 +113,12 @@ public:
 		box.add_component<cotwin::SpriteComponent>(
 			box_texture, glm::ivec4{ 0, 0, box_texture.get_width(), box_texture.get_height() }, glm::ivec2{ 100, 100 }
 		);
+
+		// Tilemap
+		cotwin::Scene::Entity tilemap = scene.create_entity("world tilemap");
+		tilemap.add_component<cotwin::TilemapComponent>(
+			
+		);
 	}
 
 	virtual void on_detach() override

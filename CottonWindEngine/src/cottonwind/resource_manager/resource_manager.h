@@ -7,6 +7,7 @@
 
 namespace cotwin
 {
+	// TODO : remove load_ functions, add unload_ functions
 	class ResourceManager
 	{
 	public:

@@ -350,6 +350,63 @@ namespace cotwin
 				static_cast<int>(camera_transform.center.y + camera_half_size.y)
 			);
 			
+			// render the tilemap
+			for (auto [entity, tilemap] : registry.view<TilemapComponent>().each())
+			{
+				glm::ivec4 tilemap_rect = {
+						tilemap.origin.x,
+						tilemap.origin.y,
+						tilemap.origin.x + tilemap.tiles_count.x * tilemap.tile_size,
+						tilemap.origin.y + tilemap.tiles_count.y * tilemap.tile_size
+				};
+
+				if (render_camera.captures(tilemap_rect))
+				{
+					int x = 0, y = 0;
+					for (SpriteComponent& tile : tilemap.tiles)
+					{
+						if (x == tilemap.tiles_count.x)
+						{
+							x = 0;
+							y++;
+						}
+						
+						glm::ivec2 tile_position = {
+							tilemap.origin.x + x * tilemap.tile_size,
+							tilemap.origin.y + y * tilemap.tile_size
+						};
+
+						glm::ivec4 tile_rect = {
+								tile_position.x,
+								tile_position.y,
+								tile_position.x + tile.size.x,
+								tile_position.y + tile.size.y
+						};
+
+						if (render_camera.captures(tile_rect))
+						{
+							glm::ivec2 tile_relative_position = {
+								camera_info.scale.x * (tile_rect.x - render_camera.left),
+								camera_info.scale.y * (tile_rect.y - render_camera.top)
+							};
+
+							glm::ivec2 tile_relative_size = {
+								tile.size.x * camera_info.scale.x,
+								tile.size.y * camera_info.scale.y
+							};
+
+							Renderer2D::render_texture(tile.texture, tile.texture_rect, tile_relative_position, tile_relative_size);
+
+							sprites_drawn++;
+						}
+
+						x++;
+						y++;
+					}
+				}
+			}
+			
+			// render sprites
 			auto view = registry.view<TransformComponent, SpriteComponent>();
 			for (auto [entity, transform, sprite] : view.each()) {
 				if (sprite.active)

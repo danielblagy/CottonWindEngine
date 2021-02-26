@@ -7,9 +7,12 @@
 
 #include "../physics/2d/physics.h"
 
+#include "../resource_manager/resource_manager.h"
+
 #include <string>
 #include <vector>
 #include <functional>
+#include <unordered_map>
 
 
 namespace cotwin
@@ -136,5 +139,49 @@ namespace cotwin
 		ColliderComponent(const glm::vec2& s_size, const glm::vec2& s_offset)
 			: size(s_size), offset(s_offset)
 		{}
+	};
+
+	// 2D COMPONENT
+	struct TilemapComponent
+	{
+		std::unordered_map<char, Texture> texture_table;
+		std::vector<SpriteComponent> tiles;
+		glm::ivec2 origin;
+		glm::ivec2 tiles_count;
+		int tile_size;
+
+		TilemapComponent(
+			const char* s_texture_table, int table_size,
+			const char* s_tiles, const glm::ivec2& s_tiles_count,
+			const glm::ivec2& s_origin,
+			int s_tile_size
+		)
+		{
+			origin = s_origin;
+			tiles_count = s_tiles_count;
+			tile_size = s_tile_size;
+			
+			for (int i = 0; i < table_size; i++)
+			{
+				texture_table[s_texture_table[i]] = ResourceManager::get_texture(s_texture_table + 1);
+			}
+
+			tiles.reserve(tiles_count.x * tiles_count.y);
+
+			glm::ivec2 size(tile_size, tile_size);
+			
+			for (int y = 0; y < tiles_count.y; y++)
+				for (int x = 0; x < tiles_count.x; x++)
+				{
+					Texture& texture = texture_table[s_tiles[x + y * tiles_count.y]];
+					tiles.push_back(
+						SpriteComponent(
+							texture,
+							{ 0, 0, texture.get_width(), texture.get_height() },
+							size
+						)
+					);
+				}
+		}
 	};
 }
