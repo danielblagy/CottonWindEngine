@@ -92,9 +92,12 @@ public:
 		cotwin::Logger::Info("PlayerScript on create!");
 		
 		entity.add_component<cotwin::TransformComponent>(glm::vec2{ 700.0f, 500.0f }, glm::vec2{ 0.0f, 0.0f });
+		
+		float sprite_width = 100.0f;
+		float sprite_height = 100.0f;
 		auto& hero_texture = cotwin::ResourceManager::get_texture("src/test/resources/textures/Hero.bmp");
 		entity.add_component<cotwin::SpriteComponent>(
-			hero_texture, glm::ivec4{ 0, 0, 0, 0 }, glm::ivec2{ 100, 100 }
+			hero_texture, glm::ivec4{ 0, 0, 0, 0 }, glm::ivec2{ static_cast<int>(sprite_width), static_cast<int>(sprite_height) }
 		);
 
 		entity.add_component<cotwin::ColliderComponent>(glm::vec2{ 100.0f, 100.0f });
@@ -109,10 +112,11 @@ public:
 			}
 		);
 
-		float collider_height = 100.0f;
-		float collider_width = collider_height / 2.0f;
-		float collider_offset_x = collider_width / 2.0f;
-		float collider_offset_y = 0.0f;
+		// this is specific to the texture used
+		float collider_width = sprite_width * 0.5f;
+		float collider_height = sprite_height * 0.8f;
+		float collider_offset_x = (sprite_width - collider_width) / 2.0f;
+		float collider_offset_y = (sprite_height - collider_height) / 2.0f;
 		entity.add_component<cotwin::PhysicsObjectComponent>(
 			cotwin::DynamicSolidBody,
 			glm::vec2{ collider_width, collider_height },
