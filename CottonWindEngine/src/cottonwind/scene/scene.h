@@ -406,8 +406,22 @@ namespace cotwin
 			}
 			
 			// render sprites
-			auto view = registry.view<TransformComponent, SpriteComponent>();
-			for (auto [entity, transform, sprite] : view.each()) {
+			auto render_group = registry.group<TransformComponent, SpriteComponent>();
+			// sort by the render layers
+			render_group.sort(
+				[&](const entt::entity e1, const entt::entity e2)
+				{
+					Entity entity1(e1, this);
+					Entity entity2(e2, this);
+
+					SpriteComponent& sprite1 = entity1.get_component<SpriteComponent>();
+					SpriteComponent& sprite2 = entity2.get_component<SpriteComponent>();
+
+					return sprite1.layer < sprite2.layer;
+				}
+			);
+			
+			for (auto [entity, transform, sprite] : render_group.each()) {
 				if (sprite.active)
 				{
 					// convert rect with left, top, right, bottom

@@ -86,12 +86,27 @@ namespace cotwin
 
 		bool active;
 
+		enum RenderLayer
+		{
+			RenderLayerA, RenderLayerB, RenderLayerC, RenderLayerD, RenderLayerE
+		};
+
+		RenderLayer layer;
+
 		SpriteComponent(Texture s_texture, const glm::ivec4& s_texture_rect, const glm::ivec2& s_size)
-			: texture(s_texture), texture_rect(s_texture_rect), size(s_size), center_offset(0, 0), active(true)
+			: texture(s_texture), texture_rect(s_texture_rect), size(s_size), center_offset(0, 0), active(true), layer(RenderLayerA)
 		{}
 		
 		SpriteComponent(Texture s_texture, const glm::ivec4& s_texture_rect, const glm::ivec2& s_size, const glm::ivec2& s_center_offset)
-			: texture(s_texture), texture_rect(s_texture_rect), size(s_size), center_offset(s_center_offset), active(true)
+			: texture(s_texture), texture_rect(s_texture_rect), size(s_size), center_offset(s_center_offset), active(true), layer(RenderLayerA)
+		{}
+
+		SpriteComponent(Texture s_texture, const glm::ivec4& s_texture_rect, const glm::ivec2& s_size, RenderLayer s_layer)
+			: texture(s_texture), texture_rect(s_texture_rect), size(s_size), center_offset(0, 0), active(true), layer(s_layer)
+		{}
+
+		SpriteComponent(Texture s_texture, const glm::ivec4& s_texture_rect, const glm::ivec2& s_size, const glm::ivec2& s_center_offset, RenderLayer s_layer)
+			: texture(s_texture), texture_rect(s_texture_rect), size(s_size), center_offset(s_center_offset), active(true), layer(s_layer)
 		{}
 	};
 
@@ -151,6 +166,7 @@ namespace cotwin
 		glm::ivec2 tiles_count;
 		int tile_size;
 
+		// TODO : add collision mapping
 		TilemapComponent(
 			Texture& tileset,
 			const char* s_texture_table,
