@@ -13,6 +13,7 @@
 #include <vector>
 #include <functional>
 #include <unordered_map>
+#include <sstream>
 
 
 namespace cotwin
@@ -151,7 +152,7 @@ namespace cotwin
 		int tile_size;
 
 		TilemapComponent(
-			const char* s_texture_table, int table_size,
+			const char* s_texture_table,
 			const char* s_tiles, const glm::ivec2& s_tiles_count,
 			const glm::ivec2& s_origin,
 			int s_tile_size
@@ -160,10 +161,13 @@ namespace cotwin
 			origin = s_origin;
 			tiles_count = s_tiles_count;
 			tile_size = s_tile_size;
-			
-			for (int i = 0; i < table_size; i++)
+
+			std::istringstream texture_table_stream(s_texture_table);
+			// the format of a line in the textures table is "char texture_path"
+			std::string texture_line;
+			while (std::getline(texture_table_stream, texture_line, '\n'))
 			{
-				texture_table[s_texture_table[i]] = ResourceManager::get_texture(s_texture_table + 1);
+				texture_table[texture_line[0]] = ResourceManager::get_texture(texture_line.c_str() + 2);
 			}
 
 			tiles.reserve(tiles_count.x * tiles_count.y);

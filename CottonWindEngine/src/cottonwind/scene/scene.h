@@ -401,7 +401,6 @@ namespace cotwin
 						}
 
 						x++;
-						y++;
 					}
 				}
 			}
