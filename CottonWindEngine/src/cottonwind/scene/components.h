@@ -145,29 +145,37 @@ namespace cotwin
 	// 2D COMPONENT
 	struct TilemapComponent
 	{
-		std::unordered_map<char, Texture> texture_table;
+		std::unordered_map<char, glm::ivec4> texture_table;
 		std::vector<SpriteComponent> tiles;
 		glm::ivec2 origin;
 		glm::ivec2 tiles_count;
 		int tile_size;
 
 		TilemapComponent(
+			Texture& tileset,
 			const char* s_texture_table,
 			const char* s_tiles, const glm::ivec2& s_tiles_count,
 			const glm::ivec2& s_origin,
 			int s_tile_size
 		)
+			: origin(s_origin), tiles_count(s_tiles_count), tile_size(s_tile_size)
 		{
-			origin = s_origin;
-			tiles_count = s_tiles_count;
-			tile_size = s_tile_size;
-
 			std::istringstream texture_table_stream(s_texture_table);
 			// the format of a line in the textures table is "char texture_path"
 			std::string texture_line;
+			std::string rect_value;
 			while (std::getline(texture_table_stream, texture_line, '\n'))
 			{
-				texture_table[texture_line[0]] = ResourceManager::get_texture(texture_line.c_str() + 2);
+				// TODO : check to see if i is > 5 (this indicated an invalid tilemap file / data)
+				int i = 0;
+				glm::ivec4 rect;
+				std::istringstream rect_values(texture_line.c_str() + 2);
+				while (std::getline(rect_values, rect_value, ','))
+				{
+					rect[i] = std::atoi(rect_value.c_str());
+					i++;
+				}
+				texture_table[texture_line[0]] = rect;
 			}
 
 			tiles.reserve(tiles_count.x * tiles_count.y);
@@ -177,11 +185,11 @@ namespace cotwin
 			for (int y = 0; y < tiles_count.y; y++)
 				for (int x = 0; x < tiles_count.x; x++)
 				{
-					Texture& texture = texture_table[s_tiles[x + y * tiles_count.x]];
+					glm::ivec4& texture_rect = texture_table[s_tiles[x + y * tiles_count.x]];
 					tiles.push_back(
 						SpriteComponent(
-							texture,
-							{ 0, 0, texture.get_width(), texture.get_height() },
+							tileset,
+							texture_rect,
 							size
 						)
 					);
