@@ -177,7 +177,7 @@ namespace cotwin
 			for (int y = 0; y < tiles_count.y; y++)
 				for (int x = 0; x < tiles_count.x; x++)
 				{
-					Texture& texture = texture_table[s_tiles[x + y * tiles_count.y]];
+					Texture& texture = texture_table[s_tiles[x + y * tiles_count.x]];
 					tiles.push_back(
 						SpriteComponent(
 							texture,

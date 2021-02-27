@@ -118,7 +118,7 @@ public:
 		cotwin::Scene::Entity tilemap = scene.create_entity("world tilemap");
 		
 		tilemap.add_component<cotwin::TilemapComponent>(
-			"g src/bird_game/resources/rect.bmp\nw src/bird_game/resources/white_rect.bmp",
+			"g src/bird_game/resources/rect.bmp\nw src/test/resources/textures/white_rect.bmp",
 			"gggggggggggggggggggggwwwwwwwwwwwwwwwwwwggwwwwwwwwwwwwwwwwwwggwwwwwwwwwwwwwwwwwwggwwwwwwwwwwwwwwwwwwggggggggggggggggggggg",
 			glm::ivec2(20, 6), glm::ivec2(0, 0), 100
 		);
