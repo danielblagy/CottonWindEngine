@@ -114,6 +114,22 @@ public:
 			box_texture, glm::ivec4{ 0, 0, box_texture.get_width(), box_texture.get_height() }, glm::ivec2{ 100, 100 }
 		);
 
+		// A static physics object
+		cotwin::Scene::Entity small_box = scene.create_entity("small box");
+		small_box.add_component<cotwin::TransformComponent>(glm::vec2{ 200.0f, 300.0f }, glm::vec2{ 0.0f, 0.0f });
+		small_box.add_component<cotwin::PhysicsObjectComponent>(cotwin::StaticSolidBody, glm::vec2{ 20.0f, 20.0f });
+		small_box.add_component<cotwin::SpriteComponent>(
+			box_texture, glm::ivec4{ 0, 0, box_texture.get_width(), box_texture.get_height() }, glm::ivec2{ 20, 20 }
+		);
+
+		// A static physics object
+		cotwin::Scene::Entity large_box = scene.create_entity("large box");
+		large_box.add_component<cotwin::TransformComponent>(glm::vec2{ -100.0f, 400.0f }, glm::vec2{ 0.0f, 0.0f });
+		large_box.add_component<cotwin::PhysicsObjectComponent>(cotwin::StaticSolidBody, glm::vec2{ 400.0f, 300.0f });
+		large_box.add_component<cotwin::SpriteComponent>(
+			box_texture, glm::ivec4{ 0, 0, box_texture.get_width(), box_texture.get_height() }, glm::ivec2{ 400, 300 }
+		);
+
 		// Tilemap
 		cotwin::Scene::Entity tilemap = scene.create_entity("world tilemap");
 		
