@@ -177,6 +177,14 @@ namespace cotwin
 
 			registry.destroy(entity);
 		}
+
+		/*void generate_tileworld(const TileWorld& tileworld)
+		{
+			// TODO : store texture rect id not as char but as uint (tile world file format)
+			// TODO	: along with static solid objects, support generic colliders (tile world file format)
+			
+			
+		}*/
 		
 		void update(float delta)
 		{

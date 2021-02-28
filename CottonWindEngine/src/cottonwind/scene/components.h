@@ -157,26 +157,29 @@ namespace cotwin
 		{}
 	};
 
-	// 2D COMPONENT
+	// TODO : move to ResourceManager
 	struct TilemapComponent
 	{
-		std::unordered_map<char, glm::ivec4> texture_table;
-		std::vector<SpriteComponent> tiles;
 		glm::ivec2 origin;
 		glm::ivec2 tiles_count;
 		int tile_size;
 
-		// TODO : add collision mapping
+		std::vector<SpriteComponent> tiles;
+
 		TilemapComponent(
 			Texture& tileset,
-			const char* s_texture_table,
-			const char* s_tiles, const glm::ivec2& s_tiles_count,
+			// TODO : store texture rect id not as char but as uint (tile world file format)
+			const char* texture_table_str,
+			const char* tiles_str,
 			const glm::ivec2& s_origin,
+			const glm::ivec2& s_tiles_count,
 			int s_tile_size
 		)
 			: origin(s_origin), tiles_count(s_tiles_count), tile_size(s_tile_size)
 		{
-			std::istringstream texture_table_stream(s_texture_table);
+			std::unordered_map<char, glm::ivec4> texture_table;
+
+			std::istringstream texture_table_stream(texture_table_str);
 			// the format of a line in the textures table is "char texture_path"
 			std::string texture_line;
 			std::string rect_value;
@@ -194,21 +197,29 @@ namespace cotwin
 				texture_table[texture_line[0]] = rect;
 			}
 
-			tiles.reserve(tiles_count.x * tiles_count.y);
-
 			glm::ivec2 size(tile_size, tile_size);
+
+			tiles.reserve(tiles_count.x * tiles_count.y);
 			
 			for (int y = 0; y < tiles_count.y; y++)
 				for (int x = 0; x < tiles_count.x; x++)
 				{
-					glm::ivec4& texture_rect = texture_table[s_tiles[x + y * tiles_count.x]];
+					glm::ivec4& texture_rect = texture_table[tiles_str[x + y * tiles_count.x]];
 					tiles.push_back(
 						SpriteComponent(
 							tileset,
 							texture_rect,
 							size
 						)
-					);
+						);
+
+					// TODO	: along with static solid objects, support generic colliders (tile world file format)
+					/*if (collision_map[x + y * tiles_count.x] == '1')
+					{
+						physics_colliders.push_back(
+							PhysicsObjectComponent(StaticSolidBody, collider_size)
+						);
+					}*/
 				}
 		}
 	};

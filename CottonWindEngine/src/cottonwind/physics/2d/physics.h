@@ -32,5 +32,9 @@ namespace cotwin
 		PhysicsObjectComponent(PhysicsObjectType s_type, const glm::vec2& s_size, const glm::vec2& s_offset)
 			: type(s_type), size(s_size), offset(s_offset)
 		{}
+
+		PhysicsObjectComponent(const PhysicsObjectComponent& physics_object)
+			: type(physics_object.type), size(physics_object.size), offset(physics_object.offset)
+		{}
 	};
 }

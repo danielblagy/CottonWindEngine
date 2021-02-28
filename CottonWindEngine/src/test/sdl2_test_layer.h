@@ -131,14 +131,15 @@ public:
 		);
 
 		// Tilemap
-		cotwin::Scene::Entity tilemap = scene.create_entity("world tilemap");
-		
+		auto tilemap = scene.create_entity("tilemap");
 		tilemap.add_component<cotwin::TilemapComponent>(
 			cotwin::ResourceManager::get_texture("src/test/resources/textures/tileset_1.bmp"),
 			"g 0,350,350,350\nw 350,350,350,350",
-			"gggggggggggggggggggggwwwwwwwwwwwwwwwwwwggwwwwwwwwwwwwwwwwwwggwwwwwwwwwwwwwwwwwwggwwwwwwwwwwwwwwwwwwggggggggggggggggggggg",
-			glm::ivec2(20, 6), glm::ivec2(0, 0), 100
+			"gggggggggggggggggggggwwwwwwwwwwwwwwwwwwggwwwwwwwwwwwwwwwwwwggwwwwwwwwwwwwwwwwwwggwwwwwwwwwwwwwwwwwwggwwwwwwwwwwwwwwwwwwggwwwwwwwwwwwwwwwwwwggggggggggggggggggggg",
+			glm::ivec2(0, 0), glm::ivec2(20, 8), 100
 		);
+
+		//scene.generate_tileworld(tileworld_level_1);
 
 		// A custom render sort function (within a layer)
 		// A 3/4 camera perspective effect
