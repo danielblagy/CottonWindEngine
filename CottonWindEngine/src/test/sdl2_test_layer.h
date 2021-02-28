@@ -143,7 +143,7 @@ public:
 
 		// A custom render sort function (within a layer)
 		// A 3/4 camera perspective effect
-		scene.set_render_sort(
+		scene.set_render_sort(cotwin::SpriteComponent::RenderLayerA,
 			[](cotwin::Scene::Entity e1, cotwin::Scene::Entity e2)
 			{
 				auto& t1 = e1.get_component<cotwin::TransformComponent>();
