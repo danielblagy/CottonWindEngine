@@ -34,7 +34,7 @@ public:
 		sensei_entity.add_component<cotwin::TransformComponent>(glm::vec2{ (float)position.x, (float)position.y }, glm::vec2{ 0.0f, 0.0f });
 		sensei_entity.add_component<cotwin::SpriteComponent>(
 			// here texture_rect is initialized with zeros, since it will be initialized later on by AnimationSystem
-			sensei_texture, glm::ivec4{ 0, 0, 0, 0 }, glm::ivec2{ 100, 100 }, cotwin::SpriteComponent::RenderLayerB
+			sensei_texture, glm::ivec4{ 0, 0, 0, 0 }, glm::ivec2{ 100, 100 }//, cotwin::SpriteComponent::RenderLayerB
 		);
 		// set up animation for sensei entity
 		sensei_entity.add_component<cotwin::AnimationComponent>(0.2f, &sensei_animation_frames);
@@ -138,6 +138,24 @@ public:
 			"g 0,350,350,350\nw 350,350,350,350",
 			"gggggggggggggggggggggwwwwwwwwwwwwwwwwwwggwwwwwwwwwwwwwwwwwwggwwwwwwwwwwwwwwwwwwggwwwwwwwwwwwwwwwwwwggggggggggggggggggggg",
 			glm::ivec2(20, 6), glm::ivec2(0, 0), 100
+		);
+
+		// A custom render sort function (within a layer)
+		// A 3/4 camera perspective effect
+		scene.set_render_sort(
+			[](cotwin::Scene::Entity e1, cotwin::Scene::Entity e2)
+			{
+				auto& t1 = e1.get_component<cotwin::TransformComponent>();
+				auto& t2 = e2.get_component<cotwin::TransformComponent>();
+
+				auto& s1 = e1.get_component<cotwin::SpriteComponent>();
+				auto& s2 = e2.get_component<cotwin::SpriteComponent>();
+
+				int bottom_y_1 = t1.center.y + s1.center_offset.y + s1.size.y;
+				int bottom_y_2 = t2.center.y + s2.center_offset.y + s2.size.y;
+
+				return bottom_y_1 < bottom_y_2;
+			}
 		);
 	}
 

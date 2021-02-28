@@ -146,6 +146,8 @@ namespace cotwin
 		Quadtree qtree;//(0, glm::vec4{ 0.0f, 0.0f, 1280.0f, 720.0f }, 4);
 		Quadtree physics_qtree;//(0, glm::vec4{ 0.0f, 0.0f, 1280.0f, 720.0f }, 4);
 
+		std::function<bool(Entity entity1, Entity entity2)> render_sort_function = [](Entity entity1, Entity entity2) { return false; };
+
 	public:
 		Scene()
 		{
@@ -417,6 +419,12 @@ namespace cotwin
 					SpriteComponent& sprite1 = entity1.get_component<SpriteComponent>();
 					SpriteComponent& sprite2 = entity2.get_component<SpriteComponent>();
 
+					// if both sprites are in the same layer use user-defined sort function to sort the entities within a layer
+					if (sprite1.layer == sprite2.layer)
+					{
+						return render_sort_function(entity1, entity2);
+					}
+					
 					return sprite1.layer < sprite2.layer;
 				}
 			);
@@ -505,6 +513,8 @@ namespace cotwin
 			}
 		}
 
+		// call this method within a layer on WindowResize event, providing it with the new window size
+		// this method will modify the scale of the camera used in the scene
 		void on_window_resize_event(const glm::ivec2& new_size)
 		{
 			auto view = registry.view<CameraComponent>();
@@ -514,6 +524,14 @@ namespace cotwin
 				camera.scale.x = (float)new_size.x / (float)camera.bounds.x;
 				camera.scale.y = (float)new_size.y / (float)camera.bounds.y;
 			}
+		}
+
+		// provide a sorting function, which will sort renderable entities (for now it's only the entities with SpriteComponent)
+		// withing a layer
+		// the comparison function object must return `true` if the first element is _less_ than the second one, `false` otherwise
+		void set_render_sort(std::function<bool(Entity entity1, Entity entity2)> s_render_sort_function)
+		{
+			render_sort_function = s_render_sort_function;
 		}
 
 		friend Entity;
