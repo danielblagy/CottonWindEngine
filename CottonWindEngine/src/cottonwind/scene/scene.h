@@ -178,13 +178,40 @@ namespace cotwin
 			registry.destroy(entity);
 		}
 
-		/*void generate_tileworld(const TileWorld& tileworld)
+		// since we need to create entities to have solid physics bodies (because of how the physics system is designed),
+		// the tilemap & collision map are separate, and the collision map is not a component, but a resource
+		// (rendering tilemap without using entities, which is a current approach, is much faster)
+		// CALL THIS METHOD AFTER CREATING AN ENTITY WITH TILEMAPCOMPONENT
+		void generate_collision_map(const CollisionMap& collision_map)
 		{
-			// TODO : store texture rect id not as char but as uint (tile world file format)
-			// TODO	: along with static solid objects, support generic colliders (tile world file format)
-			
-			
-		}*/
+			for (auto [entity, tilemap] : registry.view<TilemapComponent>().each())
+			{
+				for (int y = 0; y < tilemap.tiles_count.y; y++)
+					for (int x = 0; x < tilemap.tiles_count.x; x++)
+					{
+						// TODO	: along with static solid objects, support generic colliders (tile world file format)
+						if (collision_map.map[x + y * tilemap.tiles_count.x] == '1')
+						{
+							Entity tile = create_entity("solid tile");
+							
+							tile.add_component<TransformComponent>(
+								glm::vec2(
+									static_cast<float>(tilemap.origin.x + x * tilemap.tile_size),
+									static_cast<float>(tilemap.origin.y + y * tilemap.tile_size)
+								),
+								glm::vec2(0.0f, 0.0f)
+							);
+							
+							tile.add_component<PhysicsObjectComponent>(
+								StaticSolidBody,
+								glm::vec2(
+									static_cast<float>(tilemap.tile_size), static_cast<float>(tilemap.tile_size)
+								)
+							);
+						}
+					}
+			}
+		}
 		
 		void update(float delta)
 		{

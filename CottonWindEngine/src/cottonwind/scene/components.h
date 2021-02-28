@@ -157,7 +157,6 @@ namespace cotwin
 		{}
 	};
 
-	// TODO : move to ResourceManager
 	struct TilemapComponent
 	{
 		glm::ivec2 origin;
@@ -211,16 +210,18 @@ namespace cotwin
 							texture_rect,
 							size
 						)
-						);
-
-					// TODO	: along with static solid objects, support generic colliders (tile world file format)
-					/*if (collision_map[x + y * tiles_count.x] == '1')
-					{
-						physics_colliders.push_back(
-							PhysicsObjectComponent(StaticSolidBody, collider_size)
-						);
-					}*/
+					);
 				}
 		}
+	};
+
+	// TODO : move this to ResourceManager
+	struct CollisionMap
+	{
+		const char* map;
+
+		CollisionMap(const char* collision_map)
+			: map(collision_map)
+		{}
 	};
 }

@@ -135,11 +135,11 @@ public:
 		tilemap.add_component<cotwin::TilemapComponent>(
 			cotwin::ResourceManager::get_texture("src/test/resources/textures/tileset_1.bmp"),
 			"g 0,350,350,350\nw 350,350,350,350",
-			"gggggggggggggggggggggwwwwwwwwwwwwwwwwwwggwwwwwwwwwwwwwwwwwwggwwwwwwwwwwwwwwwwwwggwwwwwwwwwwwwwwwwwwggwwwwwwwwwwwwwwwwwwggwwwwwwwwwwwwwwwwwwggggggggggggggggggggg",
+			"gggggggggggggggggggggwwwwwwwwwwwwwwwwwwggwwwwwwwwggwwwwwwwwggwwwwwwwwgggwwwwwwwggwwwwwwwwwwwwwwwwwwggwwwwwwwwwwwwwwwwwwggwwwwwwwwwwwwwwwwwwggggggggggggggggggggg",
 			glm::ivec2(0, 0), glm::ivec2(20, 8), 100
 		);
 
-		//scene.generate_tileworld(tileworld_level_1);
+		scene.generate_collision_map(cotwin::CollisionMap("1111111111111111111110000000000000000001100000000110000000011000000001110000000110000000000000000001100000000000000000011000000000000000000111111111111111111111"));
 
 		// A custom render sort function (within a layer)
 		// A 3/4 camera perspective effect
@@ -152,8 +152,8 @@ public:
 				auto& s1 = e1.get_component<cotwin::SpriteComponent>();
 				auto& s2 = e2.get_component<cotwin::SpriteComponent>();
 
-				int bottom_y_1 = t1.center.y + s1.center_offset.y + s1.size.y;
-				int bottom_y_2 = t2.center.y + s2.center_offset.y + s2.size.y;
+				int bottom_y_1 = static_cast<int>(t1.center.y) + s1.center_offset.y + s1.size.y;
+				int bottom_y_2 = static_cast<int>(t2.center.y) + s2.center_offset.y + s2.size.y;
 
 				return bottom_y_1 < bottom_y_2;
 			}
