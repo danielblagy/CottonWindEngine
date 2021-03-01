@@ -154,6 +154,37 @@ namespace cotwin
 			}
 		}
 
+		const glm::vec4& get_bounds()
+		{
+			return bounds;
+		}
+
+		void set_bounds(const glm::vec4& s_bounds)
+		{
+			bounds = s_bounds;
+		}
+
+		// used for setting new bounds for the qtree(since the children would need their boundaries updated as well)
+		void recursive_dealloc()
+		{
+			// NOTE : used for setting new bounds for the qtree (since the children would need their boundaries updated as well)
+			
+			if (divided)
+			{
+				child_nw->recursive_dealloc();
+				child_ne->recursive_dealloc();
+				child_se->recursive_dealloc();
+				child_sw->recursive_dealloc();
+
+				delete child_nw;
+				delete child_ne;
+				delete child_se;
+				delete child_sw;
+
+				divided = false;
+			}
+		}
+
 	private:
 		void subdivide()
 		{

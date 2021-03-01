@@ -214,6 +214,57 @@ namespace cotwin
 	{
 		for (auto [entity, tilemap] : registry.view<TilemapComponent>().each())
 		{
+			// if the quadtrees' boundaries are too small for the collision map (the map is bigger),
+			// than make them bigger by updating the their bounds and recursively deallocating all the children
+			// (since they aren't deallocated for each frame for perfomance reasons)
+			const glm::vec4& physics_qtree_bounds = physics_qtree.get_bounds();
+			const glm::vec4& collisions_qtree_bounds = qtree.get_bounds();
+
+			// get the biggest bounds rect (area)
+			glm::vec4 bounds = {
+				glm::min(physics_qtree_bounds.x, collisions_qtree_bounds.x),
+				glm::min(physics_qtree_bounds.y, collisions_qtree_bounds.y),
+				glm::max(physics_qtree_bounds.z, collisions_qtree_bounds.z),
+				glm::max(physics_qtree_bounds.w, collisions_qtree_bounds.w)
+			};
+
+			bool needs_updating = false;
+			
+			if (tilemap.origin.x < bounds.x)
+			{
+				needs_updating = true;
+				bounds.x = tilemap.origin.x;
+			}
+
+			if (tilemap.origin.y < bounds.y)
+			{
+				needs_updating = true;
+				bounds.y = tilemap.origin.y;
+			}
+
+			float tilemap_right = static_cast<float>(tilemap.origin.x + tilemap.tiles_count.x * tilemap.tile_size);
+			if (tilemap_right > bounds.z)
+			{
+				needs_updating = true;
+				bounds.z = tilemap_right;
+			}
+
+			float tilemap_bottom = static_cast<float>(tilemap.origin.y + tilemap.tiles_count.y * tilemap.tile_size);
+			if (tilemap_bottom > bounds.w)
+			{
+				needs_updating = true;
+				bounds.w = tilemap_bottom;
+			}
+
+			if (needs_updating)
+			{
+				physics_qtree.recursive_dealloc();
+				physics_qtree.set_bounds(bounds);
+				
+				qtree.recursive_dealloc();
+				qtree.set_bounds(bounds);
+			}
+			
 			for (int y = 0; y < tilemap.tiles_count.y; y++)
 				for (int x = 0; x < tilemap.tiles_count.x; x++)
 				{
