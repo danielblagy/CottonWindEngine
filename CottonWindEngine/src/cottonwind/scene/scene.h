@@ -91,6 +91,16 @@ namespace cotwin
 		void set_render_sort(SpriteComponent::RenderLayer layer, std::function<bool(Entity entity1, Entity entity2)> render_sort_function);
 
 		friend Entity;
+
+	private:
+		void ScriptSystem(float delta);
+		void PhysicsSystem();
+		void TransformSystem();
+		void AnimationSystem(float delta);
+		void AudioSystem();
+		void CameraFocusSystem();
+		void SpriteRenderSystem(float delta);
+		void CollisionSystem(float delta);
 	};
 
 	class Scene::Entity
@@ -294,16 +304,56 @@ namespace cotwin
 
 	void Scene::update(float delta)
 	{
-		// Script System
-		for (auto [entity, script] : registry.view<ScriptComponent>().each())
-		{
-			script.scriptable_entity->on_update(delta);
-		}
+		ScriptSystem(delta);
 
 		// TODO : move collision system code & physics engine somewhere in here,
 		//		  make the physics engine work with constant framerate ??
 		//		  and maybe also the collision ??
 
+		PhysicsSystem();
+
+		TransformSystem();
+
+		AnimationSystem(delta);
+		
+		AudioSystem();
+
+		CameraFocusSystem();
+
+		SpriteRenderSystem(delta);
+
+		CollisionSystem(delta);
+	}
+
+	void Scene::on_window_resize_event(const glm::ivec2& new_size)
+	{
+		auto view = registry.view<CameraComponent>();
+		for (auto [entity, camera] : view.each())
+		{
+			// update camera scale
+			camera.scale.x = (float)new_size.x / (float)camera.bounds.x;
+			camera.scale.y = (float)new_size.y / (float)camera.bounds.y;
+		}
+	}
+
+	void Scene::set_render_sort(SpriteComponent::RenderLayer layer, std::function<bool(Entity entity1, Entity entity2)> render_sort_function)
+	{
+		render_sort_functions[layer] = render_sort_function;
+	}
+
+	// Systems
+
+	void Scene::ScriptSystem(float delta)
+	{
+		// Script System
+		for (auto [entity, script] : registry.view<ScriptComponent>().each())
+		{
+			script.scriptable_entity->on_update(delta);
+		}
+	}
+
+	void Scene::PhysicsSystem()
+	{
 		// Physics system
 		physics_qtree.clear();
 
@@ -392,13 +442,19 @@ namespace cotwin
 				}
 			}
 		}
+	}
 
+	void Scene::TransformSystem()
+	{
 		// Transform System
 		for (auto [entity, transform] : registry.view<TransformComponent>().each())
 		{
 			transform.center += transform.velocity;
 		}
+	}
 
+	void Scene::AnimationSystem(float delta)
+	{
 		// Animation System
 		for (auto [entity, sprite, animation] : registry.view<SpriteComponent, AnimationComponent>().each())
 		{
@@ -418,7 +474,10 @@ namespace cotwin
 				}
 			}
 		}
+	}
 
+	void Scene::AudioSystem()
+	{
 		// Audio System
 		for (auto [entity, audio_effect] : registry.view<AudioEffectComponent>().each())
 		{
@@ -428,7 +487,10 @@ namespace cotwin
 				audio_effect.play = false;
 			}
 		}
-
+	}
+	
+	void Scene::CameraFocusSystem()
+	{
 		// Camera Focus System
 		for (auto [entity, transform, camera, camera_focus] : registry.view<TransformComponent, CameraComponent, CameraFocusComponent>().each())
 		{
@@ -438,7 +500,10 @@ namespace cotwin
 				transform.center = camera_focus.focus_entity.get_component<TransformComponent>().center;
 			}
 		}
+	}
 
+	void Scene::SpriteRenderSystem(float delta)
+	{
 		static float count = 0.0f;
 		count += delta;
 
@@ -589,7 +654,10 @@ namespace cotwin
 
 		//Logger::Debug("Collision checks: %d", physics::collision_checks);
 		//physics::collision_checks = 0;
+	}
 
+	void Scene::CollisionSystem(float delta)
+	{
 		// Collision System
 		qtree.clear();
 
@@ -629,21 +697,5 @@ namespace cotwin
 				collision_resolution.resolution(Entity(entity, this), Entity(element.entity_handle, this), delta);
 			}
 		}
-	}
-
-	void Scene::on_window_resize_event(const glm::ivec2& new_size)
-	{
-		auto view = registry.view<CameraComponent>();
-		for (auto [entity, camera] : view.each())
-		{
-			// update camera scale
-			camera.scale.x = (float)new_size.x / (float)camera.bounds.x;
-			camera.scale.y = (float)new_size.y / (float)camera.bounds.y;
-		}
-	}
-
-	void Scene::set_render_sort(SpriteComponent::RenderLayer layer, std::function<bool(Entity entity1, Entity entity2)> render_sort_function)
-	{
-		render_sort_functions[layer] = render_sort_function;
 	}
 }
