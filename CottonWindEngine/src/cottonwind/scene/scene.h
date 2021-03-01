@@ -6,8 +6,6 @@
 
 #include "../util/logger.h"
 
-// NOTE : at least for now systems are in scene.update
-
 #include "../input/input.h"
 #include "../input/keycodes.h"
 
@@ -49,6 +47,9 @@ namespace cotwin
 		// the focus entity
 		struct CameraFocusComponent;
 	
+	public:
+		glm::vec4 world_rect;
+	
 	private:
 		entt::registry registry;
 		
@@ -59,11 +60,15 @@ namespace cotwin
 		std::unordered_map<SpriteComponent::RenderLayer, std::function<bool(Entity entity1, Entity entity2)>> render_sort_functions;
 
 	public:
-		Scene()
+		// top, left, width, height
+		// the world rect is the dimensions of a 2d world
+		// the dimensions are used in quadtrees for collision and physics systems
+		// if TilemapComponent is used, and its dimensions are bigger than the dimensions provided, world_rect will be stretched automatically
+		Scene(const glm::vec4& s_world_rect)
+			: world_rect(s_world_rect)
 		{
-			// TODO : have a world info, feed it here as bounds
-			qtree = Quadtree(0, glm::vec4(0.0f, 0.0f, 1280.0f, 720.0f), 4);
-			physics_qtree = Quadtree(0, glm::vec4(0.0f, 0.0f, 1280.0f, 720.0f), 4);
+			qtree = Quadtree(0, world_rect, 4);
+			physics_qtree = Quadtree(0, world_rect, 4);
 		}
 
 		~Scene()
@@ -243,13 +248,13 @@ namespace cotwin
 			if (tilemap.origin.x < bounds.x)
 			{
 				needs_updating = true;
-				bounds.x = tilemap.origin.x;
+				bounds.x = static_cast<float>(tilemap.origin.x);
 			}
 
 			if (tilemap.origin.y < bounds.y)
 			{
 				needs_updating = true;
-				bounds.y = tilemap.origin.y;
+				bounds.y = static_cast<float>(tilemap.origin.y);
 			}
 
 			float tilemap_right = static_cast<float>(tilemap.origin.x + tilemap.tiles_count.x * tilemap.tile_size);
@@ -273,6 +278,9 @@ namespace cotwin
 				
 				qtree.recursive_dealloc();
 				qtree.set_bounds(bounds);
+
+				// update the scene's world_rect property
+				world_rect = bounds;
 			}
 			
 			for (int y = 0; y < tilemap.tiles_count.y; y++)

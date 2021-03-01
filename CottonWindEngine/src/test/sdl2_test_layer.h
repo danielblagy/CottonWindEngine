@@ -23,7 +23,7 @@ private:
 
 public:
 	TestMainLayer()
-		: cotwin::Layer("main")
+		: cotwin::Layer("main"), scene(glm::vec4(0.0f, 0.0f, 1280.0f, 720.0f))
 	{}
 
 	void create_sensei_entity(const glm::ivec2& position)
