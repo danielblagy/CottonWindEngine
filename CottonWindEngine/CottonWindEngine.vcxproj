@@ -219,6 +219,7 @@
     <ClInclude Include="src\cottonwind\input\mouse_buttons.h" />
     <ClInclude Include="src\cottonwind\layer\layer.h" />
     <ClInclude Include="src\cottonwind\layer\layer_stack.h" />
+    <ClInclude Include="src\cottonwind\util\file.h" />
     <ClInclude Include="src\cottonwind\util\logger.h" />
     <ClInclude Include="src\cottonwind\graphics\sdl2\renderer_2d.h" />
     <ClInclude Include="src\cottonwind\scene\scene.h" />

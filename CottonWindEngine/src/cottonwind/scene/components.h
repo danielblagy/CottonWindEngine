@@ -214,14 +214,4 @@ namespace cotwin
 				}
 		}
 	};
-
-	// TODO : move this to ResourceManager
-	struct CollisionMap
-	{
-		const char* map;
-
-		CollisionMap(const char* collision_map)
-			: map(collision_map)
-		{}
-	};
 }
