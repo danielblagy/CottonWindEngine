@@ -13,13 +13,16 @@ namespace cotwin
 {
 	struct Tilemap
 	{
-		const char* texture_table_str;
-		const char* tiles_str;
+		std::string texture_table_str;
+		std::string tiles_str;
 		glm::ivec2 tiles_count;
 
+		Tilemap()
+		{}
+		
 		Tilemap(
-			const char* s_texture_table_str,
-			const char* s_tiles_str,
+			std::string s_texture_table_str,
+			std::string s_tiles_str,
 			const glm::ivec2& s_tiles_count
 		)
 			: texture_table_str(s_texture_table_str), tiles_str(s_tiles_str), tiles_count(s_tiles_count)
@@ -28,33 +31,45 @@ namespace cotwin
 
 	struct CollisionMap
 	{
-		const char* map;
+		std::string map;
 
-		CollisionMap(const char* collision_map)
+		CollisionMap()
+		{}
+		
+		CollisionMap(std::string collision_map)
 			: map(collision_map)
 		{}
 	};
 	
-	class Level
+	struct Level
 	{
 	private:
 		Tilemap tilemap;
 		CollisionMap collision_map;
 
-	private:
+	public:
 		Level()
-			: tilemap("", "", glm::ivec2(0, 0)), collision_map("")
 		{}
 		
 		Level(
-			const char* texture_table_str,
-			const char* tiles_str,
+			std::string texture_table_str,
+			std::string tiles_str,
 			const glm::ivec2& tiles_count,
 			int tile_size,
-			const char* map
+			std::string map
 		)
 			: tilemap(texture_table_str, tiles_str, tiles_count), collision_map(map)
 		{}
+
+		Tilemap get_tilemap()
+		{
+			return tilemap;
+		}
+
+		CollisionMap get_collision_map()
+		{
+			return collision_map;
+		}
 
 		friend class LevelManager;
 	};
@@ -97,7 +112,7 @@ namespace cotwin
 				return error_level;
 			}
 
-			if (((tilemap_height) < (tokens.size() - 2)) || (tokens[2].length() != tilemap_width))
+			if ((tilemap_height >= (tokens.size() - 2)) || (tokens[2].length() != tilemap_width))
 			{
 				Logger::Error("Failed to load level %s, the provided tiles string doesn't correspond to the dimensions", filepath);
 				Level error_level;
@@ -116,9 +131,11 @@ namespace cotwin
 
 			Level level;
 
-			if (tokens[tilemap_height] == "collision")
+			if (tokens[i] == "collision")
 			{
-				if (((tilemap_height) < (tokens.size() - 2 - tilemap_height)) || (tokens[2 - tilemap_height].length() != tilemap_width))
+				i++;
+				
+				if (((tilemap_height) > (tokens.size() - 2 - tilemap_height)) || (tokens[i].length() != tilemap_width))
 				{
 					Logger::Error("Failed to load level %s, the provided collision map string doesn't correspond to the dimensions", filepath);
 					Level error_level;
@@ -129,7 +146,7 @@ namespace cotwin
 				collision_str.reserve(tilemap_width * tilemap_height);
 				collision_str = "";
 
-				for (; i < tilemap_height * 2 + 2; i++)
+				for (; i < tilemap_height * 2 + 3; i++)
 				{
 					collision_str += tokens[i];
 				}
@@ -138,13 +155,13 @@ namespace cotwin
 			}
 			
 			std::string texture_table;
-			texture_table.reserve(tokens.size() - i);
+			//texture_table.reserve(tokens.size() - i);
 			texture_table = "";
 			for (; i < tokens.size(); i++)
 				// TODO
 				texture_table += tokens[i] + "\n";
 
-			level.tilemap = Tilemap(texture_table.c_str(), tiles_str.c_str(), { tilemap_width, tilemap_height });
+			level.tilemap = Tilemap(texture_table, tiles_str, { tilemap_width, tilemap_height });
 			
 			level_resources[std::string(filepath)] = level;
 			return level_resources[filepath];

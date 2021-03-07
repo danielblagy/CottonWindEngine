@@ -131,15 +131,24 @@ public:
 		);
 
 		// Tilemap
+		cotwin::Level& level = cotwin::ResourceManager::get_level("src/test/resources/test_level.cw_level");
 		auto tilemap = scene.create_entity("tilemap");
 		tilemap.add_component<cotwin::TilemapComponent>(
+			//cotwin::ResourceManager::get_texture("src/test/resources/textures/tileset_1.bmp"),
+			//"g 0,350,350,350\nw 350,350,350,350",
+			//"gggggggggggggggggggggwwwwwwwwwwwwwwwwwwggwwwwwwwwggwwwwwwwwggwwwwwwwwgggwwwwwwwggwwwwwwwwwwwwwwwwwwggwwwwwwwwwwwwwwwwwwggwwwwwwwwwwwwwwwwwwggggggggggggggggggggg",
+			//glm::ivec2(0, 0), glm::ivec2(20, 8), 100
+
 			cotwin::ResourceManager::get_texture("src/test/resources/textures/tileset_1.bmp"),
-			"g 0,350,350,350\nw 350,350,350,350",
-			"gggggggggggggggggggggwwwwwwwwwwwwwwwwwwggwwwwwwwwggwwwwwwwwggwwwwwwwwgggwwwwwwwggwwwwwwwwwwwwwwwwwwggwwwwwwwwwwwwwwwwwwggwwwwwwwwwwwwwwwwwwggggggggggggggggggggg",
-			glm::ivec2(0, 0), glm::ivec2(20, 8), 100
+			level.get_tilemap().texture_table_str.c_str(),
+			level.get_tilemap().tiles_str.c_str(),
+			glm::ivec2(0, 0),
+			level.get_tilemap().tiles_count,
+			100
 		);
 
-		scene.generate_collision_map(cotwin::CollisionMap("1111111111111111111110000000000000000001100000000110000000011000000001110000000110000000000000000001100000000000000000011000000000000000000111111111111111111111"));
+		//scene.generate_collision_map(cotwin::CollisionMap("1111111111111111111110000000000000000001100000000110000000011000000001110000000110000000000000000001100000000000000000011000000000000000000111111111111111111111"));
+		scene.generate_collision_map(level.get_collision_map());
 
 		// A custom render sort function (within a layer)
 		// A 3/4 camera perspective effect

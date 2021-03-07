@@ -41,5 +41,10 @@ namespace cotwin
 		{
 			return FontManager::get_font(filepath);
 		}
+
+		static Level& get_level(const char* filepath)
+		{
+			return LevelManager::get_level(filepath);
+		}
 	};
 }
