@@ -4,7 +4,6 @@
 #include <malloc.h>
 #include <string>
 
-
 namespace cotwin
 {
 	/*std::vector<std::string> split(std::string& line, char delimiter)
@@ -21,7 +20,8 @@ namespace cotwin
 
 	std::string read_file(const char* filepath)
 	{
-		FILE* file = fopen(filepath, "rt");		// rt stands for 'read text'
+		FILE* file;
+		fopen_s(&file, filepath, "rt");			// rt stands for 'read text'
 		fseek(file, 0, SEEK_END);				// go to the end of file
 		unsigned long length = ftell(file);		// tell the amount of passed bytes
 		char* data = (char*)_malloca(length + 1);	// +1 for the terminator

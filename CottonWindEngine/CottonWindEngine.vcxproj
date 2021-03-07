@@ -492,6 +492,7 @@
     <ClInclude Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imstb_rectpack.h" />
     <ClInclude Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imstb_textedit.h" />
     <ClInclude Include="src\cottonwind\vendor\imgui_sdl2_opengl3\imstb_truetype.h" />
+    <ClInclude Include="src\cottonwind\world\level.h" />
     <ClInclude Include="src\test\follower_script.h" />
     <ClInclude Include="src\test\freelook_camera_script.h" />
     <ClInclude Include="src\test\opengl_test_layer.h" />
@@ -601,6 +602,7 @@
     <None Include="src\cottonwind\vendor\glm\gtx\vector_angle.inl" />
     <None Include="src\cottonwind\vendor\glm\gtx\vector_query.inl" />
     <None Include="src\cottonwind\vendor\glm\gtx\wrap.inl" />
+    <None Include="src\test\resources\test_level.cw_level" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
