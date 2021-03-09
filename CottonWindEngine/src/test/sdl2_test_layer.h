@@ -139,7 +139,7 @@ public:
 			//"gggggggggggggggggggggwwwwwwwwwwwwwwwwwwggwwwwwwwwggwwwwwwwwggwwwwwwwwgggwwwwwwwggwwwwwwwwwwwwwwwwwwggwwwwwwwwwwwwwwwwwwggwwwwwwwwwwwwwwwwwwggggggggggggggggggggg",
 			//glm::ivec2(0, 0), glm::ivec2(20, 8), 100
 
-			cotwin::ResourceManager::get_texture("src/test/resources/textures/tileset_1.bmp"),
+			level.get_tilemap().tileset,
 			level.get_tilemap().texture_table_str.c_str(),
 			level.get_tilemap().tiles_str.c_str(),
 			glm::ivec2(0, 0),

@@ -166,7 +166,7 @@ namespace cotwin
 		std::vector<SpriteComponent> tiles;
 
 		TilemapComponent(
-			Texture& tileset,
+			const Texture& tileset,
 			// TODO : store texture rect id not as char but as uint (tile world file format)
 			const char* texture_table_str,
 			const char* tiles_str,

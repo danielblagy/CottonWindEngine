@@ -97,6 +97,7 @@ namespace cotwin
 		// the comparison function object must return `true` if the first element is _less_ than the second one, `false` otherwise
 		void set_render_sort(SpriteComponent::RenderLayer layer, std::function<bool(Entity entity1, Entity entity2)> render_sort_function);
 
+		// have a custom system (must be called in on_update method)
 		template <typename... Components, typename... ExcludeComponents>
 		void system(std::function<void(Entity entity)> for_each_entity, ExcludeComponents...);
 
