@@ -180,6 +180,12 @@ public:
 		//cotwin::Renderer2D::draw_triangle();
 
 		scene.update(delta);
+
+		// a pull down custom system
+		scene.system<cotwin::TransformComponent, cotwin::Scene::CollisionResolutionComponent>([&](cotwin::Scene::Entity entity) {
+			auto& transform = entity.get_component<cotwin::TransformComponent>();
+			transform.center.y += 50.0f * delta;
+		});
 	}
 
 	virtual void on_event(cotwin::Event* event) override

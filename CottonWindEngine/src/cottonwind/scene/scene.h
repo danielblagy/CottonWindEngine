@@ -74,6 +74,8 @@ namespace cotwin
 		~Scene()
 		{}
 
+		friend Entity;
+
 		Entity create_entity(std::string tag);
 
 		void destroy_entity(Entity entity);
@@ -95,7 +97,8 @@ namespace cotwin
 		// the comparison function object must return `true` if the first element is _less_ than the second one, `false` otherwise
 		void set_render_sort(SpriteComponent::RenderLayer layer, std::function<bool(Entity entity1, Entity entity2)> render_sort_function);
 
-		friend Entity;
+		template <typename... Components, typename... ExcludeComponents>
+		void system(std::function<void(Entity entity)> for_each_entity, ExcludeComponents...);
 
 	private:
 		void ScriptSystem(float delta);
@@ -347,6 +350,16 @@ namespace cotwin
 	void Scene::set_render_sort(SpriteComponent::RenderLayer layer, std::function<bool(Entity entity1, Entity entity2)> render_sort_function)
 	{
 		render_sort_functions[layer] = render_sort_function;
+	}
+
+	template <typename... Components, typename... ExcludeComponents>
+	void Scene::system(std::function<void(Entity entity)> for_each_entity, ExcludeComponents...)
+	{
+		auto view = registry.view<Components...>(ExcludeComponents...);
+		for (auto entity : view)
+		{
+			for_each_entity(Entity(entity, this));
+		}
 	}
 
 	// Systems
