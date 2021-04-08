@@ -59,6 +59,14 @@ namespace cotwin
 
 		std::unordered_map<SpriteComponent::RenderLayer, std::function<bool(Entity entity1, Entity entity2)>> render_sort_functions;
 
+		bool running = false;
+		bool script_system_update = false;
+		bool physics_system_update = false;
+		float temp_delta = 1.0f;
+
+		std::thread script_thread;
+		std::thread physics_thread;
+
 	public:
 		// top, left, width, height
 		// the world rect is the dimensions of a 2d world
@@ -69,10 +77,19 @@ namespace cotwin
 		{
 			qtree = Quadtree(0, world_rect, 4);
 			physics_qtree = Quadtree(0, world_rect, 4);
+
+			running = true;
+
+			script_thread = std::thread(&Scene::ScriptSystem, this, 1.0f);
+			physics_thread = std::thread(&Scene::PhysicsSystem, this);
 		}
 
 		~Scene()
-		{}
+		{
+			running = false;
+			script_thread.join();
+			physics_thread.join();
+		}
 
 		friend Entity;
 
@@ -316,13 +333,20 @@ namespace cotwin
 
 	void Scene::update(float delta)
 	{
-		ScriptSystem(delta);
+		//ScriptSystem(delta);
 
 		// TODO : move collision system code & physics engine somewhere in here,
 		//		  make the physics engine work with constant framerate ??
 		//		  and maybe also the collision ??
 
-		PhysicsSystem();
+		//PhysicsSystem();
+
+		script_system_update = true;
+		physics_system_update = true;
+		temp_delta = delta;
+
+		// wait for the threads to finish
+		while (script_system_update || physics_system_update);
 
 		TransformSystem();
 
@@ -367,98 +391,110 @@ namespace cotwin
 
 	void Scene::ScriptSystem(float delta)
 	{
-		// Script System
-		for (auto [entity, script] : registry.view<ScriptComponent>().each())
+		while (running)
 		{
-			script.scriptable_entity->on_update(delta);
+			if (!script_system_update) continue;
+			script_system_update = false;
+			
+			// Script System
+			for (auto [entity, script] : registry.view<ScriptComponent>().each())
+			{
+				script.scriptable_entity->on_update(temp_delta);
+			}
 		}
 	}
 
 	void Scene::PhysicsSystem()
 	{
-		// Physics system
-		physics_qtree.clear();
-
-		// generate a quadtree for this frame
-		for (auto [entity, transform, physics_object]
-			: registry.view<TransformComponent, PhysicsObjectComponent>().each())
+		while (running)
 		{
-			glm::vec2 collider_origin = transform.center + physics_object.offset;
-			glm::vec4 collider_rect(
-				collider_origin.x,
-				collider_origin.y,
-				physics_object.size.x,
-				physics_object.size.y
-			);
+			if (!physics_system_update) continue;
+			physics_system_update = false;
 
-			physics_qtree.insert(Quadtree::Element(entity, collider_rect));
-		}
+			// Physics system
+			physics_qtree.clear();
 
-		for (auto [entity, transform, physics_object]
-			: registry.view<TransformComponent, PhysicsObjectComponent>().each())
-		{
-			glm::vec2 collider_origin = transform.center + physics_object.offset;
-			glm::vec4 collider_rect(
-				collider_origin.x,
-				collider_origin.y,
-				physics_object.size.x,
-				physics_object.size.y
-			);
-
-			// TODO : make this a reusable global variable ??
-			std::vector<Quadtree::Element> colliding_elements;
-
-			physics_qtree.get_colliding(colliding_elements, Quadtree::Element(entity, collider_rect));
-
-			float	left = collider_rect.x, right = collider_rect.x + collider_rect.z,
-				top = collider_rect.y, bottom = collider_rect.y + collider_rect.w;
-
-			// Resolve collisions for an object of type StaticSolidBody
-			if (physics_object.type == StaticSolidBody)
+			// generate a quadtree for this frame
+			for (auto [entity, transform, physics_object]
+				: registry.view<TransformComponent, PhysicsObjectComponent>().each())
 			{
-				for (Quadtree::Element& element : colliding_elements)
+				glm::vec2 collider_origin = transform.center + physics_object.offset;
+				glm::vec4 collider_rect(
+					collider_origin.x,
+					collider_origin.y,
+					physics_object.size.x,
+					physics_object.size.y
+				);
+
+				physics_qtree.insert(Quadtree::Element(entity, collider_rect));
+			}
+
+			for (auto [entity, transform, physics_object]
+				: registry.view<TransformComponent, PhysicsObjectComponent>().each())
+			{
+				glm::vec2 collider_origin = transform.center + physics_object.offset;
+				glm::vec4 collider_rect(
+					collider_origin.x,
+					collider_origin.y,
+					physics_object.size.x,
+					physics_object.size.y
+				);
+
+				// TODO : make this a reusable global variable ??
+				std::vector<Quadtree::Element> colliding_elements;
+
+				physics_qtree.get_colliding(colliding_elements, Quadtree::Element(entity, collider_rect));
+
+				float	left = collider_rect.x, right = collider_rect.x + collider_rect.z,
+					top = collider_rect.y, bottom = collider_rect.y + collider_rect.w;
+
+				// Resolve collisions for an object of type StaticSolidBody
+				if (physics_object.type == StaticSolidBody)
 				{
-					// TODO : refactor ??
-					Entity element_entity(element.entity_handle, this);
-					cotwin::PhysicsObjectComponent& element_object = element_entity.get_component<PhysicsObjectComponent>();
-					cotwin::TransformComponent& element_transform = element_entity.get_component<TransformComponent>();
-					// A collision resolution for StaticSolidBody-DynamicSolidBody
-					if (element_object.type == DynamicSolidBody && collide_aabb(collider_rect, element.rect))
+					for (Quadtree::Element& element : colliding_elements)
 					{
-						float new_x, new_y;
+						// TODO : refactor ??
+						Entity element_entity(element.entity_handle, this);
+						cotwin::PhysicsObjectComponent& element_object = element_entity.get_component<PhysicsObjectComponent>();
+						cotwin::TransformComponent& element_transform = element_entity.get_component<TransformComponent>();
+						// A collision resolution for StaticSolidBody-DynamicSolidBody
+						if (element_object.type == DynamicSolidBody && collide_aabb(collider_rect, element.rect))
+						{
+							float new_x, new_y;
 
-						bool no_x = false, no_y = false;
+							bool no_x = false, no_y = false;
 
-						if (element.rect.x + element.rect.z >= right)
-						{
-							new_x = right;
-						}
-						else if (element.rect.x <= left)
-						{
-							new_x = left - element.rect.z;
-						}
-						else
-							no_x = true;
+							if (element.rect.x + element.rect.z >= right)
+							{
+								new_x = right;
+							}
+							else if (element.rect.x <= left)
+							{
+								new_x = left - element.rect.z;
+							}
+							else
+								no_x = true;
 
-						if (element.rect.y <= top)
-						{
-							new_y = top - element.rect.w;
-						}
-						else if (element.rect.y + element.rect.w >= bottom)
-						{
-							new_y = bottom;
-						}
-						else
-							no_y = true;
+							if (element.rect.y <= top)
+							{
+								new_y = top - element.rect.w;
+							}
+							else if (element.rect.y + element.rect.w >= bottom)
+							{
+								new_y = bottom;
+							}
+							else
+								no_y = true;
 
-						// find the smallest penetration
-						if (no_y || (!no_x && glm::abs(element.rect.x - new_x) < glm::abs(element.rect.y - new_y)))
-						{
-							element_transform.center.x -= element.rect.x - new_x;
-						}
-						else
-						{
-							element_transform.center.y -= element.rect.y - new_y;
+							// find the smallest penetration
+							if (no_y || (!no_x && glm::abs(element.rect.x - new_x) < glm::abs(element.rect.y - new_y)))
+							{
+								element_transform.center.x -= element.rect.x - new_x;
+							}
+							else
+							{
+								element_transform.center.y -= element.rect.y - new_y;
+							}
 						}
 					}
 				}

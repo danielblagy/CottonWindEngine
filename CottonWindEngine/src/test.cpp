@@ -31,7 +31,8 @@ int main(int argc, char* args[])
 {
 	cotwin::Logger::set_log_priority(cotwin::TracePriority);
 	
-	TestGame game(cotwin::WindowProperties("Test Game", 0, 0, 1280, 720, cotwin::Centered | cotwin::Resizable | cotwin::Vsync));
+	//TestGame game(cotwin::WindowProperties("Test Game", 0, 0, 1280, 720, cotwin::Centered | cotwin::Resizable | cotwin::Vsync));
+	TestGame game(cotwin::WindowProperties("Test Game", 0, 0, 1280, 720, cotwin::Centered | cotwin::Resizable));
 	//TestGame game(cotwin::WindowProperties("Test Game", 0, 0, 1920, 1080, cotwin::Centered | cotwin::Borderless | cotwin::Vsync));
 	//TestGame game(cotwin::WindowProperties("Test Game", 0, 0, 1920, 1080, cotwin::Centered | cotwin::Borderless));
 
