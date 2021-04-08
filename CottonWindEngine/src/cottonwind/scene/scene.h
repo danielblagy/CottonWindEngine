@@ -62,10 +62,12 @@ namespace cotwin
 		bool running = false;
 		bool script_system_update = false;
 		bool physics_system_update = false;
+		bool collision_system_update = false;
 		float temp_delta = 1.0f;
 
 		std::thread script_thread;
 		std::thread physics_thread;
+		std::thread collision_thread;
 
 	public:
 		// top, left, width, height
@@ -82,6 +84,7 @@ namespace cotwin
 
 			script_thread = std::thread(&Scene::ScriptSystem, this, 1.0f);
 			physics_thread = std::thread(&Scene::PhysicsSystem, this);
+			collision_thread = std::thread(&Scene::CollisionSystem, this, 1.0f);
 		}
 
 		~Scene()
@@ -89,6 +92,7 @@ namespace cotwin
 			running = false;
 			script_thread.join();
 			physics_thread.join();
+			collision_thread.join();
 		}
 
 		friend Entity;
@@ -341,12 +345,14 @@ namespace cotwin
 
 		//PhysicsSystem();
 
+		// TODO : these can conflict
 		script_system_update = true;
 		physics_system_update = true;
+		collision_system_update = true;
 		temp_delta = delta;
 
 		// wait for the threads to finish
-		while (script_system_update || physics_system_update);
+		while (script_system_update || physics_system_update || collision_system_update);
 
 		TransformSystem();
 
@@ -358,7 +364,7 @@ namespace cotwin
 
 		SpriteRenderSystem(delta);
 
-		CollisionSystem(delta);
+		//CollisionSystem(delta);
 	}
 
 	void Scene::on_window_resize_event(const glm::ivec2& new_size)
@@ -716,43 +722,49 @@ namespace cotwin
 
 	void Scene::CollisionSystem(float delta)
 	{
-		// Collision System
-		qtree.clear();
-
-		// generate a quadtree for this frame
-		for (auto [entity, transform, collider]
-			: registry.view<TransformComponent, ColliderComponent>().each())
+		while (running)
 		{
-			glm::vec2 collider_origin = transform.center + collider.offset;
-			glm::vec4 collider_rect(
-				collider_origin.x,
-				collider_origin.y,
-				collider.size.x,
-				collider.size.y
-			);
+			if (!collision_system_update) continue;
+			collision_system_update = false;
 
-			qtree.insert(Quadtree::Element(entity, collider_rect));
-		}
+			// Collision System
+			qtree.clear();
 
-		for (auto [entity, transform, collider, collision_resolution]
-			: registry.view<TransformComponent, ColliderComponent, CollisionResolutionComponent>().each())
-		{
-			glm::vec2 collider_origin = transform.center + collider.offset;
-			glm::vec4 collider_rect(
-				collider_origin.x,
-				collider_origin.y,
-				collider.size.x,
-				collider.size.y
-			);
-
-			// TODO : make this a reusable global variable ??
-			std::vector<Quadtree::Element> colliding_elements;
-
-			qtree.get_colliding(colliding_elements, Quadtree::Element(entity, collider_rect));
-
-			for (Quadtree::Element& element : colliding_elements)
+			// generate a quadtree for this frame
+			for (auto [entity, transform, collider]
+				: registry.view<TransformComponent, ColliderComponent>().each())
 			{
-				collision_resolution.resolution(Entity(entity, this), Entity(element.entity_handle, this), delta);
+				glm::vec2 collider_origin = transform.center + collider.offset;
+				glm::vec4 collider_rect(
+					collider_origin.x,
+					collider_origin.y,
+					collider.size.x,
+					collider.size.y
+				);
+
+				qtree.insert(Quadtree::Element(entity, collider_rect));
+			}
+
+			for (auto [entity, transform, collider, collision_resolution]
+				: registry.view<TransformComponent, ColliderComponent, CollisionResolutionComponent>().each())
+			{
+				glm::vec2 collider_origin = transform.center + collider.offset;
+				glm::vec4 collider_rect(
+					collider_origin.x,
+					collider_origin.y,
+					collider.size.x,
+					collider.size.y
+				);
+
+				// TODO : make this a reusable global variable ??
+				std::vector<Quadtree::Element> colliding_elements;
+
+				qtree.get_colliding(colliding_elements, Quadtree::Element(entity, collider_rect));
+
+				for (Quadtree::Element& element : colliding_elements)
+				{
+					collision_resolution.resolution(Entity(entity, this), Entity(element.entity_handle, this), delta);
+				}
 			}
 		}
 	}
