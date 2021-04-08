@@ -345,11 +345,13 @@ namespace cotwin
 
 		//PhysicsSystem();
 
+		SpriteRenderSystem(delta);
+
 		// TODO : these can conflict
+		temp_delta = delta;
 		script_system_update = true;
 		physics_system_update = true;
 		collision_system_update = true;
-		temp_delta = delta;
 
 		// wait for the threads to finish
 		while (script_system_update || physics_system_update || collision_system_update);
@@ -362,7 +364,7 @@ namespace cotwin
 
 		CameraFocusSystem();
 
-		SpriteRenderSystem(delta);
+		//SpriteRenderSystem(delta);
 
 		//CollisionSystem(delta);
 	}
